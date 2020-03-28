@@ -13,9 +13,10 @@ public class AlpacaTradeConfiguration {
 	@Bean
 	public ObjectMapper objectMapper(){
 		ObjectMapper mapper = new ObjectMapper();
-		SimpleModule module = new SimpleModule();
-		module.addDeserializer(StockTradeStrategy.class, new StockTradeStrategyDeserializer());
-		mapper.registerModule(module);		
+//		SimpleModule module = new SimpleModule();
+	//	module.addDeserializer(StockTradeStrategy.class, new StockTradeStrategyDeserializer());
+	//	mapper.registerModule(module);	
+		return mapper;
 	}
 
 }

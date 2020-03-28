@@ -5,4 +5,5 @@ public enum TradeStrategyState {
 	WATCHING,
 	ENTERED,
 	COMPLETED;	
+	
 }

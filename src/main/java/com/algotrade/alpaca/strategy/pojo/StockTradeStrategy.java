@@ -1,29 +1,46 @@
 package com.algotrade.alpaca.strategy.pojo;
 
-import java.util.Set;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 
 public class StockTradeStrategy {
 	private String ticker;
-	private Set<TradeStrategy> tradeStrategies;
+	private TimeInterval timeInterval;
+	private TradeStrategy tradeStrategy;
 	private TradeStrategyState state;
+	private StockWatch stockWatch;
 	public String getTicker() {
 		return ticker;
 	}
 	public void setTicker(String ticker) {
 		this.ticker = ticker;
 	}
-	public Set<TradeStrategy> getTradeStrategy() {
-		return tradeStrategies;
+
+	public TradeStrategyState getState() {
+		return state;
 	}
-	public void setTradeStrategy(Set<TradeStrategy> tradeStrategies) {
-		this.tradeStrategies = tradeStrategies;
+	public void setState(String state) {
+		this.state = TradeStrategyState.valueOf(state);
 	}
-	public void addTradeStrategy(TradeStrategy tradeStrategy) {
-		this.tradeStrategies.add(tradeStrategy);
+	public TradeStrategy getTradeStrategy() {
+		return tradeStrategy;
+	}
+	public void setTradeStrategy(TradeStrategy tradeStrategy) {
+		this.tradeStrategy = tradeStrategy;
 	}
 
-	
+	public StockWatch getStockWatch() {
+		return stockWatch;
+	}
+	public void setStockWatch(StockWatch stockWatch) {
+		this.stockWatch = stockWatch;
+	}
+	public String getTimeInterval() {
+		return timeInterval.toString();
+	}
+	public void setTimeInterval(String timeInterval) {
+		this.timeInterval = TimeInterval.valueOf(timeInterval);
+	}
+	public void setState(TradeStrategyState state) {
+		this.state = state;
+	}
 }

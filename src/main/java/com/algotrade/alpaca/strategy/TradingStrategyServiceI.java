@@ -7,5 +7,4 @@ public interface TradingStrategyServiceI {
 
 	public StockTradeStrategy getTradingStrategy(String ticker);
 	public void storeStockTradeStrategy(StockTradeStrategy stockTradeStrategy);
-	public void addTradeStrategy(String ticker, TradeStrategy tradeStrategy);
 }

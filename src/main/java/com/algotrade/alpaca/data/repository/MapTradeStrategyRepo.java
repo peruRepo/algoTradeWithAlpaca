@@ -3,10 +3,13 @@ package com.algotrade.alpaca.data.repository;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.springframework.stereotype.Component;
+
 import com.algotrade.alpaca.strategy.pojo.StockTradeStrategy;
 import com.algotrade.alpaca.strategy.pojo.TradeStrategy;
 
-public class SetTradeStrategyRepo implements TradeStrategyRepo {
+@Component
+public class MapTradeStrategyRepo implements TradeStrategyRepo {
 	
 	
 	HashMap<String, StockTradeStrategy> stockTradeStrategyMap = new HashMap<>();
@@ -18,12 +21,12 @@ public class SetTradeStrategyRepo implements TradeStrategyRepo {
 		
 	}
 
-	@Override
-	public void addStrategy(String ticker, TradeStrategy tradeStrategy) {
-		StockTradeStrategy stockTradeStrategy = stockTradeStrategyMap.get(ticker);
-		stockTradeStrategy.addTradeStrategy(tradeStrategy);
-		stockTradeStrategyMap.put(ticker, stockTradeStrategy);
-	}
+//	@Override
+//	public void addStrategy(String ticker, TradeStrategy tradeStrategy) {
+//		StockTradeStrategy stockTradeStrategy = stockTradeStrategyMap.get(ticker);
+//		stockTradeStrategy.addTradeStrategy(tradeStrategy);
+//		stockTradeStrategyMap.put(ticker, stockTradeStrategy);
+//	}
 	
 	@Override
 	public StockTradeStrategy getStrategy(String ticker) {

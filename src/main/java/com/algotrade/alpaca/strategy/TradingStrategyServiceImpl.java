@@ -1,11 +1,11 @@
 package com.algotrade.alpaca.strategy;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.stereotype.Component;
 import com.algotrade.alpaca.data.repository.TradeStrategyRepo;
 import com.algotrade.alpaca.strategy.pojo.StockTradeStrategy;
-import com.algotrade.alpaca.strategy.pojo.TradeStrategy;
 
+@Component
 public class TradingStrategyServiceImpl  implements TradingStrategyServiceI {
 	
 	@Autowired
@@ -21,9 +21,6 @@ public class TradingStrategyServiceImpl  implements TradingStrategyServiceI {
 		setTradeStrategyRepo.saveStrategy(stockTradeStrategy);		
 	}
 
-	@Override
-	public void addTradeStrategy(String ticker, TradeStrategy tradeStrategy) {
-		setTradeStrategyRepo.addStrategy(ticker, tradeStrategy);		
-	}
+
 
 }

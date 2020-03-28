@@ -1,25 +1,22 @@
 package com.algotrade.alpaca.strategy.pojo;
 
-import java.util.List;
-
-import com.algotrade.alpaca.strategy.trade.condition.TradeCondition;
-
 public class TradeStrategy {
 
-	private List<TradeCondition> entryConditions;
-	private List<TradeCondition> exitConditions;
+	private String entryConditions;
+	private String exitConditions;
 
-	public List<TradeCondition> getEntryConditions() {
+	
+	public String getEntryConditions() {
 		return entryConditions;
 	}
-	public void setEntryConditions(List<TradeCondition> entryConditions) {
+	public void setEntryConditions(String entryConditions) {
 		this.entryConditions = entryConditions;
 	}
-	public List<TradeCondition> getExitConditions() {
+	public String getExitConditions() {
 		return exitConditions;
 	}
-	public void setExitConditions(List<TradeCondition> exitConditions) {
+	public void setExitConditions(String exitConditions) {
 		this.exitConditions = exitConditions;
 	}
-	
+
 }
