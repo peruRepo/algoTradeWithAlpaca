@@ -2,6 +2,8 @@ package com.algotrade.alpaca.data.repository;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Stream;
 
 import org.springframework.stereotype.Component;
 
@@ -32,6 +34,12 @@ public class MapTradeStrategyRepo implements TradeStrategyRepo {
 	public StockTradeStrategy getStrategy(String ticker) {
 		// TODO Auto-generated method stub
 		return stockTradeStrategyMap.get(ticker);
+	}
+
+	@Override
+	public Stream<StockTradeStrategy> getAllStrategies() {
+		// TODO Auto-generated method stub
+		return stockTradeStrategyMap.values().stream();
 	}
 
 }
