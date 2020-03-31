@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.algotrade.alpaca.strategy.TradingStrategyExecutionServiceI;
 import com.algotrade.alpaca.strategy.TradingStrategyServiceI;
 import com.algotrade.alpaca.strategy.pojo.StockTradeStrategy;
 import com.algotrade.alpaca.strategy.pojo.StockWatch;
@@ -18,6 +19,8 @@ public class TradeStrategyController {
 	@Autowired
 	private TradingStrategyServiceI tradingStrategyService;
 	
+	@Autowired
+	private TradingStrategyExecutionServiceI tradingStrategyExecutionService;
 	
 	@PostMapping("/alpaca/strategy/updateStrategy")
 	@ResponseBody
@@ -39,31 +42,39 @@ public class TradeStrategyController {
 		return getStrategyTemplate();		
 	}
 	
+	@GetMapping("/alpaca/strategy/executeStrategy")
+	@ResponseBody
+	public String executeStrategy(String ticker){
+		tradingStrategyExecutionService.executeStrategies();
+		return "success";
+	}
+	
 	private StockTradeStrategy getStrategyTemplate(){
 		StockTradeStrategy stockTradeStrategy = new StockTradeStrategy();
 		stockTradeStrategy.setTicker("TSLA");
-		stockTradeStrategy.setTimeInterval("EVERY_5_MINUTE");
+		stockTradeStrategy.setInterval(2);
+		stockTradeStrategy.setTimeUnit("MINUTES");
 		stockTradeStrategy.setState("INACTIVE");
 		TradeStrategy tradeStrategy = new TradeStrategy();
 		String entryConditions = 
-				"  function entryCondition(aggregatedData, stockWatch){" + 
-				"   	 if (aggregatedData.currentPrice <= 400) { " + 
+				"  function entryCondition(stockMarketData, stockWatch){" + 
+				"   	 if (stockMarketData.currentPrice <= 510) { " + 
 				"       	 	stockWatch.stopLossPercentage = 10;" + 
 				"        	    return \"buy\";" + 
 				"    		} \n" + 
 				"  };\n" + 
-				"  entryCondition(aggregatedData, stockWatch);";
+				"  entryCondition(stockMarketData, stockWatch);";
 		tradeStrategy.setEntryConditions(entryConditions);
 		String exitConditions = 
-				"  function exitCondition(aggregatedData, stockWatch){\n" + 
-				"    if (portFolio.totalProfitPercentage <= stockWatch.stopLossPercentage){\n" + 
+				"  function exitCondition(stockMarketData, stockWatch){\n" + 
+				"    if (stockMarketData.totalProfitPercentage <= stockWatch.stopLossPercentage){\n" + 
 				"        return \"sell\";\n" + 
 				"    } else {\n" + 
-				"        stockWatch.stopLossPercentage = stockWatch.stopLossPercentage + stockWatch.totalProfitPercentage;\n" + 
+				"        stockWatch.stopLossPercentage = stockWatch.stopLossPercentage + stockMarketData.totalProfitPercentage;\n" + 
 				"        return stockWatch;\n" + 
 				"      }\n" + 
 				"  }\n" + 
-				"  exitCondition(aggregatedData, stockWatch);";
+				"  exitCondition(stockMarketData, stockWatch);";
 		tradeStrategy.setExitConditions(exitConditions);		
 		stockTradeStrategy.setTradeStrategy(tradeStrategy);
 		StockWatch stockWatch = new StockWatch();

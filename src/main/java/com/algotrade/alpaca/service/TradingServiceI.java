@@ -1,4 +1,4 @@
-package com.algotrade.alpaca.data.service;
+package com.algotrade.alpaca.service;
 
 import com.algotrade.alpaca.data.pojo.TradeOrder;
 

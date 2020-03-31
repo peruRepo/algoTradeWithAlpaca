@@ -4,7 +4,8 @@ package com.algotrade.alpaca.strategy.pojo;
 
 public class StockTradeStrategy {
 	private String ticker;
-	private TimeInterval timeInterval;
+	private Integer interval;
+	private TimeUnit timeUnit;
 	private TradeStrategy tradeStrategy;
 	private TradeStrategyState state;
 	private StockWatch stockWatch;
@@ -34,13 +35,20 @@ public class StockTradeStrategy {
 	public void setStockWatch(StockWatch stockWatch) {
 		this.stockWatch = stockWatch;
 	}
-	public String getTimeInterval() {
-		return timeInterval.toString();
-	}
-	public void setTimeInterval(String timeInterval) {
-		this.timeInterval = TimeInterval.valueOf(timeInterval);
-	}
+
 	public void setState(TradeStrategyState state) {
 		this.state = state;
+	}
+	public Integer getInterval() {
+		return interval;
+	}
+	public void setInterval(Integer interval) {
+		this.interval = interval;
+	}
+	public String getTimeUnit() {
+		return timeUnit.toString();
+	}
+	public void setTimeUnit(String timeUnit) {
+		this.timeUnit = TimeUnit.valueOf(timeUnit);
 	}
 }
