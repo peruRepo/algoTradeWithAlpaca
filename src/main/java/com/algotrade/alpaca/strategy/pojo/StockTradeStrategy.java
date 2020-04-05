@@ -6,6 +6,7 @@ public class StockTradeStrategy {
 	private String ticker;
 	private Integer interval;
 	private TimeUnit timeUnit;
+	private Integer quantity;
 	private TradeStrategy tradeStrategy;
 	private TradeStrategyState state;
 	private StockWatch stockWatch;
@@ -50,5 +51,14 @@ public class StockTradeStrategy {
 	}
 	public void setTimeUnit(String timeUnit) {
 		this.timeUnit = TimeUnit.valueOf(timeUnit);
+	}
+	public Integer getQuantity() {
+		return quantity;
+	}
+	public void setQuantity(Integer quantity) {
+		this.quantity = quantity;
+	}
+	public void setTimeUnit(TimeUnit timeUnit) {
+		this.timeUnit = timeUnit;
 	}
 }

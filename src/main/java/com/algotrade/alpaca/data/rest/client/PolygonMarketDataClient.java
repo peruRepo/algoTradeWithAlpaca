@@ -17,8 +17,7 @@ public class PolygonMarketDataClient  implements MarketDataClient {
 	@Value("${polygon.host}")
 	private String polygonHost;
 	
-	@Value("${alpaca.api.keyId}")
-	private String apiKeyId;
+	private String apiKeyId = System.getProperty("alpca.api.keyId");
 	
 	@Value("${alpaca.api.histrorical.trade.path}")
 	private String historticalTradeURIPath;
