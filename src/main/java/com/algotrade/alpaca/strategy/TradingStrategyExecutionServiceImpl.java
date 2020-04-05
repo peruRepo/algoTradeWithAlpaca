@@ -13,9 +13,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.algotrade.alpaca.data.pojo.StockMarketData;
+import com.algotrade.alpaca.data.pojo.TradeOrder;
 import com.algotrade.alpaca.data.polygon.pojo.RecentTradeData;
 import com.algotrade.alpaca.data.repository.TradeStrategyRepo;
 import com.algotrade.alpaca.data.rest.client.MarketDataClient;
+import com.algotrade.alpaca.service.TradingServiceI;
 import com.algotrade.alpaca.strategy.exception.TradeStrategyExecutionException;
 import com.algotrade.alpaca.strategy.pojo.StockTradeStrategy;
 import com.algotrade.alpaca.strategy.pojo.StockWatch;
@@ -41,7 +43,9 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	
 	@Autowired
 	private ObjectMapper objectMapper;
-
+	
+	@Autowired
+	private TradingServiceI tradingService;
 
 	
 	public void executeStrategies(){
@@ -50,11 +54,11 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 
 		stockTradeStrategies.forEach(stockTradeStrategy -> {
 			if(stockTradeStrategy.getState().equals(TradeStrategyState.WATCHING)){
-				Runnable command = getEntryRunnable(stockTradeStrategy);
+				Runnable command = getEntryRunnable(stockTradeStrategy.getTicker());
 				scheduledThreadPool.scheduleWithFixedDelay(command, 0, stockTradeStrategy.getInterval(), TimeUnit.valueOf(stockTradeStrategy.getTimeUnit()));
 			}
 			if(stockTradeStrategy.getState().equals(TradeStrategyState.ENTERED)){
-				Runnable command = getExitRunnable(stockTradeStrategy);
+				Runnable command = getExitRunnable(stockTradeStrategy.getTicker());
 				scheduledThreadPool.scheduleWithFixedDelay(command, 0, stockTradeStrategy.getInterval(), TimeUnit.valueOf(stockTradeStrategy.getTimeUnit()));
 				}
 			
@@ -90,27 +94,36 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 
 	}
 	
-	private Runnable getEntryRunnable(StockTradeStrategy stockTradeStrategy){
+	private Runnable getEntryRunnable(String ticker){
 		Runnable command = new Runnable(){
 
 			@Override
 			public void run() {
 				try{
-					String stockMarketData = "var stockMarketData = " + getCurrentMarketDataAsString(stockTradeStrategy.getTicker()) + " \n";
-					String stockWatch = "var stockWatch = "  + getStockWatchAsString(stockTradeStrategy.getStockWatch()) + " \n";
-					StringBuilder builder = new StringBuilder();
-					builder.append(stockMarketData);
-					builder.append(stockWatch);
-					builder.append(stockTradeStrategy.getTradeStrategy().getEntryConditions());
-					String response = executeStrategyJSScripts(builder.toString());
-					if(response.equalsIgnoreCase("buy")){
-						logger.info("Buy order is requested!");
-					} else {
-						StockWatch stockWatch2 = getStockWatchAsObject(response);
-						stockTradeStrategy.setStockWatch(stockWatch2);
+					StockTradeStrategy stockTradeStrategy = tradeStrategyRepo.getStrategy(ticker);
+					if(stockTradeStrategy.getState().equals(TradeStrategyState.WATCHING)){
+						String stockMarketData = "var stockMarketData = " + getCurrentMarketDataAsString(stockTradeStrategy.getTicker()) + " \n";
+						String stockWatch = "var stockWatch = "  + getStockWatchAsString(stockTradeStrategy.getStockWatch()) + " \n";
+						StringBuilder builder = new StringBuilder();
+						builder.append(stockMarketData);
+						builder.append(stockWatch);
+						builder.append(stockTradeStrategy.getTradeStrategy().getEntryConditions());
+						String response = executeStrategyJSScripts(builder.toString());
+						if(response.equalsIgnoreCase("buy")){
+							logger.info("Buy order is requested!");
+							stockTradeStrategy.setState(TradeStrategyState.ENTRY_ORDER_PENDING);
+							tradeStrategyRepo.saveStrategy(stockTradeStrategy);
+							TradeOrder tradeOrder = new TradeOrder();
+							tradeOrder.setQuantity(stockTradeStrategy.getQuantity());
+							tradeOrder.setTicker(stockTradeStrategy.getTicker());
+							tradingService.buyStock(tradeOrder);
+						} else {
+							StockWatch stockWatch2 = getStockWatchAsObject(response);
+							stockTradeStrategy.setStockWatch(stockWatch2);
+						}
 					}
 				} catch(Exception ex){
-					logger.error("Exception happened while trying to process Entry strategy for "+stockTradeStrategy.getTicker()+ " and exception is=" , ex);
+					logger.error("Exception happened while trying to process Entry strategy for "+ticker+ " and exception is=" , ex);
 					
 				}
 				
@@ -121,27 +134,30 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	}
 	
 	
-	private Runnable getExitRunnable(StockTradeStrategy stockTradeStrategy){
+	private Runnable getExitRunnable(String ticker){
 		Runnable command = new Runnable(){
 
 			@Override
 			public void run() {
 				try{
-					String stockMarketData = "var stockMarketData = " + getCurrentMarketDataAsString(stockTradeStrategy.getTicker()) + " \n";
-					String stockWatch = "var stockWatch = "  + getStockWatchAsString(stockTradeStrategy.getStockWatch()) + " \n";
-					StringBuilder builder = new StringBuilder();
-					builder.append(stockMarketData);
-					builder.append(stockWatch);
-					builder.append(stockTradeStrategy.getTradeStrategy().getExitConditions());
-					String response = executeStrategyJSScripts(builder.toString());
-					if(response.equalsIgnoreCase("sell")){
-						logger.info("Sell order is requested!");
-					} else {
-						StockWatch stockWatch2 = getStockWatchAsObject(response);
-						stockTradeStrategy.setStockWatch(stockWatch2);
+					StockTradeStrategy stockTradeStrategy = tradeStrategyRepo.getStrategy(ticker);
+					if(stockTradeStrategy.getState().equals(TradeStrategyState.ENTERED)){
+						String stockMarketData = "var stockMarketData = " + getCurrentMarketDataAsString(stockTradeStrategy.getTicker()) + " \n";
+						String stockWatch = "var stockWatch = "  + getStockWatchAsString(stockTradeStrategy.getStockWatch()) + " \n";
+						StringBuilder builder = new StringBuilder();
+						builder.append(stockMarketData);
+						builder.append(stockWatch);
+						builder.append(stockTradeStrategy.getTradeStrategy().getExitConditions());
+						String response = executeStrategyJSScripts(builder.toString());
+						if(response.equalsIgnoreCase("sell")){
+							logger.info("Sell order is requested!");
+						} else {
+							StockWatch stockWatch2 = getStockWatchAsObject(response);
+							stockTradeStrategy.setStockWatch(stockWatch2);
+						}
 					}
 				} catch(Exception ex){
-					logger.error("Exception happened while trying to process Exit strategy for "+stockTradeStrategy.getTicker()+ " and exception is=" , ex);
+					logger.error("Exception happened while trying to process Exit strategy for "+ticker+ " and exception is=" , ex);
 				}
 				
 			}

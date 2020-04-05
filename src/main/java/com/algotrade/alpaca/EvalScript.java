@@ -1,7 +1,25 @@
 package com.algotrade.alpaca;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Map;
+
+import javax.naming.spi.DirStateFactory.Result;
+import javax.script.Bindings;
+import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+
+import org.ta4j.core.BarSeries;
+
+import com.algotrade.alpaca.data.ta4j.AlpacaTa4jAdapter;
+import com.mangofactory.typescript.TypescriptCompiler;
+
+import io.github.mainstringargs.alpaca.AlpacaAPI;
+import io.github.mainstringargs.alpaca.enums.BarsTimeFrame;
+import io.github.mainstringargs.alpaca.rest.exception.AlpacaAPIRequestException;
+import io.github.mainstringargs.domain.alpaca.bar.Bar;
 
 public class EvalScript {
 	
@@ -34,17 +52,50 @@ public class EvalScript {
 		        		"  }\n" + 
 		        		"}\n" + 
 		        		"checkStudentElgibility(student);";
-		        
+		        String sdScript = " var obj = new Object();\n" + 
+		        		" obj.closePrice = function(series){\n" + 
+		        		"    var ClosePriceIndicatorClass = Java.type(\"org.ta4j.core.indicators.helpers.ClosePriceIndicator\");\n" + 
+		        		"    var closePriceIndicator = new ClosePriceIndicatorClass(series);\n" + 
+		        		"    return closePriceIndicator.getValue(0);\n" + 
+		        		" };";
 		        StringBuilder javaScriptString = new StringBuilder();
 		        javaScriptString.append("student=");
 			        javaScriptString.append(studentJsonString);
 		        javaScriptString.append("\n");
 		        javaScriptString.append(javaScriptFunctionString);
 		        
-		       Object object = engine.eval(javaScriptString.toString());
-		  
-		       System.out.println(object);
+		        engine.eval(sdScript);
+		        Object obj = engine.get("obj");
+		     // create an Invocable object by casting the script engine object
+		        Invocable inv = (Invocable) engine;
+
+		        // invoke the method named "hello" on the object defined in the script
+		        // with "Script Method!" as the argument
+		        BarSeries series = getSeries();
+		        Object result  = inv.invokeMethod(obj, "closePrice", series);
+		        System.out.println(result);
+
 		    }
 		    
+		    
+		    private static BarSeries getSeries() throws AlpacaAPIRequestException{
+		    		ZonedDateTime start = ZonedDateTime.of(2020, 04, 01, 0, 0, 0, 0, ZoneId.of("America/New_York"));
+				ZonedDateTime end = ZonedDateTime.of(2020, 04, 03, 23, 59, 0, 0, ZoneId.of("America/New_York"));
+
+				String keyId = System.getProperty("alpca.api.keyId");
+				String secret = System.getProperty("alpca.api.secret");
+				System.setProperty("javax.net.ssl.trustStore",
+						"/Library/Java/JavaVirtualMachines/jdk1.8.0_101.jdk/Contents/Home/jre/lib/security/cacerts");
+				System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
+				
+				AlpacaAPI alpacaAPI = new AlpacaAPI("V2", keyId, secret, "https://paper-api.alpaca.markets",
+						"https://data.alpaca.markets");
+
+				Map<String, ArrayList<Bar>> bars = alpacaAPI.getBars(BarsTimeFrame.FIFTEEN_MINUTE, "AAPL", null, start, end, null,
+						null);
+				ArrayList<Bar> barsL =  bars.get("AAPL");
+				BarSeries barSeries = AlpacaTa4jAdapter.generateBars(barsL);
+				return barSeries;
+		    }
 	    
 }

@@ -55,10 +55,11 @@ public class TradeStrategyController {
 		stockTradeStrategy.setInterval(2);
 		stockTradeStrategy.setTimeUnit("MINUTES");
 		stockTradeStrategy.setState("INACTIVE");
+		stockTradeStrategy.setQuantity(10);
 		TradeStrategy tradeStrategy = new TradeStrategy();
 		String entryConditions = 
 				"  function entryCondition(stockMarketData, stockWatch){" + 
-				"   	 if (stockMarketData.currentPrice <= 510) { " + 
+				"   	 if (stockMarketData.currentPrice <= 500) { " + 
 				"       	 	stockWatch.stopLossPercentage = 10;" + 
 				"        	    return \"buy\";" + 
 				"    		} \n" + 
@@ -67,9 +68,9 @@ public class TradeStrategyController {
 		tradeStrategy.setEntryConditions(entryConditions);
 		String exitConditions = 
 				"  function exitCondition(stockMarketData, stockWatch){\n" + 
-				"    if (stockMarketData.totalProfitPercentage <= stockWatch.stopLossPercentage){\n" + 
-				"        return \"sell\";\n" + 
-				"    } else {\n" + 
+				"    if (stockMarketData.totalProfitPercentage <= stockWatch.stopLossPercentage){ \n" + 
+				"        return \"sell\"; \n" + 
+				"    } else { \n" + 
 				"        stockWatch.stopLossPercentage = stockWatch.stopLossPercentage + stockMarketData.totalProfitPercentage;\n" + 
 				"        return stockWatch;\n" + 
 				"      }\n" + 

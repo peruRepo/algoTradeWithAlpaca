@@ -1,10 +1,11 @@
 package com.algotrade.alpaca.service;
 
-import com.algotrade.alpaca.data.pojo.TradeOrder;
+import io.github.mainstringargs.domain.alpaca.order.Order;
+import io.github.mainstringargs.domain.alpaca.portfoliohistory.PortfolioHistory;
 
 public interface PortfolioServiceI {
 
 
-	public void getOrderHistory();
-	public void getPortFolio();
+	public Order getOrderById(String orderId);
+	public PortfolioHistory getPortFolio();
 }
