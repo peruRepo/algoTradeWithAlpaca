@@ -2,7 +2,7 @@ package com.algotrade.alpaca.strategy.pojo;
 
 public class StockWatch {
 	private Double  stopLossPercentage;
-	private Double profilePercentage;
+	private Double profitPercentage;
 
 	public Double getStopLossPercentage() {
 		return stopLossPercentage;
@@ -12,12 +12,14 @@ public class StockWatch {
 		this.stopLossPercentage = stopLossPercentage;
 	}
 
-	public Double getProfilePercentage() {
-		return profilePercentage;
+	public Double getProfitPercentage() {
+		return profitPercentage;
 	}
 
-	public void setProfilePercentage(Double profilePercentage) {
-		this.profilePercentage = profilePercentage;
+	public void setProfitPercentage(Double profitPercentage) {
+		this.profitPercentage = profitPercentage;
 	}
+
+
 	
 }

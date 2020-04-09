@@ -58,7 +58,7 @@ public class TradeStrategyController {
 		stockTradeStrategy.setQuantity(10);
 		stockTradeStrategy.setCandleCount(500);
 		// Based on enum BarsTimeFrame
-		stockTradeStrategy.setIntervalDuration("1Min");
+		stockTradeStrategy.setIntervalDuration("FIVE_MINUTE");
 		TradeStrategy tradeStrategy = new TradeStrategy();
 //		String entryConditions = 
 //				"  function entryCondition(stockMarketData, stockWatch){" + 

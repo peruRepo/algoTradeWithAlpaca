@@ -80,6 +80,14 @@ public class EvalScript {
 		       float data =  bar.getLowPrice().floatValue();
 		        ClosePriceIndicator result  = (ClosePriceIndicator) inv.invokeMethod(obj, "strategy", series);
 		        System.out.println(result.getValue(0));
+		        
+		        String jsString = "    var obj = new Object()\n" + 
+		        		"    var ArrayList = Java.type(\"java.util.ArrayList\");\n" +
+		        		"    var customSizeArrayList = new ArrayList(16);\n" + 
+		        		"    obj.hello = function(name) { \n" + 
+		        		"       customSizeArrayList(name);	\n" + 
+		        		"       print('Hello, ' + name) \n" + 
+		        		"    }";
 
 		    }
 		    

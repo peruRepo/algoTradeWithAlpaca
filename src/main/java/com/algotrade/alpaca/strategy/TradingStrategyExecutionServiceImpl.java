@@ -42,8 +42,10 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 
 	private static final Logger logger = LoggerFactory.getLogger(TradingStrategyExecutionServiceImpl.class);
 
-	private ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(5);
+	private ScheduledExecutorService tradeScheduledThreadPool = Executors.newScheduledThreadPool(20);
 
+	private ScheduledExecutorService mainScheduledThreadPool = Executors.newScheduledThreadPool(20);
+	
 	@Autowired
 	private TradeStrategyRepo tradeStrategyRepo;
 
@@ -60,26 +62,25 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 			+ getTa4jPackagesList() + ");\n" + " with(ta4jCorePackage) {\n" + "   obj.tradingRule = ";
 	private final String endBracket = "}";
 
-	public void executeStrategies() {
+	public void executeStrategies() {		
+		mainScheduledThreadPool.scheduleAtFixedRate(() -> {
+			scheduleTradingStrategy();
+		}, 0, 1, TimeUnit.MINUTES);
+	}
 
+	private void scheduleTradingStrategy(){
 		Stream<StockTradeStrategy> stockTradeStrategies = tradeStrategyRepo.getAllStrategies();
 
 		stockTradeStrategies.forEach(stockTradeStrategy -> {
-			if (stockTradeStrategy.getState().equals(TradeStrategyState.WATCHING)) {
-				Runnable command = getEntryRunnable(stockTradeStrategy.getTicker());
-				scheduledThreadPool.scheduleWithFixedDelay(command, 0, stockTradeStrategy.getInterval(),
+				Runnable entryCommand = getEntryRunnable(stockTradeStrategy.getTicker());
+				tradeScheduledThreadPool.scheduleWithFixedDelay(entryCommand, 0, stockTradeStrategy.getInterval(),
 						TimeUnit.valueOf(stockTradeStrategy.getTimeUnit()));
-			}
-			if (stockTradeStrategy.getState().equals(TradeStrategyState.ENTERED)) {
-				Runnable command = getExitRunnable(stockTradeStrategy.getTicker());
-				scheduledThreadPool.scheduleWithFixedDelay(command, 0, stockTradeStrategy.getInterval(),
+				Runnable exitCommand = getExitRunnable(stockTradeStrategy.getTicker());
+				tradeScheduledThreadPool.scheduleWithFixedDelay(exitCommand, 0, stockTradeStrategy.getInterval(),
 						TimeUnit.valueOf(stockTradeStrategy.getTimeUnit()));
-			}
-
 		});
 
 	}
-
 
 	private Runnable getEntryRunnable(String ticker) {
 		Runnable command = new Runnable() {
@@ -133,15 +134,15 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 						BarSeries barSeries = getBarSeriesForGivenDuration(stockTradeStrategy.getTicker(),
 								stockTradeStrategy.getCandleCount(), stockTradeStrategy.getIntervalDuration());
 						Boolean isTradingRuleSucceeds = executeTradingRule(
-								stockTradeStrategy.getTradeStrategy().getEntryConditions(), barSeries, stockWatch);
+								stockTradeStrategy.getTradeStrategy().getExitConditions(), barSeries, stockWatch);
 						if (isTradingRuleSucceeds) {
 							logger.info(
-									stockTradeStrategy.getTradeStrategy().getEntrySignal() + " order is requested!");
+									stockTradeStrategy.getTradeStrategy().getExitSignal() + " order is requested!");
 							stockTradeStrategy.setState(TradeStrategyState.EXIT_ORDER_PENDING);
 							TradeOrder tradeOrder = new TradeOrder();
 							tradeOrder.setQuantity(stockTradeStrategy.getQuantity());
 							tradeOrder.setTicker(stockTradeStrategy.getTicker());
-							if (stockTradeStrategy.getTradeStrategy().getEntrySignal().equalsIgnoreCase("buy")) {
+							if (stockTradeStrategy.getTradeStrategy().getExitSignal().equalsIgnoreCase("buy")) {
 								tradingService.buyStock(tradeOrder);
 							} else {
 								tradingService.sellStock(tradeOrder);
@@ -205,7 +206,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 			return executeTrade;
 		} catch (ScriptException | NoSuchMethodException e) {
 
-			logger.error("Exception happened while executing strategy script and exception is=", e);
+			logger.error("Exception happened while executing strategy script =" +jsScript + "  and exception is=", e);
 			throw new TradeStrategyExecutionException(e.getMessage());
 		}
 

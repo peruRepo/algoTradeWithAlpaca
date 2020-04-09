@@ -1,5 +1,7 @@
 package com.algotrade.alpaca.event;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -19,7 +21,9 @@ public class AlpacaEventFactory {
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 	
-	public void createOrderUpdateEvents(){
+    @PostConstruct
+	public void listenAndPropagateAlpacaEvent(){
+    	
         alpacaAPI.addAlpacaStreamListener(new AlpacaStreamListenerAdapter(
                 AlpacaStreamMessageType.ACCOUNT_UPDATES,
                 AlpacaStreamMessageType.TRADE_UPDATES) {
