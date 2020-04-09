@@ -54,32 +54,50 @@ public class TradeStrategyController {
 		stockTradeStrategy.setTicker("TSLA");
 		stockTradeStrategy.setInterval(2);
 		stockTradeStrategy.setTimeUnit("MINUTES");
-		stockTradeStrategy.setState("INACTIVE");
+		stockTradeStrategy.setState("WATCHING");
 		stockTradeStrategy.setQuantity(10);
+		stockTradeStrategy.setCandleCount(500);
+		// Based on enum BarsTimeFrame
+		stockTradeStrategy.setIntervalDuration("1Min");
 		TradeStrategy tradeStrategy = new TradeStrategy();
-		String entryConditions = 
-				"  function entryCondition(stockMarketData, stockWatch){" + 
-				"   	 if (stockMarketData.currentPrice <= 500) { " + 
-				"       	 	stockWatch.stopLossPercentage = 10;" + 
-				"        	    return \"buy\";" + 
-				"    		} \n" + 
-				"  };\n" + 
-				"  entryCondition(stockMarketData, stockWatch);";
+//		String entryConditions = 
+//				"  function entryCondition(stockMarketData, stockWatch){" + 
+//				"   	 if (stockMarketData.currentPrice <= 500) { " + 
+//				"       	 	stockWatch.stopLossPercentage = 10;" + 
+//				"        	    return \"buy\";" + 
+//				"    		} \n" + 
+//				"  };\n" + 
+//				"  entryCondition(stockMarketData, stockWatch);";
+		String entryConditions="function(barSeries, stockWatch){ \n" + 
+				"	closePriceIndicator = new ClosePriceIndicator(barSeries);\n" + 
+				"	if(closePriceIndicator.getValue(barSeries.getEndIndex()).floatValue() < 560){\n" + 
+				"		stockWatch.setStopLossPercentage(10.0);\n" + 
+				"		return true;\n" + 
+				"	}\n" + 
+				"	return false;\n" + 
+				"};";
 		tradeStrategy.setEntryConditions(entryConditions);
-		String exitConditions = 
-				"  function exitCondition(stockMarketData, stockWatch){\n" + 
-				"    if (stockMarketData.totalProfitPercentage <= stockWatch.stopLossPercentage){ \n" + 
-				"        return \"sell\"; \n" + 
-				"    } else { \n" + 
-				"        stockWatch.stopLossPercentage = stockWatch.stopLossPercentage + stockMarketData.totalProfitPercentage;\n" + 
-				"        return stockWatch;\n" + 
-				"      }\n" + 
-				"  }\n" + 
-				"  exitCondition(stockMarketData, stockWatch);";
+		String exitConditions="function(barSeries, stockWatch){ \n" + 
+				"	closePriceIndicator = new ClosePriceIndicator(barSeries);\n" + 
+				"	if(closePriceIndicator.getValue(barSeries.getEndIndex()).floatValue() > 570){\n" + 
+				"		return true;\n" + 
+				"	}\n" + 
+				"	return false;\n" + 
+				"};";
+//		String exitConditions = 
+//				"  function exitCondition(stockMarketData, stockWatch){\n" + 
+//				"    if (stockMarketData.totalProfitPercentage <= stockWatch.stopLossPercentage){ \n" + 
+//				"        return \"sell\"; \n" + 
+//				"    } else { \n" + 
+//				"        stockWatch.stopLossPercentage = stockWatch.stopLossPercentage + stockMarketData.totalProfitPercentage;\n" + 
+//				"        return stockWatch;\n" + 
+//				"      }\n" + 
+//				"  }\n" + 
+//				"  exitCondition(stockMarketData, stockWatch);";
 		tradeStrategy.setExitConditions(exitConditions);		
 		stockTradeStrategy.setTradeStrategy(tradeStrategy);
 		StockWatch stockWatch = new StockWatch();
-		stockWatch.setStopLossPercentage(500.0);
+		stockWatch.setStopLossPercentage(10.0);
 		stockTradeStrategy.setStockWatch(stockWatch);
 		return stockTradeStrategy;
 		
