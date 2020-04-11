@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.ta4j.core.BarSeries;
@@ -17,7 +18,7 @@ public class AlpacaTa4jAdapter {
 	
 	public static BarSeries generateBars(ArrayList<Bar> bars){
 		BaseBarSeriesBuilder builder = new BaseBarSeriesBuilder();
-		List<org.ta4j.core.Bar> ta4jBars = new ArrayList<>(1000);
+		List<org.ta4j.core.Bar> ta4jBars = new LinkedList<>();
 		for(Bar bar: bars){
 			org.ta4j.core.Bar ta4jBar = new BaseBar(Duration.ofDays(1), ZonedDateTime.ofInstant(Instant.ofEpochSecond(bar.getT()), ZoneOffset.UTC), bar.getO(), bar.getH(), bar.getL(), bar.getC(), bar.getV());
 			ta4jBars.add(ta4jBar);

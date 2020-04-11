@@ -3,6 +3,8 @@ package com.algotrade.alpaca.strategy.pojo;
 public class TradeStrategy {
 
 	private String entryConditions;
+	private String entrySignal;
+	private String exitSignal;
 	private String exitConditions;
 
 	
@@ -17,6 +19,18 @@ public class TradeStrategy {
 	}
 	public void setExitConditions(String exitConditions) {
 		this.exitConditions = exitConditions;
+	}
+	public String getEntrySignal() {
+		return entrySignal;
+	}
+	public void setEntrySignal(String entrySignal) {
+		this.entrySignal = entrySignal;
+	}
+	public String getExitSignal() {
+		return exitSignal;
+	}
+	public void setExitSignal(String exitSignal) {
+		this.exitSignal = exitSignal;
 	}
 
 }

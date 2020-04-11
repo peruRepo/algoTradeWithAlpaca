@@ -11,15 +11,16 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
+import org.ta4j.core.Bar;
 import org.ta4j.core.BarSeries;
+import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 
 import com.algotrade.alpaca.data.ta4j.AlpacaTa4jAdapter;
-import com.mangofactory.typescript.TypescriptCompiler;
 
 import io.github.mainstringargs.alpaca.AlpacaAPI;
 import io.github.mainstringargs.alpaca.enums.BarsTimeFrame;
 import io.github.mainstringargs.alpaca.rest.exception.AlpacaAPIRequestException;
-import io.github.mainstringargs.domain.alpaca.bar.Bar;
+
 
 public class EvalScript {
 	
@@ -53,11 +54,14 @@ public class EvalScript {
 		        		"}\n" + 
 		        		"checkStudentElgibility(student);";
 		        String sdScript = " var obj = new Object();\n" + 
-		        		" obj.closePrice = function(series){\n" + 
-		        		"    var ClosePriceIndicatorClass = Java.type(\"org.ta4j.core.indicators.helpers.ClosePriceIndicator\");\n" + 
-		        		"    var closePriceIndicator = new ClosePriceIndicatorClass(series);\n" + 
-		        		"    return closePriceIndicator.getValue(0);\n" + 
-		        		" };";
+		        		" var ta4jCorePackage = new JavaImporter(org.ta4j.core.indicators.helpers);\n" + 
+		        		" var closePriceIndicator = null;\n" + 
+		        		" with(ta4jCorePackage) {\n" + 
+		        		"   obj.closePrice = function(series){    \n" + 
+		        		"      closePriceIndicator = new ClosePriceIndicator(series);\n" + 
+		        		"      return closePriceIndicator;\n" + 
+		        		"   };\n" + 
+		        		" }";
 		        StringBuilder javaScriptString = new StringBuilder();
 		        javaScriptString.append("student=");
 			        javaScriptString.append(studentJsonString);
@@ -72,8 +76,18 @@ public class EvalScript {
 		        // invoke the method named "hello" on the object defined in the script
 		        // with "Script Method!" as the argument
 		        BarSeries series = getSeries();
-		        Object result  = inv.invokeMethod(obj, "closePrice", series);
-		        System.out.println(result);
+		        Bar bar = series.getBar(series.getEndIndex());
+		       float data =  bar.getLowPrice().floatValue();
+		        ClosePriceIndicator result  = (ClosePriceIndicator) inv.invokeMethod(obj, "strategy", series);
+		        System.out.println(result.getValue(0));
+		        
+		        String jsString = "    var obj = new Object()\n" + 
+		        		"    var ArrayList = Java.type(\"java.util.ArrayList\");\n" +
+		        		"    var customSizeArrayList = new ArrayList(16);\n" + 
+		        		"    obj.hello = function(name) { \n" + 
+		        		"       customSizeArrayList(name);	\n" + 
+		        		"       print('Hello, ' + name) \n" + 
+		        		"    }";
 
 		    }
 		    
@@ -91,9 +105,9 @@ public class EvalScript {
 				AlpacaAPI alpacaAPI = new AlpacaAPI("V2", keyId, secret, "https://paper-api.alpaca.markets",
 						"https://data.alpaca.markets");
 
-				Map<String, ArrayList<Bar>> bars = alpacaAPI.getBars(BarsTimeFrame.FIFTEEN_MINUTE, "AAPL", null, start, end, null,
+				Map<String, ArrayList<io.github.mainstringargs.domain.alpaca.bar.Bar>> bars = alpacaAPI.getBars(BarsTimeFrame.FIFTEEN_MINUTE, "AAPL", null, start, end, null,
 						null);
-				ArrayList<Bar> barsL =  bars.get("AAPL");
+				ArrayList<io.github.mainstringargs.domain.alpaca.bar.Bar> barsL =  bars.get("AAPL");
 				BarSeries barSeries = AlpacaTa4jAdapter.generateBars(barsL);
 				return barSeries;
 		    }

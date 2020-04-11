@@ -4,12 +4,14 @@ package com.algotrade.alpaca.strategy.pojo;
 
 public class StockTradeStrategy {
 	private String ticker;
+	private Integer quantity;
 	private Integer interval;
 	private TimeUnit timeUnit;
-	private Integer quantity;
+	private String intervalDuration;
 	private TradeStrategy tradeStrategy;
 	private TradeStrategyState state;
 	private StockWatch stockWatch;
+	private Integer candleCount;
 	public String getTicker() {
 		return ticker;
 	}
@@ -60,5 +62,17 @@ public class StockTradeStrategy {
 	}
 	public void setTimeUnit(TimeUnit timeUnit) {
 		this.timeUnit = timeUnit;
+	}
+	public String getIntervalDuration() {
+		return intervalDuration;
+	}
+	public void setIntervalDuration(String intervalDuration) {
+		this.intervalDuration = intervalDuration;
+	}
+	public Integer getCandleCount() {
+		return candleCount;
+	}
+	public void setCandleCount(Integer candleCount) {
+		this.candleCount = candleCount;
 	}
 }
