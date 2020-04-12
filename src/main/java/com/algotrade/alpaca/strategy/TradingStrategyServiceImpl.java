@@ -9,16 +9,22 @@ import com.algotrade.alpaca.strategy.pojo.StockTradeStrategy;
 public class TradingStrategyServiceImpl  implements TradingStrategyServiceI {
 	
 	@Autowired
-	private TradeStrategyRepo setTradeStrategyRepo;
+	private TradeStrategyRepo tradeStrategyRepo;
 	@Override
 	public StockTradeStrategy getTradingStrategy(String ticker) {
-		return setTradeStrategyRepo.getStrategy(ticker);
+		return tradeStrategyRepo.getStrategy(ticker);
 
 	}
 
 	@Override
 	public void storeStockTradeStrategy(StockTradeStrategy stockTradeStrategy) {
-		setTradeStrategyRepo.saveStrategy(stockTradeStrategy);		
+		tradeStrategyRepo.saveStrategy(stockTradeStrategy);		
+	}
+
+	@Override
+	public void removeTradingStrategy(String ticker) {
+		// TODO Auto-generated method stub
+		 tradeStrategyRepo.removeStrategy(ticker);
 	}
 
 
