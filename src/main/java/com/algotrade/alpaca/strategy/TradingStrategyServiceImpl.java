@@ -21,6 +21,12 @@ public class TradingStrategyServiceImpl  implements TradingStrategyServiceI {
 		tradeStrategyRepo.saveStrategy(stockTradeStrategy);		
 	}
 
+	@Override
+	public void removeTradingStrategy(String ticker) {
+		// TODO Auto-generated method stub
+		 tradeStrategyRepo.removeStrategy(ticker);
+	}
+
 
 
 }

@@ -16,7 +16,7 @@ public class NitriteDBConfiguration {
 		String fileLocation = System.getProperty("db.location");
 		Nitrite db = Nitrite.builder()
 		        .filePath(fileLocation+"AlpacaTrade.db")
-		        .openOrCreate("user", "password");
+		        .openOrCreate();
 		return db;
 	}
 	
