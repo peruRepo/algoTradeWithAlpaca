@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import com.algotrade.alpaca.strategy.pojo.StockTradeStrategy;
 import com.algotrade.alpaca.strategy.pojo.TradeStrategy;
 
-@Component
+
 public class MapTradeStrategyRepo implements TradeStrategyRepo {
 	
 	
@@ -40,6 +40,12 @@ public class MapTradeStrategyRepo implements TradeStrategyRepo {
 	public Stream<StockTradeStrategy> getAllStrategies() {
 		// TODO Auto-generated method stub
 		return stockTradeStrategyMap.values().stream();
+	}
+
+	@Override
+	public void removeStrategy(String ticker) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

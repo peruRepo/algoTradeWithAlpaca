@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,9 +30,9 @@ public class TradeStrategyController {
 		return "success";
 	}
 	
-	@PostMapping("/alpaca/strategy/getStrategy")
+	@GetMapping("/alpaca/strategy/getStrategy")
 	@ResponseBody
-	public StockTradeStrategy getStrategy(String ticker){
+	public StockTradeStrategy getStrategy(@RequestParam("ticker")String ticker){
 		return tradingStrategyService.getTradingStrategy(ticker);		
 	}
 	
