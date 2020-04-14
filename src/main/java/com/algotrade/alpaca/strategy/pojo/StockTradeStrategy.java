@@ -1,9 +1,10 @@
 package com.algotrade.alpaca.strategy.pojo;
 
 import java.io.Serializable;
-import org.dizitart.no2.objects.Indices;
-import org.dizitart.no2.objects.Index;
+
 import org.dizitart.no2.IndexType;
+import org.dizitart.no2.objects.Index;
+import org.dizitart.no2.objects.Indices;
 
 @Indices({
     @Index(value = "ticker", type = IndexType.Unique)
@@ -11,7 +12,7 @@ import org.dizitart.no2.IndexType;
 public class StockTradeStrategy implements Serializable {
 
 	private static final long serialVersionUID = 717926579496269439L;
-
+	
 	private String ticker;
 	private Integer quantity;
 	private Integer interval;
@@ -83,5 +84,9 @@ public class StockTradeStrategy implements Serializable {
 	}
 	public void setCandleCount(Integer candleCount) {
 		this.candleCount = candleCount;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 }

@@ -1,6 +1,9 @@
 package com.algotrade.alpaca.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +19,7 @@ import com.algotrade.alpaca.strategy.pojo.StockWatch;
 import com.algotrade.alpaca.strategy.pojo.TradeStrategy;
 
 @RestController
+@CrossOrigin
 public class TradeStrategyController {
 
 	@Autowired
@@ -35,6 +39,12 @@ public class TradeStrategyController {
 	@ResponseBody
 	public StockTradeStrategy getStrategy(@RequestParam("ticker")String ticker){
 		return tradingStrategyService.getTradingStrategy(ticker);		
+	}
+	
+	@GetMapping("/alpaca/strategy/getAllStrategy")
+	@ResponseBody
+	public List<StockTradeStrategy> getAllStrategy(){
+		return tradingStrategyService.getAllTradingStrategies();
 	}
 	
 	@DeleteMapping("/alpaca/strategy/removeStrategy")
