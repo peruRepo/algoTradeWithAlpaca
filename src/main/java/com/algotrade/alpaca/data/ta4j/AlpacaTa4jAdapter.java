@@ -16,7 +16,7 @@ import io.github.mainstringargs.domain.alpaca.bar.Bar;
 
 public class AlpacaTa4jAdapter {
 	
-	public static BarSeries generateBars(ArrayList<Bar> bars){
+	public static BarSeries generateBars(List<Bar> bars){
 		BaseBarSeriesBuilder builder = new BaseBarSeriesBuilder();
 		List<org.ta4j.core.Bar> ta4jBars = new LinkedList<>();
 		for(Bar bar: bars){
