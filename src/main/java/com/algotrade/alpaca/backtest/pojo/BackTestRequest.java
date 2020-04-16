@@ -8,7 +8,7 @@ import com.algotrade.alpaca.strategy.pojo.TradeStrategyState;
 public class BackTestRequest {
 
 	private String ticker;
-	private Integer quantity;
+	private Double amountUsed;
 	private String intervalDuration;
 	private TradeStrategy tradeStrategy;
 	private StockWatch stockWatch;
@@ -20,12 +20,7 @@ public class BackTestRequest {
 	public void setTicker(String ticker) {
 		this.ticker = ticker;
 	}
-	public Integer getQuantity() {
-		return quantity;
-	}
-	public void setQuantity(Integer quantity) {
-		this.quantity = quantity;
-	}
+
 	public String getIntervalDuration() {
 		return intervalDuration;
 	}
@@ -49,6 +44,12 @@ public class BackTestRequest {
 	}
 	public void setCandleCount(Integer candleCount) {
 		this.candleCount = candleCount;
+	}
+	public Double getAmountUsed() {
+		return amountUsed;
+	}
+	public void setAmountUsed(Double amountUsed) {
+		this.amountUsed = amountUsed;
 	}
 	
 	

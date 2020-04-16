@@ -32,22 +32,34 @@ public class DynamicTradingRule implements Rule{
 	
 	private static final Logger logger = LoggerFactory.getLogger(DynamicTradingRule.class);
 	
-	private static ScriptEngineManager factory;
-	private static ScriptEngine engine;
+	private Invocable invokable;
+	private Object jsObject;
 	private static String scriptTemplete = " var obj = new Object();\n" + " var ta4jCorePackage = new JavaImporter( "
 			+ getTa4jPackagesList() + ");\n" + " with(ta4jCorePackage) {\n" + "   obj.tradingRule = ";
 	private final static String endBracket = "}";
 	
-	{
-		 factory = new ScriptEngineManager();
-		 engine = factory.getEngineByName("JavaScript");
-	}
 	
 	public DynamicTradingRule(BarSeries barSeries, StockWatch stockWatch, String dynamicJSbasedRule) {
 		super();
 		this.barSeries = barSeries;
 		this.stockWatch = stockWatch;
 		this.dynamicJSbasedRule = dynamicJSbasedRule;
+		createJSInvokable(dynamicJSbasedRule);
+	}
+
+
+	private void createJSInvokable(String dynamicJSbasedRule) {
+		String jsScript = scriptTemplete + dynamicJSbasedRule + endBracket;
+		ScriptEngineManager factory = new ScriptEngineManager();
+		ScriptEngine engine = factory.getEngineByName("JavaScript");
+		try {
+			engine.eval(jsScript);
+		} catch (ScriptException e) {
+			logger.error("Exception happened while executing strategy js script " +jsScript + "   and exception is=", e);
+			throw new TradeStrategyExecutionException(e.getMessage());
+		}
+		jsObject = engine.get("obj");
+		invokable = (Invocable) engine;		
 	}
 
 
@@ -91,17 +103,13 @@ public class DynamicTradingRule implements Rule{
 
 	
 	private Boolean executeTradingRule(String tradingRule, BarSeries barSeries, Integer index, StockWatch stockWatch) {
-		String jsScript = scriptTemplete + tradingRule + endBracket;
-		try {
-			engine.eval(jsScript);
-			Object obj = engine.get("obj");
-			// create an Invocable object by casting the script engine object
-			Invocable inv = (Invocable) engine;
-			Boolean executeTrade = (Boolean) inv.invokeMethod(obj, "tradingRule", barSeries, index, stockWatch);
+			
+		try{
+			Boolean executeTrade = (Boolean) invokable.invokeMethod(jsObject, "tradingRule", barSeries, index, stockWatch);
 			return executeTrade;
 		} catch (ScriptException | NoSuchMethodException e) {
-
-			logger.error("Exception happened while executing strategy script =" +jsScript + "  and exception is=", e);
+		
+			logger.error("Exception happened while executing strategy js script   and exception is=", e);
 			throw new TradeStrategyExecutionException(e.getMessage());
 		}
 

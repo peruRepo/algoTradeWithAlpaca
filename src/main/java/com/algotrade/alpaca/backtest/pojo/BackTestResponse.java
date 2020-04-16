@@ -5,17 +5,17 @@ import java.util.List;
 public class BackTestResponse {
 
 	private List<BackTestTrade> trades;
-	private Double profitPercentage;
+	private Float profitPercentage;
 	public List<BackTestTrade> getTrades() {
 		return trades;
 	}
 	public void setTrades(List<BackTestTrade> trades) {
 		this.trades = trades;
 	}
-	public Double getProfitPercentage() {
+	public Float getProfitPercentage() {
 		return profitPercentage;
 	}
-	public void setProfitPercentage(Double profitPercentage) {
+	public void setProfitPercentage(Float profitPercentage) {
 		this.profitPercentage = profitPercentage;
 	}
 	

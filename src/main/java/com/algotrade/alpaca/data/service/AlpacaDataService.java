@@ -1,7 +1,6 @@
 package com.algotrade.alpaca.data.service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -9,13 +8,10 @@ import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-import org.jasypt.util.numeric.IntegerNumberEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mapping.model.CamelCaseAbbreviatingFieldNamingStrategy;
 import org.springframework.stereotype.Component;
 import org.ta4j.core.BarSeries;
 
@@ -78,46 +74,43 @@ public class AlpacaDataService  implements MarketDataService {
 			}
 		} else {
 				
-
-				
-				
-
+			return aggregateBarSeriesData(ticker, candleDuration,startTime, endTime);
 	}
-		return null;
+
 	}
 	
 	
-	private BarSeries aggregateBarSeriesData(String ticker, String candleDuration, BarsTimeFrame timeFrame,
-			Integer candleCount) {
+	private BarSeries aggregateBarSeriesData(String ticker, String candleDuration , ZonedDateTime startTime, ZonedDateTime endTime) {
 		LinkedList<Bar> aggregatedbars = new LinkedList<Bar>();
-		ZonedDateTime endTime = ZonedDateTime.now(TIMEZONE_ET);
+	//	ZonedDateTime maxEndTime = ZonedDateTime.now(TIMEZONE_ET);
+	//	ZonedDateTime startTimeAfter = maxEndTime.minus(360, ChronoUnit.DAYS);
 		boolean endOfDuration = false;
 		Integer daysOfData = 1;
 		Integer maxCandleCount = 1000;
 		Integer workingHoursPerDay = 8;
-		// Maximum to get  year worth of data
-		ZonedDateTime maxStartingTime = endTime.minus(365, ChronoUnit.DAYS);
-		
-		
-		if(candleDuration.equals(BarsTimeFrame.FIVE_MINUTE)) {
-			
+		BarsTimeFrame timeFrame = null;
+		if(candleDuration.equals(BarsTimeFrame.FIVE_MINUTE.toString())) {	
+			timeFrame = BarsTimeFrame.FIVE_MINUTE;
 			daysOfData = (maxCandleCount / 12) / 8;
-		} else if(candleDuration.equals(BarsTimeFrame.ONE_MIN)) {
+		} else if(candleDuration.equals(BarsTimeFrame.ONE_MIN.toString())) {
+			timeFrame = BarsTimeFrame.ONE_MIN;
 			daysOfData = (maxCandleCount / 60) / 8;
-		} else if(candleDuration.equals(BarsTimeFrame.FIFTEEN_MINUTE)) {
+		} else if(candleDuration.equals(BarsTimeFrame.FIFTEEN_MINUTE.toString())) {
+			timeFrame = BarsTimeFrame.FIFTEEN_MINUTE;
 			daysOfData = ( maxCandleCount / 4 ) / 8;
 		} 
-		ZonedDateTime startTimeAfter = endTime.minusDays(daysOfData);
+	    ZonedDateTime startTimeAfter = startTime;		
+		ZonedDateTime endTimeUntil = startTimeAfter.plusDays(daysOfData);
 		
-		while(!startTimeAfter.isBefore(maxStartingTime)) {
+		while(!endTimeUntil.isAfter(endTime)) {
 			try{
-				Map<String, ArrayList<Bar>> bars = alpacaAPI.getBars(timeFrame, ticker, maxCandleCount, null, endTime, startTimeAfter,
-						null);				
+				Map<String, ArrayList<Bar>> bars = alpacaAPI.getBars(timeFrame, ticker, maxCandleCount, null, null, startTimeAfter,
+						endTimeUntil);				
 				aggregatedbars.addAll(bars.get(ticker));
-				startTimeAfter = ZonedDateTime.ofInstant(Instant.ofEpochMilli(aggregatedbars.getLast().getT()), ZoneId.systemDefault());
+				startTimeAfter = ZonedDateTime.ofInstant(Instant.ofEpochSecond(aggregatedbars.getLast().getT()), ZoneId.systemDefault());
+				endTimeUntil = endTimeUntil.plusDays(daysOfData);
 			} catch (AlpacaAPIRequestException e) {
-				logger.error("Exception happend while trying to get Alpaca market data and execption is =",e);
-				throw new MarketDataException("Error while fetching AlpcaMarket data");
+					throw new MarketDataException("Error while fetching AlpcaMarket data");
 			}
 
 		}
