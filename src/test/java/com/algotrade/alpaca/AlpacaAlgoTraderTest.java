@@ -20,7 +20,7 @@ public class AlpacaAlgoTraderTest {
 	@Autowired
 	private MarketDataClient polygonMarketDataClient;
 	
-	@Test
+
 	public void testPolygonData(){
 
 		System.setProperty("javax.net.ssl.trustStore", "/Library/Java/JavaVirtualMachines/jdk1.8.0_101.jdk/Contents/Home/jre/lib/security/cacerts"); 

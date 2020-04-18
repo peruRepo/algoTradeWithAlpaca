@@ -1,5 +1,8 @@
 package com.algotrade.alpaca.configuration;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,6 +40,8 @@ public class AlpacaTradeConfiguration {
 //		SimpleModule module = new SimpleModule();
 	//	module.addDeserializer(StockTradeStrategy.class, new StockTradeStrategyDeserializer());
 	//	mapper.registerModule(module);	
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		mapper.setDateFormat(df);
 		return mapper;
 	}
 

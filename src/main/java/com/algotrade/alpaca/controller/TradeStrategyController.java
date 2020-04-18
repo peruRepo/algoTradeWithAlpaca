@@ -84,7 +84,26 @@ public class TradeStrategyController {
 //				"    		} \n" + 
 //				"  };\n" + 
 //				"  entryCondition(stockMarketData, stockWatch);";
-		String entryConditions="function(barSeries, stockWatch){ \n" + 
+	    String buyRule = "function(barSeries, index, stockWatch){ \n" + 
+	    		"	closePriceIndicator = new ClosePriceIndicator(barSeries);\n" + 
+	    		"	if(closePriceIndicator.getValue(index).floatValue() < 500){\n" + 
+	    		"		stockWatch.setStopLossPercentage(-10.0);\n" + 
+	    		"		return true;\n" + 
+	    		"	}\n" + 
+	    		"	return false;\n" + 
+	    		"};";
+	    String sellRule = "function(barSeries, index , stockWatch){ \n" + 
+	    		"	closePriceIndicator = new ClosePriceIndicator(barSeries);\n" + 
+	    		"	if(closePriceIndicator.getValue(index).floatValue() > 700){\n" + 
+	    		"		// stockWatch.setStopLossPercentage(3.0);\n" + 
+	    		"		return true;\n" + 
+	    		"	} else if(stockWatch.getProfitPercentage() <=  stockWatch.getStopLossPercentage()) {\n" + 
+	    		"		return true;\n" + 
+	    		"	}\n" + 
+	    		"	return false;\n" + 
+	    		"	};";
+	    
+		String entryConditions="function(barSeries, index, stockWatch){ \n" + 
 				"	closePriceIndicator = new ClosePriceIndicator(barSeries);\n" + 
 				"	if(closePriceIndicator.getValue(barSeries.getEndIndex()).floatValue() < 560){\n" + 
 				"		stockWatch.setStopLossPercentage(10.0);\n" + 
@@ -92,7 +111,7 @@ public class TradeStrategyController {
 				"	}\n" + 
 				"	return false;\n" + 
 				"};";
-		tradeStrategy.setEntryConditions(entryConditions);
+		tradeStrategy.setEntryConditions(buyRule);
 		String exitConditions="function(barSeries, stockWatch){ \n" + 
 				"	closePriceIndicator = new ClosePriceIndicator(barSeries);\n" + 
 				"	if(closePriceIndicator.getValue(barSeries.getEndIndex()).floatValue() > 570){\n" + 
@@ -110,7 +129,7 @@ public class TradeStrategyController {
 //				"      }\n" + 
 //				"  }\n" + 
 //				"  exitCondition(stockMarketData, stockWatch);";
-		tradeStrategy.setExitConditions(exitConditions);		
+		tradeStrategy.setExitConditions(sellRule);		
 		stockTradeStrategy.setTradeStrategy(tradeStrategy);
 		StockWatch stockWatch = new StockWatch();
 		stockWatch.setStopLossPercentage(10.0);

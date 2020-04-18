@@ -5,19 +5,28 @@ import java.util.List;
 public class BackTestResponse {
 
 	private List<BackTestTrade> trades;
-	private Float profitPercentage;
+	private Double profitPercentage;
+	private Double profitOrLoss;
+	
 	public List<BackTestTrade> getTrades() {
 		return trades;
 	}
 	public void setTrades(List<BackTestTrade> trades) {
 		this.trades = trades;
 	}
-	public Float getProfitPercentage() {
+	public Double getProfitPercentage() {
 		return profitPercentage;
 	}
-	public void setProfitPercentage(Float profitPercentage) {
+	public void setProfitPercentage(Double profitPercentage) {
 		this.profitPercentage = profitPercentage;
 	}
+	public Double getProfitOrLoss() {
+		return profitOrLoss;
+	}
+	public void setProfitOrLoss(Double profitOrLoss) {
+		this.profitOrLoss = profitOrLoss;
+	}
+
 	
 	
 	

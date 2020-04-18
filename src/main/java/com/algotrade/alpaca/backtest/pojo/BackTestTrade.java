@@ -1,28 +1,34 @@
 package com.algotrade.alpaca.backtest.pojo;
 
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.ta4j.core.Order.OrderType;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class BackTestTrade  {
 
-	
-	private ZonedDateTime entryTime;
+	private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy - HH:mm:ss");
+
+	private String entryTime;
 	private OrderType entrySignal;
 	private Float priceAtEntry;
 	
-	private ZonedDateTime exitTime;
+
+	private String exitTime;
 	private OrderType exitSignal;
 	private Float priceAtExit;
 	
-	private Double profitOrLoss;
+	private Float profitOrLoss;
 
-	public ZonedDateTime getEntryTime() {
+	public String getEntryTime() {
 		return entryTime;
 	}
 
 	public void setEntryTime(ZonedDateTime entryTime) {
-		this.entryTime = entryTime;
+		this.entryTime = entryTime.format(formatter);
 	}
 
 	public OrderType getEntrySignal() {
@@ -41,12 +47,12 @@ public class BackTestTrade  {
 		this.priceAtEntry = priceAtEntry;
 	}
 
-	public ZonedDateTime getExitTime() {
+	public String getExitTime() {
 		return exitTime;
 	}
 
 	public void setExitTime(ZonedDateTime exitTime) {
-		this.exitTime = exitTime;
+		this.exitTime = exitTime.format(formatter);
 	}
 
 	public OrderType getExitSignal() {
@@ -65,11 +71,11 @@ public class BackTestTrade  {
 		this.priceAtExit = priceAtExit;
 	}
 
-	public Double getProfitOrLoss() {
+	public Float getProfitOrLoss() {
 		return profitOrLoss;
 	}
 
-	public void setProfitOrLoss(Double profitOrLoss) {
+	public void setProfitOrLoss(Float profitOrLoss) {
 		this.profitOrLoss = profitOrLoss;
 	}
 	

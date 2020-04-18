@@ -1,5 +1,6 @@
 package com.algotrade.alpaca.data.service;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -27,8 +28,10 @@ import io.github.mainstringargs.domain.alpaca.bar.Bar;
 public class AlpacaDataService  implements MarketDataService {
 	private static final Logger logger = LoggerFactory.getLogger(AlpacaDataService.class);
 	
-	@Autowired
+	
+	@Autowired	
 	private AlpacaAPI alpacaAPI;
+	
 	
 	private ZoneId TIMEZONE_ET = ZoneId.of("America/New_York");
 	
@@ -38,17 +41,20 @@ public class AlpacaDataService  implements MarketDataService {
 		BarsTimeFrame timeFrame = BarsTimeFrame.valueOf(candleDuration);		
 		ZonedDateTime currentTime = ZonedDateTime.now(TIMEZONE_ET);
 		TemporalUnit unit = null;
+		Duration duration = null;
 		if(candleDuration.equals(BarsTimeFrame.ONE_DAY)) {
 			unit = ChronoUnit.DAYS;
+			duration = Duration.ofDays(1);
 		} else {
 			unit = ChronoUnit.MINUTES;
+			duration = Duration.ofMinutes(1);
 		}
 
 		ZonedDateTime startTime = currentTime.minus(candleCount, unit);
 		try {
 			Map<String, ArrayList<Bar>> bars = alpacaAPI.getBars(timeFrame, ticker, candleCount, startTime, currentTime, null,
 					null);
-			return AlpacaTa4jAdapter.generateBars(bars.get(ticker));
+			return AlpacaTa4jAdapter.generateBars(bars.get(ticker),duration );
 		} catch (AlpacaAPIRequestException e) {
 			logger.error("Exception happend while trying to get Alpaca market data and execption is =",e);
 			throw new MarketDataException("Error while fetching AlpcaMarket data");
@@ -63,11 +69,10 @@ public class AlpacaDataService  implements MarketDataService {
 			) {
 		BarsTimeFrame timeFrame = BarsTimeFrame.valueOf(candleDuration);		
 		if(candleDuration.equals(BarsTimeFrame.ONE_DAY)) {
-			startTime = endTime.minus(300, ChronoUnit.DAYS);
 			try {
 				Map<String, ArrayList<Bar>> bars = alpacaAPI.getBars(timeFrame, ticker, candleCount, startTime, endTime, null,
 						null);
-				return AlpacaTa4jAdapter.generateBars(bars.get(ticker));
+				return AlpacaTa4jAdapter.generateBars(bars.get(ticker),Duration.ofDays(1));
 			} catch (AlpacaAPIRequestException e) {
 				logger.error("Exception happend while trying to get Alpaca market data and execption is =",e);
 				throw new MarketDataException("Error while fetching AlpcaMarket data");
@@ -84,7 +89,6 @@ public class AlpacaDataService  implements MarketDataService {
 		LinkedList<Bar> aggregatedbars = new LinkedList<Bar>();
 	//	ZonedDateTime maxEndTime = ZonedDateTime.now(TIMEZONE_ET);
 	//	ZonedDateTime startTimeAfter = maxEndTime.minus(360, ChronoUnit.DAYS);
-		boolean endOfDuration = false;
 		Integer daysOfData = 1;
 		Integer maxCandleCount = 1000;
 		Integer workingHoursPerDay = 8;
@@ -114,6 +118,6 @@ public class AlpacaDataService  implements MarketDataService {
 			}
 
 		}
-		return AlpacaTa4jAdapter.generateBars(aggregatedbars);
+		return AlpacaTa4jAdapter.generateBars(aggregatedbars,Duration.ofMinutes(1));
 	}
 }

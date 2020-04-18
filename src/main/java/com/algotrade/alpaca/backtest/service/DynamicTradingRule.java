@@ -1,4 +1,4 @@
-package com.algotrade.alpaca.backtest;
+package com.algotrade.alpaca.backtest.service;
 
 import java.io.IOException;
 import java.net.URI;
@@ -19,6 +19,7 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseBarSeries;
 import org.ta4j.core.Rule;
+import org.ta4j.core.Trade;
 import org.ta4j.core.TradingRecord;
 
 import com.algotrade.alpaca.strategy.TradingStrategyExecutionServiceImpl;
@@ -70,7 +71,7 @@ public class DynamicTradingRule implements Rule{
 	
 	@Override
 	public boolean isSatisfied(int index, TradingRecord tradingRecord) {
-		return executeTradingRule(this.dynamicJSbasedRule, barSeries, index, stockWatch);
+		return executeTradingRule(this.dynamicJSbasedRule, barSeries, index, stockWatch, tradingRecord);
 
 	}
 	
@@ -82,7 +83,6 @@ public class DynamicTradingRule implements Rule{
 		
 		try {
 			URI uri = DynamicTradingRule.class.getResource("/meta/StrategyPackagesList.txt").toURI();
-			//URI uri = new URI("file:///Users/sriram/Documents/Study/Projects/Algo/AlgoTradeWithAlpaca/src/main/resources/meta/StrategyPackagesList.txt");
 			List<String> lines  = Files.readAllLines(Paths.get(uri));
 			StringBuilder packagesNames = new StringBuilder();
 			for (String line : lines) {
@@ -102,9 +102,21 @@ public class DynamicTradingRule implements Rule{
 	
 
 	
-	private Boolean executeTradingRule(String tradingRule, BarSeries barSeries, Integer index, StockWatch stockWatch) {
+	private Boolean executeTradingRule(String tradingRule, BarSeries barSeries, Integer index, StockWatch stockWatch, TradingRecord tradingRecord) {
 			
 		try{
+			Double profitPercentage = 0.0;
+		//	if(tradingRecord.getTrades().size() > 0 && tradingRecord.getTrades().get(tradingRecord.getTrades().size() - 1) != null && tradingRecord.getTrades().get(tradingRecord.getTrades().size() - 1).isOpened()) {
+			if(tradingRecord.getCurrentTrade() != null && tradingRecord.getCurrentTrade().isOpened()) {
+			   Trade lastTrade = tradingRecord.getCurrentTrade();
+				Integer quantity = lastTrade.getEntry().getAmount().intValue();
+				Double buyCost = lastTrade.getEntry().getNetPrice().doubleValue();
+				Double currentValue = barSeries.getBar(index).getClosePrice().doubleValue();
+				profitPercentage = (( (currentValue * quantity) - ( quantity * buyCost)  ) / (quantity * buyCost) ) * 100;
+				logger.debug("Data " + profitPercentage);
+			}
+			 
+			stockWatch.setProfitPercentage(profitPercentage);
 			Boolean executeTrade = (Boolean) invokable.invokeMethod(jsObject, "tradingRule", barSeries, index, stockWatch);
 			return executeTrade;
 		} catch (ScriptException | NoSuchMethodException e) {
