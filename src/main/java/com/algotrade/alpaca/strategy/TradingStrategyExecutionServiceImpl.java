@@ -23,19 +23,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.ta4j.core.BarSeries;
 
-import com.algotrade.alpaca.data.pojo.StockMarketData;
 import com.algotrade.alpaca.data.pojo.TradeOrder;
-import com.algotrade.alpaca.data.polygon.pojo.RecentTradeData;
 import com.algotrade.alpaca.data.repository.TradeStrategyRepo;
-import com.algotrade.alpaca.data.rest.client.MarketDataClient;
 import com.algotrade.alpaca.data.service.MarketDataService;
+import com.algotrade.alpaca.service.PortfolioServiceI;
 import com.algotrade.alpaca.service.TradingServiceI;
 import com.algotrade.alpaca.strategy.exception.TradeStrategyExecutionException;
 import com.algotrade.alpaca.strategy.pojo.StockTradeStrategy;
 import com.algotrade.alpaca.strategy.pojo.StockWatch;
 import com.algotrade.alpaca.strategy.pojo.TradeStrategyState;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecutionServiceI {
@@ -54,6 +50,9 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 
 	@Autowired
 	private TradingServiceI tradingService;
+	
+	@Autowired
+	private PortfolioServiceI portfolioService;
 
 	@Autowired
 	private MarketDataService marketDataService;
@@ -131,6 +130,9 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 					StockTradeStrategy stockTradeStrategy = tradeStrategyRepo.getStrategy(ticker);
 					if (stockTradeStrategy.getState().equals(TradeStrategyState.ENTERED)) {
 						StockWatch stockWatch = stockTradeStrategy.getStockWatch();
+						String unrealizedProfitPercentage = portfolioService.getOpenPosition(ticker).getUnrealizedPlpc();
+						stockWatch.setProfitPercentage(Double.parseDouble(unrealizedProfitPercentage));
+						
 						BarSeries barSeries = getBarSeriesForGivenDuration(stockTradeStrategy.getTicker(),
 								stockTradeStrategy.getCandleCount(), stockTradeStrategy.getIntervalDuration());
 						Boolean isTradingRuleSucceeds = executeTradingRule(
