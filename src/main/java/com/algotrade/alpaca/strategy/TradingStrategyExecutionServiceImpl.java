@@ -161,7 +161,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	}
 
 	private BarSeries getBarSeriesForGivenDuration(String ticker, Integer candleCount, String candleDuration) {
-		return marketDataService.getMarketData(ticker, candleDuration, candleCount);
+		return marketDataService.getCurrentMarketData(ticker, candleDuration, candleCount);
 	}
 
 	@PostConstruct
@@ -176,8 +176,8 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	private String getTa4jPackagesList()  {
 	
 		try {
-			//URI uri = TradingStrategyExecutionServiceImpl.class.getResource("meta/StrategyPackagesList").toURI();
-			URI uri = new URI("file:///Users/sriram/Documents/Study/Projects/Algo/AlgoTradeWithAlpaca/src/main/resources/meta/StrategyPackagesList.txt");
+			URI uri = TradingStrategyExecutionServiceImpl.class.getResource("/meta/StrategyPackagesList.txt").toURI();
+			//URI uri = new URI("file:///Users/sriram/Documents/Study/Projects/Algo/AlgoTradeWithAlpaca/src/main/resources/meta/StrategyPackagesList.txt");
 			List<String> lines  = Files.readAllLines(Paths.get(uri));
 			StringBuilder packagesNames = new StringBuilder();
 			for (String line : lines) {

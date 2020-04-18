@@ -5,6 +5,7 @@ import org.dizitart.no2.objects.ObjectRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.algotrade.alpaca.backtest.pojo.BackTestStrategy;
 import com.algotrade.alpaca.strategy.pojo.StockTradeStrategy;
 
 @Configuration
@@ -25,5 +26,9 @@ public class NitriteDBConfiguration {
 		return nitriteDB.getRepository(StockTradeStrategy.class);
 	}
 	
+	@Bean
+	public ObjectRepository<BackTestStrategy> backTestStrategyRepo(Nitrite nitriteDB){
+		return nitriteDB.getRepository(BackTestStrategy.class);
+	}
 	
 }
