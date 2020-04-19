@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class BackTestTrade  {
 
-	private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy - HH:mm:ss");
+	private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
 	private String entryTime;
 	private OrderType entrySignal;

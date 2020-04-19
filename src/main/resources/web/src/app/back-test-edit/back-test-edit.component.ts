@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {BackTestRequest } from "../shared/backTestRequest";
 import {BackTestResponse } from "../shared/backTestResponse";
 import {BackTestStrategy } from "../shared/backTestStrategy";
+import { EChartOption } from 'echarts';
 
 @Component({
   selector: 'back-test-edit',
@@ -13,10 +14,12 @@ import {BackTestStrategy } from "../shared/backTestStrategy";
 
 export class BackTestEditComponent implements OnInit {
   strategyName = this.actRoute.snapshot.params['strategyName'];
-  backTestStrategy: BackTestStrategy = {};
-  backTestRequest: BackTestRequest = {};
-  stockWatch : StockWatch = {};
-  tradeStrategy : TradeStrategy = {};
+  backTestStrategy: BackTestStrategy = new BackTestStrategy();
+  backTestResponse : BackTestResponse = new BackTestResponse();
+  profitDataSeries : number[] = [];
+  timeSeriesData : Date[] = [];
+  eChartDataSeries : any [] = [];
+   dynamicData : any = {};
 
   constructor(
     public restApi: RestApiService,
@@ -31,10 +34,6 @@ export class BackTestEditComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.backTestStrategy.backTestRequest = this.backTestRequest;
-    this.backTestStrategy.backTestRequest.stockWatch = this.stockWatch;
-    this.backTestStrategy.backTestRequest.tradeStrategy = this.tradeStrategy;
-
     this.getBackTestStrategyWithParam();
    }
 
@@ -57,8 +56,42 @@ export class BackTestEditComponent implements OnInit {
       this.backTestResponse = data;
       this.backTestStrategy.profitOrLoss = this.backTestResponse.profitOrLoss;
       this.backTestStrategy.profitPercentage = this.backTestResponse.profitPercentage;
+      this.formDataforChart(this.backTestResponse.trades);
     })
   }
 
+  formDataforChart(backTestTrades) {
+    let i = 0;
+    for(let backTestTrade of backTestTrades){
+       let profitAndTime = [];
+       profitAndTime.push(backTestTrade.exitTime);
+       profitAndTime.push(backTestTrade.profitOrLoss);
+       this.eChartDataSeries.push(profitAndTime);
+    }
+    let data = {
+      data : this.eChartDataSeries,
+      type : 'bar'
+    };
+    this.dynamicData=this.chartOption;
+    this.dynamicData.series = [];
+    this.dynamicData.series.push(data);
+    console.log(this.eChartDataSeries);
+  }
+
+  chartOption: EChartOption = {
+    xAxis: {
+      type: 'time',
+      splitNumber : 20
+    },
+    yAxis: {
+      type: 'value',
+      name : '$',
+      nameLocation: 'middle'
+    },
+    series: [{
+      data : [],
+      type: 'line'
+    }]
+  }
 
 }

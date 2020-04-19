@@ -11,6 +11,8 @@ import { AppRoutingModule } from './app-routing.module';
 // Forms module
 import { FormsModule } from '@angular/forms';
 
+import { NgxEchartsModule } from 'ngx-echarts';
+
 // Components
 import { TradeStrategyEditComponent } from './trade-strategy-edit/trade-strategy-edit.component';
 import { TradeStrategyBrowseComponent } from './trade-strategy-browse/trade-strategy-browse.component';
@@ -29,7 +31,8 @@ import { BackTestBrowseComponent } from './back-test-browse/back-test-browse.com
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    NgxEchartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

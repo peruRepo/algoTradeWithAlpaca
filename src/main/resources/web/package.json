@@ -23,7 +23,9 @@
     "@types/lowdb": "^1.0.6",
     "bootstrap": "^4.2.1",
     "core-js": "^2.5.4",
+    "echarts": "^4.7.0",
     "json-server": "^0.15.1",
+    "ngx-echarts": "^4.2.2",
     "rxjs": "~6.3.3",
     "zone.js": "~0.8.26"
   },
@@ -32,6 +34,7 @@
     "@angular/cli": "~7.2.3",
     "@angular/compiler-cli": "~7.2.2",
     "@angular/language-service": "~7.2.2",
+    "@types/echarts": "^4.4.6",
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~10.12.18",
