@@ -24,6 +24,7 @@
 } ,
 {
     "Buy_Based_on_5EMA_AND_30SMA": "function(barSeries, index, stockWatch){
+    closePriceIndicator = new ClosePriceIndicator(barSeries);
     sma30Indicator = new SMAIndicator(closePriceIndicator, 30);
     ema5Indicator = new EMAIndicator(closePriceIndicator, 5);
 
@@ -60,6 +61,7 @@
 },
 {
     "Sell_Based_on_5EMA_AND_30SMA": "function(barSeries, index, stockWatch){
+    closePriceIndicator = new ClosePriceIndicator(barSeries);
     sma30Indicator = new SMAIndicator(closePriceIndicator, 30);
     ema5Indicator = new EMAIndicator(closePriceIndicator, 5);
 
