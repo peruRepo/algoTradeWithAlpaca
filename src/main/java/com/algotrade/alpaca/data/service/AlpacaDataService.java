@@ -68,7 +68,7 @@ public class AlpacaDataService  implements MarketDataService {
 			ZonedDateTime endTime
 			) {
 		BarsTimeFrame timeFrame = BarsTimeFrame.valueOf(candleDuration);		
-		if(candleDuration.equals(BarsTimeFrame.ONE_DAY)) {
+		if(candleDuration.equals(BarsTimeFrame.ONE_DAY.toString())) {
 			try {
 				Map<String, ArrayList<Bar>> bars = alpacaAPI.getBars(timeFrame, ticker, candleCount, startTime, endTime, null,
 						null);

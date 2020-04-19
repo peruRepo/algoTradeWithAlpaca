@@ -5,6 +5,7 @@ import {BackTestRequest } from "../shared/backTestRequest";
 import {BackTestResponse } from "../shared/backTestResponse";
 import {BackTestStrategy } from "../shared/backTestStrategy";
 import { EChartOption } from 'echarts';
+import { CSVUtil } from '../shared/csvUtil.service';
 
 @Component({
   selector: 'back-test-edit',
@@ -24,7 +25,8 @@ export class BackTestEditComponent implements OnInit {
   constructor(
     public restApi: RestApiService,
     public actRoute: ActivatedRoute,
-    public router: Router
+    public router: Router,
+    public csvUtil : CSVUtil
   ) {
     this.actRoute.params.subscribe( params => {
       console.log(params);
@@ -72,13 +74,18 @@ export class BackTestEditComponent implements OnInit {
       data : this.eChartDataSeries,
       type : 'bar'
     };
-    this.dynamicData=this.chartOption;
+    this.dynamicData=this.initialValue;
     this.dynamicData.series = [];
     this.dynamicData.series.push(data);
-    console.log(this.eChartDataSeries);
   }
 
-  chartOption: EChartOption = {
+   downloadCSV() {
+     let headerList = ['entryTime', 'entrySignal', 'priceAtEntry', 'exitTime', 'exitSignal', 'priceAtExit','profitOrLoss'];
+     let fileName = "ExecutedTradesFor-"+this.backTestStrategy.backTestRequest.ticker;
+     this.csvUtil.downloadFile(this.backTestResponse.trades,fileName,headerList);
+   }
+
+  initialValue: EChartOption = {
     xAxis: {
       type: 'time',
       splitNumber : 20
