@@ -44,55 +44,53 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	private ScheduledExecutorService tradeScheduledThreadPool = Executors.newScheduledThreadPool(20);
 
 	private ScheduledExecutorService mainScheduledThreadPool = Executors.newScheduledThreadPool(20);
-	
+
 	@Autowired
 	private TradeStrategyRepo tradeStrategyRepo;
-
 
 	private ScriptEngine engine;
 
 	@Autowired
 	private TradingServiceI tradingService;
-	
+
 	@Autowired
 	private PortfolioServiceI portfolioService;
 
 	@Autowired
 	private MarketDataService marketDataService;
-	
-	private HashSet<StockTradeStrategy> currentStrategyRegistry =  new HashSet<>();
+
+	private HashSet<StockTradeStrategy> currentStrategyRegistry = new HashSet<>();
 
 	private String scriptTemplete = " var obj = new Object();\n" + " var ta4jCorePackage = new JavaImporter( "
 			+ getTa4jPackagesList() + ");\n" + " with(ta4jCorePackage) {\n" + "   obj.tradingRule = ";
 	private final String endBracket = "}";
 
-	public void executeStrategies() {		
+	public void executeStrategies() {
 		mainScheduledThreadPool.scheduleAtFixedRate(() -> {
 			scheduleTradingStrategy();
 		}, 0, 1, TimeUnit.MINUTES);
 	}
 
-	//Every Five minutes scan for new Strategies
-	//@Scheduled(fixedDelay=300000)
-	public void scheduleTradingStrategy(){
+	// Every Five minutes scan for new Strategies
+	//@Scheduled(fixedDelay = 300000)
+	public void scheduleTradingStrategy() {
 		Stream<StockTradeStrategy> stockTradeStrategies = tradeStrategyRepo.getAllStrategies();
-		
+
 		stockTradeStrategies.forEach(stockTradeStrategy -> {
 			currentStrategyRegistry.add(stockTradeStrategy);
 		});
-		
+
 		currentStrategyRegistry.forEach(stockTradeStrategy -> {
-				Runnable entryCommand = getEntryRunnable(stockTradeStrategy.getTicker());
-				tradeScheduledThreadPool.scheduleWithFixedDelay(entryCommand, 0, stockTradeStrategy.getInterval(),
-						TimeUnit.valueOf(stockTradeStrategy.getTimeUnit()));
-				Runnable exitCommand = getExitRunnable(stockTradeStrategy.getTicker());
-				tradeScheduledThreadPool.scheduleWithFixedDelay(exitCommand, 0, stockTradeStrategy.getInterval(),
-						TimeUnit.valueOf(stockTradeStrategy.getTimeUnit()));
+			Runnable entryCommand = getEntryRunnable(stockTradeStrategy.getTicker());
+			tradeScheduledThreadPool.scheduleWithFixedDelay(entryCommand, 0, stockTradeStrategy.getInterval(),
+					TimeUnit.valueOf(stockTradeStrategy.getTimeUnit()));
+			Runnable exitCommand = getExitRunnable(stockTradeStrategy.getTicker());
+			tradeScheduledThreadPool.scheduleWithFixedDelay(exitCommand, 0, stockTradeStrategy.getInterval(),
+					TimeUnit.valueOf(stockTradeStrategy.getTimeUnit()));
 		});
 
 	}
 
-	
 	private Runnable getEntryRunnable(String ticker) {
 		Runnable command = new Runnable() {
 
@@ -104,22 +102,24 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 						StockWatch stockWatch = stockTradeStrategy.getStockWatch();
 						BarSeries barSeries = getBarSeriesForGivenDuration(stockTradeStrategy.getTicker(),
 								stockTradeStrategy.getCandleCount(), stockTradeStrategy.getIntervalDuration());
-						Boolean isTradingRuleSucceeds = executeTradingRule(
-								stockTradeStrategy.getTradeStrategy().getEntryConditions(), barSeries, stockWatch);
-						if (isTradingRuleSucceeds) {
-							logger.info(
-									stockTradeStrategy.getTradeStrategy().getEntrySignal() + " order is requested!");
-							stockTradeStrategy.setState(TradeStrategyState.ENTRY_ORDER_PENDING);
-							TradeOrder tradeOrder = new TradeOrder();
-							tradeOrder.setQuantity(stockTradeStrategy.getQuantity());
-							tradeOrder.setTicker(stockTradeStrategy.getTicker());
-							if (stockTradeStrategy.getTradeStrategy().getEntrySignal().equalsIgnoreCase("buy")) {
-								tradingService.buyStock(tradeOrder);
-							} else {
-								tradingService.sellStock(tradeOrder);
+						if (barSeries != null) {
+							Boolean isTradingRuleSucceeds = executeTradingRule(
+									stockTradeStrategy.getTradeStrategy().getEntryConditions(), barSeries, stockWatch);
+							if (isTradingRuleSucceeds) {
+								logger.info(stockTradeStrategy.getTradeStrategy().getEntrySignal()
+										+ " order is requested!");
+								stockTradeStrategy.setState(TradeStrategyState.ENTRY_ORDER_PENDING);
+								TradeOrder tradeOrder = new TradeOrder();
+								tradeOrder.setQuantity(stockTradeStrategy.getQuantity());
+								tradeOrder.setTicker(stockTradeStrategy.getTicker());
+								if (stockTradeStrategy.getTradeStrategy().getEntrySignal().equalsIgnoreCase("buy")) {
+									tradingService.buyStock(tradeOrder);
+								} else {
+									tradingService.sellStock(tradeOrder);
+								}
 							}
+							tradeStrategyRepo.saveStrategy(stockTradeStrategy);
 						}
-						tradeStrategyRepo.saveStrategy(stockTradeStrategy);
 					}
 				} catch (Exception ex) {
 					logger.error("Exception happened while trying to process Entry strategy for " + ticker
@@ -142,27 +142,30 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 					StockTradeStrategy stockTradeStrategy = tradeStrategyRepo.getStrategy(ticker);
 					if (stockTradeStrategy.getState().equals(TradeStrategyState.ENTERED)) {
 						StockWatch stockWatch = stockTradeStrategy.getStockWatch();
-						String unrealizedProfitPercentage = portfolioService.getOpenPosition(ticker).getUnrealizedPlpc();
+						String unrealizedProfitPercentage = portfolioService.getOpenPosition(ticker)
+								.getUnrealizedPlpc();
 						stockWatch.setProfitPercentage(Double.parseDouble(unrealizedProfitPercentage));
-						
+
 						BarSeries barSeries = getBarSeriesForGivenDuration(stockTradeStrategy.getTicker(),
 								stockTradeStrategy.getCandleCount(), stockTradeStrategy.getIntervalDuration());
-						Boolean isTradingRuleSucceeds = executeTradingRule(
-								stockTradeStrategy.getTradeStrategy().getExitConditions(), barSeries, stockWatch);
-						if (isTradingRuleSucceeds) {
-							logger.info(
-									stockTradeStrategy.getTradeStrategy().getExitSignal() + " order is requested!");
-							stockTradeStrategy.setState(TradeStrategyState.EXIT_ORDER_PENDING);
-							TradeOrder tradeOrder = new TradeOrder();
-							tradeOrder.setQuantity(stockTradeStrategy.getQuantity());
-							tradeOrder.setTicker(stockTradeStrategy.getTicker());
-							if (stockTradeStrategy.getTradeStrategy().getExitSignal().equalsIgnoreCase("buy")) {
-								tradingService.buyStock(tradeOrder);
-							} else {
-								tradingService.sellStock(tradeOrder);
+						if (barSeries != null) {
+							Boolean isTradingRuleSucceeds = executeTradingRule(
+									stockTradeStrategy.getTradeStrategy().getExitConditions(), barSeries, stockWatch);
+							if (isTradingRuleSucceeds) {
+								logger.info(
+										stockTradeStrategy.getTradeStrategy().getExitSignal() + " order is requested!");
+								stockTradeStrategy.setState(TradeStrategyState.EXIT_ORDER_PENDING);
+								TradeOrder tradeOrder = new TradeOrder();
+								tradeOrder.setQuantity(stockTradeStrategy.getQuantity());
+								tradeOrder.setTicker(stockTradeStrategy.getTicker());
+								if (stockTradeStrategy.getTradeStrategy().getExitSignal().equalsIgnoreCase("buy")) {
+									tradingService.buyStock(tradeOrder);
+								} else {
+									tradingService.sellStock(tradeOrder);
+								}
 							}
+							tradeStrategyRepo.saveStrategy(stockTradeStrategy);
 						}
-						tradeStrategyRepo.saveStrategy(stockTradeStrategy);
 					}
 				} catch (Exception ex) {
 					logger.error("Exception happened while trying to process Exit strategy for " + ticker
@@ -184,15 +187,13 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 		this.engine = factory.getEngineByName("JavaScript");
 	}
 
-	
-	
-	
-	private String getTa4jPackagesList()  {
-	
+	private String getTa4jPackagesList() {
+
 		try {
 			URI uri = TradingStrategyExecutionServiceImpl.class.getResource("/meta/StrategyPackagesList.txt").toURI();
-			//URI uri = new URI("file:///Users/sriram/Documents/Study/Projects/Algo/AlgoTradeWithAlpaca/src/main/resources/meta/StrategyPackagesList.txt");
-			List<String> lines  = Files.readAllLines(Paths.get(uri));
+			// URI uri = new
+			// URI("file:///Users/sriram/Documents/Study/Projects/Algo/AlgoTradeWithAlpaca/src/main/resources/meta/StrategyPackagesList.txt");
+			List<String> lines = Files.readAllLines(Paths.get(uri));
 			StringBuilder packagesNames = new StringBuilder();
 			for (String line : lines) {
 				packagesNames.append(line);
@@ -203,7 +204,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 			}
 			return packagesNames.toString();
 		} catch (IOException | URISyntaxException e) {
-			logger.error("Exception happend while trying to read package meta data ",e);
+			logger.error("Exception happend while trying to read package meta data ", e);
 			return "";
 		}
 
@@ -220,7 +221,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 			return executeTrade;
 		} catch (ScriptException | NoSuchMethodException e) {
 
-			logger.error("Exception happened while executing strategy script =" +jsScript + "  and exception is=", e);
+			logger.error("Exception happened while executing strategy script =" + jsScript + "  and exception is=", e);
 			throw new TradeStrategyExecutionException(e.getMessage());
 		}
 

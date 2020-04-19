@@ -44,6 +44,15 @@
     </div>
 
     <div class="form-group">
+      <label>ReEnter?</label>
+      <select [(ngModel)]="stockTradeStrategy.stockWatch.reenter" class="form-control">
+        <option *ngFor="let option of reEnterOptions">
+          {{option}}
+        </option>
+        </select>
+    </div>
+
+    <div class="form-group">
       <label>EntryConditions</label>
       <br>
         <textarea rows = "15" cols = "80" [(ngModel)]="stockTradeStrategy.tradeStrategy.entryConditions"  placeholder="Entry Condition">

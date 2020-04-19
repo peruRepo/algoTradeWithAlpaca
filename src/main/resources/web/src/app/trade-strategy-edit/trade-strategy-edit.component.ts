@@ -11,6 +11,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class TradeStrategyEditComponent implements OnInit {
   ticker = this.actRoute.snapshot.params['ticker'];
   stockTradeStrategy: any = {};
+  reEnterOptions : string[] = ["true","false"];
 
   constructor(
     public restApi: RestApiService,
