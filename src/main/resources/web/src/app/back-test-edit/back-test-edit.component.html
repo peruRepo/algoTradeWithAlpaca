@@ -81,6 +81,9 @@
     <div class="form-group">
       <button class="btn btn-success btn-lg btn-block" (click)="executeBackTestStrategy()">Execute Back Test</button>
     </div>
-    <div echarts [options]="chartOption" [merge]= "dynamicData" class="demo-chart"></div>
+    <div class="form-group">
+    <button (click)="download()"> Download Trades </button>
+    </div>
+    <div echarts [options]="initialValue" [merge]= "dynamicData" class="demo-chart"></div>
   </div>
 </div>
