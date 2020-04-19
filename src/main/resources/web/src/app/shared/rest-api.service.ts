@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { StockTradeStrategy } from './stockTradeStrategy';
+import { BackTestStrategy } from './backTestStrategy';
+import { BackTestRequest } from './backTestRequest';
+import { BackTestResponse } from './backTestResponse';
 import { Observable, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
 
@@ -26,7 +29,6 @@ export class RestApiService {
     })
   }
 
-  // HttpClient API get() method => Fetch employees list
   getAllStockTradeStrategy (): Observable<StockTradeStrategy[]> {
     return this.http.get<StockTradeStrategy[]>(this.apiURL + '/alpaca/strategy/getAllStrategy')
     .pipe(
@@ -35,7 +37,14 @@ export class RestApiService {
     )
   };
 
-  // HttpClient API get() method => Fetch StockTradeStrategy
+  getAllBackTestStrategy (): Observable<BackTestStrategy[]> {
+    return this.http.get<BackTestStrategy[]>(this.apiURL + '/alpaca/backtest/getAllBackTest')
+    .pipe(
+      retry(1),
+      catchError(this.handleError)
+    )
+  };
+
   getStockTradeStrategy(ticker): Observable<StockTradeStrategy> {
     return this.http.get<StockTradeStrategy>(this.apiURL + '/alpaca/strategy/getStrategy?ticker=' + ticker)
     .pipe(
@@ -44,7 +53,14 @@ export class RestApiService {
     )
   }
 
-  // HttpClient API post() method => Create StockTradeStrategy
+  getBackTestStrategy(strategyName): Observable<BackTestStrategy> {
+    return this.http.get<BackTestStrategy>(this.apiURL + '/alpaca/backtest/getBackTest?strategyName=' + strategyName)
+    .pipe(
+      retry(1),
+      catchError(this.handleError)
+    )
+  }
+
   saveStockTradeStrategy(stockTradeStrategy): Observable<StockTradeStrategy> {
     return this.http.post<StockTradeStrategy>(this.apiURL + '/alpaca/strategy/updateStrategy', JSON.stringify(stockTradeStrategy), this.httpOptions)
     .pipe(
@@ -53,7 +69,15 @@ export class RestApiService {
     )
   }
 
-  // HttpClient API delete() method => Delete StockTradeStrategy
+  executeBackTestStrategy(backTestRequest): Observable<BackTestResponse> {
+    return this.http.post<BackTestResponse>(this.apiURL + '/alpaca/backtest/execute', JSON.stringify(backTestRequest), this.httpOptions)
+    .pipe(
+      retry(1),
+      catchError(this.handleError)
+    )
+  }
+
+
   deleteStockTradeStrategy(ticker){
     return this.http.delete<StockTradeStrategy>(this.apiURL + '/alpaca/strategy/removeStrategy' + ticker)
     .pipe(
@@ -62,10 +86,17 @@ export class RestApiService {
     )
   }
 
-  // Error handling
+  deleteBackTestStrategy(strategyName){
+    return this.http.delete<BackTestStrategy>(this.apiURL + '/alpaca/backtest/remove' + strategyName)
+    .pipe(
+      retry(1),
+      catchError(this.handleError)
+    )
+  }
+
   handleError(error) {
      let errorMessage = '';
-     if(error.errorCode == 200) {
+     if(error.status == 0 || error.status == 200) {
        return;
      }
      if(error.error instanceof ErrorEvent) {

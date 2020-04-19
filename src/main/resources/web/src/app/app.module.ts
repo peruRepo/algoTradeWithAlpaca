@@ -14,12 +14,16 @@ import { FormsModule } from '@angular/forms';
 // Components
 import { TradeStrategyEditComponent } from './trade-strategy-edit/trade-strategy-edit.component';
 import { TradeStrategyBrowseComponent } from './trade-strategy-browse/trade-strategy-browse.component';
+import { BackTestEditComponent } from './back-test-edit/back-test-edit.component';
+import { BackTestBrowseComponent } from './back-test-browse/back-test-browse.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TradeStrategyEditComponent,
-    TradeStrategyBrowseComponent
+    TradeStrategyBrowseComponent,
+    BackTestEditComponent,
+    BackTestBrowseComponent
   ],
   imports: [
     BrowserModule,
