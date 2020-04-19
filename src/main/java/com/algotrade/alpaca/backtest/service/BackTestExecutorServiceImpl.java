@@ -48,7 +48,7 @@ public class BackTestExecutorServiceImpl implements BackTestExecutorService {
 		  String ticker = backTestRequest.getTicker();
 		   ZonedDateTime endTime = ZonedDateTime.now(TIMEZONE_ET);
 		   ZonedDateTime startTime =  null;
-			if(backTestRequest.getIntervalDuration().equals(BarsTimeFrame.ONE_DAY)) {
+			if(backTestRequest.getIntervalDuration().equals(BarsTimeFrame.ONE_DAY.toString())) {
 				startTime = endTime.minus(700, ChronoUnit.DAYS);
 			} else {
 				startTime = endTime.minus(100, ChronoUnit.DAYS);

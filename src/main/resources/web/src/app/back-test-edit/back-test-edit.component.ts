@@ -58,7 +58,6 @@ export class BackTestEditComponent implements OnInit {
       this.backTestResponse = data;
       this.backTestStrategy.profitOrLoss = this.backTestResponse.profitOrLoss;
       this.backTestStrategy.profitPercentage = this.backTestResponse.profitPercentage;
-      this.downloadCSV(this.backTestResponse.trades);
       this.formDataforChart(this.backTestResponse.trades);
     })
   }
@@ -80,10 +79,10 @@ export class BackTestEditComponent implements OnInit {
     this.dynamicData.series.push(data);
   }
 
-   downloadCSV(backTestTrades) {
+   downloadCSV() {
      let headerList = ['entryTime', 'entrySignal', 'priceAtEntry', 'exitTime', 'exitSignal', 'priceAtExit','profitOrLoss'];
      let fileName = "ExecutedTradesFor-"+this.backTestStrategy.backTestRequest.ticker;
-     this.csvUtil.downloadFile(backTestTrades,fileName,headerList);
+     this.csvUtil.downloadFile(this.backTestResponse.trades,fileName,headerList);
    }
 
   initialValue: EChartOption = {
