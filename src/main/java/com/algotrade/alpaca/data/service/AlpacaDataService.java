@@ -42,10 +42,17 @@ public class AlpacaDataService  implements MarketDataService {
 		ZonedDateTime currentTime = ZonedDateTime.now(TIMEZONE_ET);
 		TemporalUnit unit = null;
 		Duration duration = null;
-		if(candleDuration.equals(BarsTimeFrame.ONE_DAY)) {
+
+		if(candleDuration.equals(BarsTimeFrame.ONE_DAY.toString())) {
 			unit = ChronoUnit.DAYS;
 			duration = Duration.ofDays(1);
-		} else {
+		} else if(candleDuration.equals(BarsTimeFrame.FIFTEEN_MINUTE.toString())){
+			unit = ChronoUnit.MINUTES;
+			duration = Duration.ofMinutes(15);
+		} else if(candleDuration.equals(BarsTimeFrame.FIVE_MINUTE.toString())){
+			unit = ChronoUnit.MINUTES;
+			duration = Duration.ofMinutes(5);
+		} else if(candleDuration.equals(BarsTimeFrame.ONE_MIN.toString())){
 			unit = ChronoUnit.MINUTES;
 			duration = Duration.ofMinutes(1);
 		}
