@@ -20,6 +20,7 @@ import javax.script.ScriptException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.ta4j.core.BarSeries;
 
@@ -67,6 +68,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 		}, 0, 1, TimeUnit.MINUTES);
 	}
 
+	
 	private void scheduleTradingStrategy(){
 		Stream<StockTradeStrategy> stockTradeStrategies = tradeStrategyRepo.getAllStrategies();
 

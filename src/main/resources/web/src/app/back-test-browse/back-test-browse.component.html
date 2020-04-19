@@ -1,0 +1,40 @@
+<div class="container custom-container-2">
+
+  <!-- Show it when there is no employee -->
+  <div class="no-data text-center">
+    <p>Click here to backtest more Strategy</p>
+    <button class="btn btn-outline-primary" routerLink="trade-strategy-edit">BackTest Strategy</button>
+  </div>
+
+  <!-- Employees list table, it hides when there is no employee -->
+  <div *ngIf="backTestStrategies.length !== 0">
+    <h3 class="mb-3 text-center">Browse BackTest Strategy</h3>
+
+    <div class="col-md-12">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th scope="col">Strategy Name</th>
+            <th scope="col">Ticker</th>
+            <th scope="col">IntervalDuration</th>
+            <th scope="col">profit Percentage </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let backTestStrategy of backTestStrategies">
+            <td>{{backTestStrategy.strategyName}}</td>
+            <td>{{backTestStrategy.backTestRequest.ticker}}</td>
+            <td>{{backTestStrategy.backTestRequest.intervalDuration}}</td>
+            <td>{{backTestStrategy.profitPercentage}}</td>
+            <td>
+              <span class="edit" routerLink="back-test-edit/{{backTestStrategy.strategyName}}">Edit</span>
+              <span class="delete" (click)="deleteBackTestStrategy(backTestStrategy.strategyName)">Delete</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>

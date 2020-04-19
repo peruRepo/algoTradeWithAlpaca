@@ -72,6 +72,7 @@ public class BackTestExecutorServiceImpl implements BackTestExecutorService {
 	        Num profitOrLossPercentage = criterion.calculate(barSeries, tradingRecord);
 
 	        BackTestStrategy backTestStrategy = new BackTestStrategy();
+	        backTestStrategy.setStrategyName(backTestRequest.getStrategyName());
 	        backTestStrategy.setBackTestRequest(backTestRequest);
 	        backTestStrategy.setProfitPercentage(profitOrLossPercentage.doubleValue());
 
@@ -99,7 +100,7 @@ public class BackTestExecutorServiceImpl implements BackTestExecutorService {
 		  List<BackTestTrade> backTestTrades = new LinkedList<BackTestTrade>();
 		  BackTestResponse backTestResponse = new BackTestResponse();
 		   backTestResponse.setTrades(backTestTrades);
-		   Float profitOrLoss = 0.0f;
+		   Double profitOrLoss = 0.0;
 
 		   
 		   for(Trade trade : tradingRecord.getTrades()) {

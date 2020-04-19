@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,7 @@ import com.algotrade.alpaca.backtest.repository.NitrateBackTestStrategyRepo;
 import com.algotrade.alpaca.backtest.service.BackTestExecutorService;
 
 @RestController
+@CrossOrigin
 public class BackTestController {
 
 	@Autowired
@@ -26,24 +28,24 @@ public class BackTestController {
 	@Autowired
 	private NitrateBackTestStrategyRepo nitrateBackTestStrategyRepo;
 	
-	@PostMapping("execute/backtest")
+	@PostMapping("alpaca/backtest/execute")
 	public BackTestResponse executeBackTest(@RequestBody BackTestRequest backTestRequest) {
 		return backTestExecutorService.executeStrategy(backTestRequest);		
 	}
 	
 	
-	@GetMapping("alpaca/get/backtest")
-	public BackTestStrategy getBackTest(@RequestParam("name") String strategyName) {
+	@GetMapping("alpaca/backtest/getBackTest")
+	public BackTestStrategy getBackTest(@RequestParam("strategyName") String strategyName) {
 		return nitrateBackTestStrategyRepo.getBackTestStrategy(strategyName);
 	}
 	
-	@GetMapping("alpaca/get/allbacktest")
+	@GetMapping("alpaca/backtest/getAllBackTest")
 	public List<BackTestStrategy> getAllBackTestStrategies() {
 		return nitrateBackTestStrategyRepo.getAllBackTestStrategies().collect(Collectors.toList());	
 	}
 	
-	@DeleteMapping("alpaca/delete/backtest")
-	public String deleteBackTest(@RequestParam("name") String strategyName) {
+	@DeleteMapping("alpaca/backtest/remove")
+	public String deleteBackTest(@RequestParam("strategyName") String strategyName) {
 		nitrateBackTestStrategyRepo.removeStrategy(strategyName);
 		return "sucess";	
 	}

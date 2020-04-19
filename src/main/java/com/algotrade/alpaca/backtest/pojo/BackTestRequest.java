@@ -7,6 +7,7 @@ import com.algotrade.alpaca.strategy.pojo.TradeStrategyState;
 
 public class BackTestRequest {
 
+	private String strategyName;
 	private String ticker;
 	private Integer quantity;
 	private String intervalDuration;
@@ -52,7 +53,12 @@ public class BackTestRequest {
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 	}
-	
+	public String getStrategyName() {
+		return strategyName;
+	}
+	public void setStrategyName(String strategyName) {
+		this.strategyName = strategyName;
+	}
 	
 	
 }
