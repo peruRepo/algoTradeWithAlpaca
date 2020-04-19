@@ -6,17 +6,16 @@ import java.text.SimpleDateFormat;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
-import com.algotrade.alpaca.strategy.pojo.StockTradeStrategy;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import io.github.mainstringargs.alpaca.AlpacaAPI;
 import io.github.mainstringargs.alpaca.rest.exception.AlpacaAPIRequestException;
 import io.github.mainstringargs.domain.alpaca.account.Account;
-import springfox.documentation.swagger.web.SwaggerApiListingReader;
 
 @Configuration
+@EnableScheduling
 public class AlpacaTradeConfiguration {
 	
 	@Value("${alpaca.api.version}")

@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -33,6 +34,7 @@ import com.algotrade.alpaca.strategy.exception.TradeStrategyExecutionException;
 import com.algotrade.alpaca.strategy.pojo.StockTradeStrategy;
 import com.algotrade.alpaca.strategy.pojo.StockWatch;
 import com.algotrade.alpaca.strategy.pojo.TradeStrategyState;
+import com.google.common.collect.ConcurrentHashMultiset;
 
 @Component
 public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecutionServiceI {
@@ -57,6 +59,8 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 
 	@Autowired
 	private MarketDataService marketDataService;
+	
+	private HashSet<StockTradeStrategy> currentStrategyRegistry =  new HashSet<>();
 
 	private String scriptTemplete = " var obj = new Object();\n" + " var ta4jCorePackage = new JavaImporter( "
 			+ getTa4jPackagesList() + ");\n" + " with(ta4jCorePackage) {\n" + "   obj.tradingRule = ";
@@ -68,11 +72,16 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 		}, 0, 1, TimeUnit.MINUTES);
 	}
 
-	
-	private void scheduleTradingStrategy(){
+	//Every Five minutes scan for new Strategies
+	@Scheduled(fixedDelay=300000)
+	public void scheduleTradingStrategy(){
 		Stream<StockTradeStrategy> stockTradeStrategies = tradeStrategyRepo.getAllStrategies();
-
+		
 		stockTradeStrategies.forEach(stockTradeStrategy -> {
+			currentStrategyRegistry.add(stockTradeStrategy);
+		});
+		
+		currentStrategyRegistry.forEach(stockTradeStrategy -> {
 				Runnable entryCommand = getEntryRunnable(stockTradeStrategy.getTicker());
 				tradeScheduledThreadPool.scheduleWithFixedDelay(entryCommand, 0, stockTradeStrategy.getInterval(),
 						TimeUnit.valueOf(stockTradeStrategy.getTimeUnit()));
@@ -83,6 +92,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 
 	}
 
+	
 	private Runnable getEntryRunnable(String ticker) {
 		Runnable command = new Runnable() {
 
