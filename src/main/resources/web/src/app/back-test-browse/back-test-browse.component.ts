@@ -30,9 +30,10 @@ export class BackTestBrowseComponent implements OnInit {
   // Delete Back Test Strategy
  deleteBackTestStrategy(strategyName) {
     if (window.confirm('Are you sure, you want to delete?')){
-      this.restApi.deleteBackTestStrategy(strategyName).subscribe(data => {
-        this.loadAllBackTestStrategy();
-      })
+      this.restApi.deleteBackTestStrategy(strategyName).subscribe( data => {
+         this.loadAllBackTestStrategy();
+      });
+
     }
   }
 
