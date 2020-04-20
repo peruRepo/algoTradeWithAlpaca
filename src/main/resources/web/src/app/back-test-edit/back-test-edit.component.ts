@@ -22,6 +22,7 @@ export class BackTestEditComponent implements OnInit {
   eChartDataSeries : any [] = [];
    dynamicData : any = {};
   intervalDurationOptions : string[] = ["ONE_MIN","FIVE_MINUTE","FIFTEEN_MINUTE","ONE_DAY"];
+  
 
   constructor(
     public restApi: RestApiService,

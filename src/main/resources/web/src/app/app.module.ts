@@ -19,6 +19,7 @@ import { TradeStrategyBrowseComponent } from './trade-strategy-browse/trade-stra
 import { BackTestEditComponent } from './back-test-edit/back-test-edit.component';
 import { BackTestBrowseComponent } from './back-test-browse/back-test-browse.component';
 
+
 @NgModule({
   declarations: [
     AppComponent,

@@ -86,8 +86,8 @@ export class RestApiService {
     )
   }
 
-  deleteBackTestStrategy(strategyName){
-    return this.http.delete<BackTestStrategy>(this.apiURL + '/alpaca/backtest/remove' + strategyName)
+  deleteBackTestStrategy(strategyName) : Observable<any> {
+    return this.http.delete<any>(this.apiURL + '/alpaca/backtest/remove?strategyName=' + strategyName)
     .pipe(
       retry(1),
       catchError(this.handleError)

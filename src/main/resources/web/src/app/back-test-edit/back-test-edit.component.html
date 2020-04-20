@@ -25,6 +25,10 @@
         -->
 
     </div>
+    <div class="form-group">
+      <label>Quantity</label>
+      <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.quantity" class="form-control" placeholder="Quantity">
+    </div>
 
     <div class="form-group">
       <label>CandleCount</label>
@@ -89,6 +93,7 @@
     <div class="form-group">
       <button class="btn btn-success btn-lg btn-block" (click)="executeBackTestStrategy()">Execute Back Test</button>
     </div>
+
     <div class="form-group">
     <button (click)="downloadCSV()"> Download Trades </button>
     </div>
