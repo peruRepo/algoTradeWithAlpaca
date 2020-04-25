@@ -10,13 +10,13 @@ const routes: Routes = [
   { path: 'trade-strategy-edit', component: TradeStrategyEditComponent },
   { path: 'back-test-edit', component: BackTestEditComponent },
   { path: 'back-test-browse', component: BackTestBrowseComponent },
-  { path: 'back-test-browse/back-test-edit/:strategyName', component: BackTestEditComponent },
-  { path: 'trade-strategy-edit/:ticker', component: TradeStrategyEditComponent }
+  { path: 'back-test-browse/back-test-edit/:strategyName', component: BackTestEditComponent }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers : []
 })
 
 export class AppRoutingModule { }

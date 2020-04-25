@@ -31,7 +31,9 @@
             <td>{{stockTradeStrategy.state}}</td>
             <td>{{stockTradeStrategy.candleCount}}</td>
             <td>
-              <span class="edit" routerLink="trade-strategy-edit/{{stockTradeStrategy.ticker}}">Edit</span>
+              <span class="edit"
+                [routerLink]="['/trade-strategy-edit']"  [queryParams]="{ ticker: stockTradeStrategy.ticker}">Edit</span>
+              <!-- routerLink="trade-strategy-edit/{{stockTradeStrategy.ticker}}">Edit</span> -->
               <span class="delete" (click)="deleteStockStrategy(stockTradeStrategy.ticker)">Delete</span>
             </td>
           </tr>
