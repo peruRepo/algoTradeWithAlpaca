@@ -12,4 +12,5 @@ export class StockTradeStrategy {
    state: string;
    stockWatch: StockWatch;
    candleCount: number;
+
 }

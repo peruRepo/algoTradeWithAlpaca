@@ -68,7 +68,7 @@ export class BackTestEditComponent implements OnInit {
     },
     error =>
     {
-    this.errorMessage = errorMessage;
+    this.errorMessage = error;
     this.loading = false;
   }
   )

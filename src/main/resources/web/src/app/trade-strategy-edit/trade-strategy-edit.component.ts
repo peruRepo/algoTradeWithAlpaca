@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { RestApiService } from "../shared/rest-api.service";
 import { ActivatedRoute, Router } from '@angular/router';
+import { StockTradeStrategy } from "../shared/stockTradeStrategy";
+import { TradeStrategy } from "../shared/tradeStrategy";
 
 @Component({
   selector: 'trade-strategy-edit',
@@ -9,7 +11,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 
 export class TradeStrategyEditComponent implements OnInit {
-  ticker = this.actRoute.snapshot.params['ticker'];
+//  ticker = this.actRoute.snapshot.params['ticker'];
+  ticker : string;
+  strategyName : string;
   stockTradeStrategy: any = {};
   reEnterOptions : string[] = ["true","false"];
 
@@ -18,21 +22,39 @@ export class TradeStrategyEditComponent implements OnInit {
     public actRoute: ActivatedRoute,
     public router: Router
   ) {
-    this.actRoute.params.subscribe( params => {
+    this.actRoute.queryParams.subscribe( params => {
       console.log(params);
       this.ticker = params["ticker"];
+      this.strategyName = params["strategyName"];
        }
     );
+
   }
 
   ngOnInit() {
-    this.getStockTradeStrategyWithParam();
+    this.getStockTradeStrategyFromParam();
    }
 
-  getStockTradeStrategyWithParam() {
-    this.restApi.getStockTradeStrategy(this.ticker).subscribe(data => {
-      this.stockTradeStrategy = data;
-    })
+  getStockTradeStrategyFromParam() {
+    if(this.ticker != null) {
+      this.restApi.getStockTradeStrategy(this.ticker).subscribe(data => {
+        this.stockTradeStrategy = data;
+      })
+    } else {
+      this.restApi.getBackTestStrategy(this.strategyName).subscribe(data => {
+        let backTestStrategy = data;
+        this.stockTradeStrategy = new StockTradeStrategy();
+        this.stockTradeStrategy.ticker = backTestStrategy.backTestRequest.ticker;
+        this.stockTradeStrategy.quantity = backTestStrategy.backTestRequest.quantity;
+        this.stockTradeStrategy.interval = 1;
+        this.stockTradeStrategy.intervalDuration = backTestStrategy.backTestRequest.intervalDuration;
+        this.stockTradeStrategy.state = "WATCHING";
+        this.stockTradeStrategy.candleCount=backTestStrategy.backTestRequest.candleCount;
+        this.stockTradeStrategy.tradeStrategy = backTestStrategy.backTestRequest.tradeStrategy;
+        this.stockTradeStrategy.stockWatch = backTestStrategy.backTestRequest.stockWatch;
+        this.stockTradeStrategy.stockWatch.reenter = true;
+      })
+    }
   }
 
 

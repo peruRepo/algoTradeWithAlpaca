@@ -94,6 +94,10 @@
       <button class="btn btn-success btn-lg btn-block" (click)="executeBackTestStrategy()">Execute Back Test</button>
     </div>
 
+    <div class="form-group" *ngIf="!loading">
+      <span class="btn btn-success btn-lg btn-block" [routerLink]="['/trade-strategy-edit']"  [queryParams]="{ strategyName: backTestStrategy.backTestRequest.strategyName }">Deploy Back Test</span>
+    </div>
+
     <div class="app-loading" *ngIf="loading">
       <div class="logo"></div>
      <svg class="spinner" viewBox="25 25 50 50">
