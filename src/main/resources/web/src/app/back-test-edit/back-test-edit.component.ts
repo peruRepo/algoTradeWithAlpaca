@@ -22,7 +22,8 @@ export class BackTestEditComponent implements OnInit {
   eChartDataSeries : any [] = [];
    dynamicData : any = {};
   intervalDurationOptions : string[] = ["ONE_MIN","FIVE_MINUTE","FIFTEEN_MINUTE","ONE_DAY"];
-  
+  loading : boolean = false;
+  errorMessage : string = "";
 
   constructor(
     public restApi: RestApiService,
@@ -35,6 +36,7 @@ export class BackTestEditComponent implements OnInit {
       this.strategyName = params["strategyName"];
        }
     );
+
   }
 
   ngOnInit() {
@@ -56,12 +58,21 @@ export class BackTestEditComponent implements OnInit {
 
   // Update employee data
   executeBackTestStrategy() {
+    this.loading = true;
     this.restApi.executeBackTestStrategy(this.backTestStrategy.backTestRequest).subscribe(data => {
       this.backTestResponse = data;
       this.backTestStrategy.profitOrLoss = this.backTestResponse.profitOrLoss;
       this.backTestStrategy.profitPercentage = this.backTestResponse.profitPercentage;
       this.formDataforChart(this.backTestResponse.trades);
-    })
+      this.loading = false;
+    },
+    error =>
+    {
+    this.errorMessage = errorMessage;
+    this.loading = false;
+  }
+  )
+  //  this.loading = false;
   }
 
   formDataforChart(backTestTrades) {
