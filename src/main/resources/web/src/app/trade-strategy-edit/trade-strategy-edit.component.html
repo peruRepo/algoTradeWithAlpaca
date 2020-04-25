@@ -20,12 +20,20 @@
 
     <div class="form-group">
       <label>IntervalDuration</label>
-      <input type="text" [(ngModel)]="stockTradeStrategy.intervalDuration" class="form-control" placeholder="IntervalDuration">
+      <select [(ngModel)]="stockTradeStrategy.intervalDuration" class="form-control">
+        <option *ngFor="let option of intervalDurationOptions">
+          {{option}}
+        </option>
+        </select>
     </div>
 
     <div class="form-group">
       <label>State</label>
-      <input type="text" [(ngModel)]="stockTradeStrategy.state" class="form-control" placeholder="State">
+      <select [(ngModel)]="stockTradeStrategy.state" class="form-control">
+        <option *ngFor="let option of tradeStrategyStates">
+          {{option}}
+        </option>
+        </select>
     </div>
 
     <div class="form-group">
