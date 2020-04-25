@@ -37,7 +37,7 @@ export class TradeStrategyEditComponent implements OnInit {
   reEnterOptions : string[] = ["true","false"];
   intervalDurationOptions : string[] = ["ONE_MIN","FIVE_MINUTE","FIFTEEN_MINUTE","ONE_DAY"];
   tradeStrategyStates : string[] = ["INACTIVE","WATCHING","ENTRY_ORDER_PENDING","EXIT_ORDER_PENDING","ENTERED","COMPLETED"];
-
+  timeUnit : string[] = ["DAYS","MINUTES","HOURS"];
   constructor(
     public restApi: RestApiService,
     public actRoute: ActivatedRoute,

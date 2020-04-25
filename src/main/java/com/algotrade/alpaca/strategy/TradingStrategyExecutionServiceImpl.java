@@ -72,8 +72,8 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	}
 
 	// Every Five minutes scan for new Strategies
-	//@Scheduled(fixedDelay = 300000)
-     @Scheduled(cron="0 0/5 9-17 ? * MON-SAT")
+	@Scheduled(fixedDelay = 300000)
+    // @Scheduled(cron="0 0/5 9-17 ? * MON-SAT")
 	public void scheduleTradingStrategy() {
 		Stream<StockTradeStrategy> stockTradeStrategies = tradeStrategyRepo.getAllStrategies();
 		
