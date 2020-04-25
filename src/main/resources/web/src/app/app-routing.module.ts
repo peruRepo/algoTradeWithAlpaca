@@ -7,6 +7,7 @@ import { TradeStrategyBrowseComponent } from './trade-strategy-browse/trade-stra
 
 const routes: Routes = [
   { path: '', component: TradeStrategyBrowseComponent },
+  { path: 'trade-strategy-browse', component: TradeStrategyBrowseComponent },
   { path: 'trade-strategy-edit', component: TradeStrategyEditComponent },
   { path: 'back-test-edit', component: BackTestEditComponent },
   { path: 'back-test-browse', component: BackTestBrowseComponent },

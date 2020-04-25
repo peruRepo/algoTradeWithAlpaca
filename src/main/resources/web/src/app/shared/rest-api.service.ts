@@ -78,8 +78,8 @@ export class RestApiService {
   }
 
 
-  deleteStockTradeStrategy(ticker){
-    return this.http.delete<StockTradeStrategy>(this.apiURL + '/alpaca/strategy/removeStrategy' + ticker)
+  deleteStockTradeStrategy(ticker) : Observable<any> {
+    return this.http.delete<any>(this.apiURL + '/alpaca/strategy/removeStrategy?ticker=' + ticker)
     .pipe(
       retry(1),
       catchError(this.handleError)
