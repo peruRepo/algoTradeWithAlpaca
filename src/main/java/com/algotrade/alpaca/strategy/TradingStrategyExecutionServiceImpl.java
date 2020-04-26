@@ -48,8 +48,6 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	@Autowired
 	private TradeStrategyRepo tradeStrategyRepo;
 
-	private ScriptEngine engine;
-
 	@Autowired
 	private TradingServiceI tradingService;
 
@@ -60,7 +58,6 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	private MarketDataService marketDataService;
 
 	private HashSet<StockTradeStrategy> currentStrategyRegistry = new HashSet<>();
-	private HashSet<StockTradeStrategy> newStrategyRegistry = new HashSet<>();
 
 	private String scriptTemplete = " var obj = new Object();\n" + " var ta4jCorePackage = new JavaImporter( "
 			+ getTa4jPackagesList() + ");\n" + " with(ta4jCorePackage) {\n" + "   obj.tradingRule = ";
