@@ -60,6 +60,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	private MarketDataService marketDataService;
 
 	private HashSet<StockTradeStrategy> currentStrategyRegistry = new HashSet<>();
+	private HashSet<StockTradeStrategy> newStrategyRegistry = new HashSet<>();
 
 	private String scriptTemplete = " var obj = new Object();\n" + " var ta4jCorePackage = new JavaImporter( "
 			+ getTa4jPackagesList() + ");\n" + " with(ta4jCorePackage) {\n" + "   obj.tradingRule = ";
@@ -74,30 +75,27 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	// Every Five minutes scan for new Strategies
 	@Scheduled(fixedDelay = 300000)
 	// @Scheduled(cron="0 0/5 9-17 ? * MON-SAT")
+	
 	public void scheduleTradingStrategy() {
+		
 		Stream<StockTradeStrategy> stockTradeStrategies = tradeStrategyRepo.getAllStrategies();
 
 		stockTradeStrategies.forEach(stockTradeStrategy -> {
-			currentStrategyRegistry.add(stockTradeStrategy);
+			
+					if(!currentStrategyRegistry.contains(stockTradeStrategy)){
+						
+						currentStrategyRegistry.add(stockTradeStrategy);
+						Runnable entryCommand = getEntryRunnable(stockTradeStrategy.getTicker());
+						tradeScheduledThreadPool.scheduleWithFixedDelay(entryCommand, 0, stockTradeStrategy.getInterval(),
+								TimeUnit.valueOf(stockTradeStrategy.getTimeUnit()));
+						Runnable exitCommand = getExitRunnable(stockTradeStrategy.getTicker());
+						tradeScheduledThreadPool.scheduleWithFixedDelay(exitCommand, 0, stockTradeStrategy.getInterval(),
+								TimeUnit.valueOf(stockTradeStrategy.getTimeUnit()));
+						
+					}
+
 		});
 		
-//		try {
-//			if(tradeScheduledThreadPool.awaitTermination(1, TimeUnit.MINUTES)){
-				currentStrategyRegistry.forEach(stockTradeStrategy -> {
-					Runnable entryCommand = getEntryRunnable(stockTradeStrategy.getTicker());
-					tradeScheduledThreadPool.scheduleWithFixedDelay(entryCommand, 0, stockTradeStrategy.getInterval(),
-							TimeUnit.valueOf(stockTradeStrategy.getTimeUnit()));
-					Runnable exitCommand = getExitRunnable(stockTradeStrategy.getTicker());
-					tradeScheduledThreadPool.scheduleWithFixedDelay(exitCommand, 0, stockTradeStrategy.getInterval(),
-							TimeUnit.valueOf(stockTradeStrategy.getTimeUnit()));
-				});
-//			}
-//		} catch (InterruptedException e) {
-//			throw new TradeStrategyExecutionException(e.getMessage());
-//		}
-
-
-
 	}
 
 	@Scheduled(cron = "0 1 17 ? * MON-FRI")
@@ -139,6 +137,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 							}
 						}
 					} else {
+						currentStrategyRegistry.remove(stockTradeStrategy);
 						throw new TradeStrategyExecutionInterruption("Strategy not found for Ticker"+ticker);
 					}
 				} catch (Exception ex) {
@@ -161,6 +160,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 			public void run() {
 				try {
 					StockTradeStrategy stockTradeStrategy = tradeStrategyRepo.getStrategy(ticker);
+					if(stockTradeStrategy != null){
 					if (stockTradeStrategy.getState().equals(TradeStrategyState.ENTERED)) {
 						StockWatch stockWatch = stockTradeStrategy.getStockWatch();
 						String unrealizedProfitPercentage = portfolioService.getOpenPosition(ticker)
@@ -188,9 +188,16 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 							tradeStrategyRepo.saveStrategy(stockTradeStrategy);
 						}
 					}
+					} else {
+							currentStrategyRegistry.remove(stockTradeStrategy);
+							throw new TradeStrategyExecutionInterruption("Strategy not found for Ticker"+ticker);
+						}
 				} catch (Exception ex) {
 					logger.error("Exception happened while trying to process Exit strategy for " + ticker
 							+ " and exception is=", ex);
+					if (ex instanceof TradeStrategyExecutionInterruption) {
+						throw ex;
+					}
 				}
 
 			}
@@ -233,14 +240,16 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 
 	private Boolean executeTradingRule(String tradingRule, BarSeries barSeries, StockWatch stockWatch) {
 		String jsScript = scriptTemplete + tradingRule + endBracket;
-		logger.info("Executing Trading Rule=" + jsScript);
 		try {
+			ScriptEngineManager factory = new ScriptEngineManager();
+			ScriptEngine engine = factory.getEngineByName("nashorn");
 			engine.eval(jsScript);
 			Object obj = engine.get("obj");
 			// create an Invocable object by casting the script engine object
 			Invocable inv = (Invocable) engine;
 			Integer lastIndex = barSeries.getEndIndex();
 			Boolean executeTrade = (Boolean) inv.invokeMethod(obj, "tradingRule", barSeries, lastIndex, stockWatch);
+			logger.info("Executing Trading Rule=" + jsScript  + " Result="+ executeTrade);
 			return executeTrade;
 		} catch (ScriptException | NoSuchMethodException e) {
 

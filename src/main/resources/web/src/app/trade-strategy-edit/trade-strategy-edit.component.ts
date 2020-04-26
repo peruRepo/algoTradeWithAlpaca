@@ -38,6 +38,10 @@ export class TradeStrategyEditComponent implements OnInit {
   intervalDurationOptions : string[] = ["ONE_MIN","FIVE_MINUTE","FIFTEEN_MINUTE","ONE_DAY"];
   tradeStrategyStates : string[] = ["INACTIVE","WATCHING","ENTRY_ORDER_PENDING","EXIT_ORDER_PENDING","ENTERED","COMPLETED"];
   timeUnit : string[] = ["DAYS","MINUTES","HOURS"];
+  loading : boolean = false;
+
+
+
   constructor(
     public restApi: RestApiService,
     public actRoute: ActivatedRoute,
@@ -88,9 +92,11 @@ export class TradeStrategyEditComponent implements OnInit {
   // Update employee data
   saveStockTradeStrategy() {
     if(window.confirm('Are you sure, you want to save?')){
+      this.loading = true;
       this.restApi.saveStockTradeStrategy(this.stockTradeStrategy).subscribe(data => {
         this.stockTradeStrategy = data;
-      })
+        this.loading = false;
+      });
     }
   }
 
