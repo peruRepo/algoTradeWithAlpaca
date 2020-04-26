@@ -34,13 +34,13 @@ export class TradeStrategyBrowseComponent implements OnInit {
   ngOnInit() :void  {
     this.loadAllStockStrategy();
   }
-  // Delete employee
-//  deleteStockStrategy(id) {
-//    if (window.confirm('Are you sure, you want to delete?')){
-//      this.restApi.deleteStockTradeStrategy(id).subscribe(data => {
-//        this.loadAllStockStrategy()
-//      })
-//    }
-//  }
+
+deleteStockStrategy(id) {
+   if (window.confirm('Are you sure, you want to delete?')){
+   this.restApi.deleteStockTradeStrategy(id).subscribe(data => {
+     this.loadAllStockStrategy()
+   })
+   }
+ }
 
 }

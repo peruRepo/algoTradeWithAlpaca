@@ -1,4 +1,4 @@
 /target/
 /.classpath
 .settings/
-./src/main/resources/web/node_modules/
+/src/main/resources/web/node_modules/*

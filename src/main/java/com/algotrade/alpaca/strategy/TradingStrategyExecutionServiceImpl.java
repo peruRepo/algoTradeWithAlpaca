@@ -31,10 +31,10 @@ import com.algotrade.alpaca.data.service.MarketDataService;
 import com.algotrade.alpaca.service.PortfolioServiceI;
 import com.algotrade.alpaca.service.TradingServiceI;
 import com.algotrade.alpaca.strategy.exception.TradeStrategyExecutionException;
+import com.algotrade.alpaca.strategy.exception.TradeStrategyExecutionInterruption;
 import com.algotrade.alpaca.strategy.pojo.StockTradeStrategy;
 import com.algotrade.alpaca.strategy.pojo.StockWatch;
 import com.algotrade.alpaca.strategy.pojo.TradeStrategyState;
-import com.google.common.collect.ConcurrentHashMultiset;
 
 @Component
 public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecutionServiceI {
@@ -48,8 +48,6 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	@Autowired
 	private TradeStrategyRepo tradeStrategyRepo;
 
-	private ScriptEngine engine;
-
 	@Autowired
 	private TradingServiceI tradingService;
 
@@ -58,6 +56,8 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 
 	@Autowired
 	private MarketDataService marketDataService;
+	
+	private ScriptEngine engine;
 
 	private HashSet<StockTradeStrategy> currentStrategyRegistry = new HashSet<>();
 
@@ -72,23 +72,34 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	}
 
 	// Every Five minutes scan for new Strategies
-	//@Scheduled(fixedDelay = 300000)
+	@Scheduled(fixedDelay = 300000)
+	// @Scheduled(cron="0 0/5 9-17 ? * MON-SAT")
+	
 	public void scheduleTradingStrategy() {
+		
 		Stream<StockTradeStrategy> stockTradeStrategies = tradeStrategyRepo.getAllStrategies();
 
 		stockTradeStrategies.forEach(stockTradeStrategy -> {
-			currentStrategyRegistry.add(stockTradeStrategy);
-		});
+			
+					if(!currentStrategyRegistry.contains(stockTradeStrategy)){
+						
+						currentStrategyRegistry.add(stockTradeStrategy);
+						Runnable entryCommand = getEntryRunnable(stockTradeStrategy.getTicker());
+						tradeScheduledThreadPool.scheduleWithFixedDelay(entryCommand, 0, stockTradeStrategy.getInterval(),
+								TimeUnit.valueOf(stockTradeStrategy.getTimeUnit()));
+						Runnable exitCommand = getExitRunnable(stockTradeStrategy.getTicker());
+						tradeScheduledThreadPool.scheduleWithFixedDelay(exitCommand, 0, stockTradeStrategy.getInterval(),
+								TimeUnit.valueOf(stockTradeStrategy.getTimeUnit()));
+						
+					}
 
-		currentStrategyRegistry.forEach(stockTradeStrategy -> {
-			Runnable entryCommand = getEntryRunnable(stockTradeStrategy.getTicker());
-			tradeScheduledThreadPool.scheduleWithFixedDelay(entryCommand, 0, stockTradeStrategy.getInterval(),
-					TimeUnit.valueOf(stockTradeStrategy.getTimeUnit()));
-			Runnable exitCommand = getExitRunnable(stockTradeStrategy.getTicker());
-			tradeScheduledThreadPool.scheduleWithFixedDelay(exitCommand, 0, stockTradeStrategy.getInterval(),
-					TimeUnit.valueOf(stockTradeStrategy.getTimeUnit()));
 		});
+		
+	}
 
+	@Scheduled(cron = "0 1 17 ? * MON-FRI")
+	public void stopScheduler() {
+		tradeScheduledThreadPool.shutdownNow();
 	}
 
 	private Runnable getEntryRunnable(String ticker) {
@@ -98,35 +109,43 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 			public void run() {
 				try {
 					StockTradeStrategy stockTradeStrategy = tradeStrategyRepo.getStrategy(ticker);
-					if (stockTradeStrategy.getState().equals(TradeStrategyState.WATCHING)) {
-						StockWatch stockWatch = stockTradeStrategy.getStockWatch();
-						BarSeries barSeries = getBarSeriesForGivenDuration(stockTradeStrategy.getTicker(),
-								stockTradeStrategy.getCandleCount(), stockTradeStrategy.getIntervalDuration());
-						if (barSeries != null) {
-							Boolean isTradingRuleSucceeds = executeTradingRule(
-									stockTradeStrategy.getTradeStrategy().getEntryConditions(), barSeries, stockWatch);
-							if (isTradingRuleSucceeds) {
-								logger.info(stockTradeStrategy.getTradeStrategy().getEntrySignal()
-										+ " order is requested!");
-								stockTradeStrategy.setState(TradeStrategyState.ENTRY_ORDER_PENDING);
-								TradeOrder tradeOrder = new TradeOrder();
-								tradeOrder.setQuantity(stockTradeStrategy.getQuantity());
-								tradeOrder.setTicker(stockTradeStrategy.getTicker());
-								if (stockTradeStrategy.getTradeStrategy().getEntrySignal().equalsIgnoreCase("buy")) {
-									tradingService.buyStock(tradeOrder);
-								} else {
-									tradingService.sellStock(tradeOrder);
+					if (stockTradeStrategy != null) {
+						if (stockTradeStrategy.getState().equals(TradeStrategyState.WATCHING)) {
+							StockWatch stockWatch = stockTradeStrategy.getStockWatch();
+							BarSeries barSeries = getBarSeriesForGivenDuration(stockTradeStrategy.getTicker(),
+									stockTradeStrategy.getCandleCount(), stockTradeStrategy.getIntervalDuration());
+							if (barSeries != null) {
+								Boolean isTradingRuleSucceeds = executeTradingRule(
+										stockTradeStrategy.getTradeStrategy().getEntryConditions(), barSeries,
+										stockWatch);
+								if (isTradingRuleSucceeds) {
+									logger.info(stockTradeStrategy.getTradeStrategy().getEntrySignal()
+											+ " order is requested!");
+									stockTradeStrategy.setState(TradeStrategyState.ENTRY_ORDER_PENDING);
+									TradeOrder tradeOrder = new TradeOrder();
+									tradeOrder.setQuantity(stockTradeStrategy.getQuantity());
+									tradeOrder.setTicker(stockTradeStrategy.getTicker());
+									if (stockTradeStrategy.getTradeStrategy().getEntrySignal()
+											.equalsIgnoreCase("buy")) {
+										tradingService.buyStock(tradeOrder);
+									} else {
+										tradingService.sellStock(tradeOrder);
+									}
 								}
+								tradeStrategyRepo.saveStrategy(stockTradeStrategy);
 							}
-							tradeStrategyRepo.saveStrategy(stockTradeStrategy);
 						}
+					} else {
+						currentStrategyRegistry.remove(stockTradeStrategy);
+						throw new TradeStrategyExecutionInterruption("Strategy not found for Ticker"+ticker);
 					}
 				} catch (Exception ex) {
 					logger.error("Exception happened while trying to process Entry strategy for " + ticker
 							+ " and exception is=", ex);
-
+					if (ex instanceof TradeStrategyExecutionInterruption) {
+						throw ex;
+					}
 				}
-
 			}
 
 		};
@@ -140,6 +159,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 			public void run() {
 				try {
 					StockTradeStrategy stockTradeStrategy = tradeStrategyRepo.getStrategy(ticker);
+					if(stockTradeStrategy != null){
 					if (stockTradeStrategy.getState().equals(TradeStrategyState.ENTERED)) {
 						StockWatch stockWatch = stockTradeStrategy.getStockWatch();
 						String unrealizedProfitPercentage = portfolioService.getOpenPosition(ticker)
@@ -167,9 +187,16 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 							tradeStrategyRepo.saveStrategy(stockTradeStrategy);
 						}
 					}
+					} else {
+							currentStrategyRegistry.remove(stockTradeStrategy);
+							throw new TradeStrategyExecutionInterruption("Strategy not found for Ticker"+ticker);
+						}
 				} catch (Exception ex) {
 					logger.error("Exception happened while trying to process Exit strategy for " + ticker
 							+ " and exception is=", ex);
+					if (ex instanceof TradeStrategyExecutionInterruption) {
+						throw ex;
+					}
 				}
 
 			}
@@ -184,7 +211,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	@PostConstruct
 	private void configureJSEngine() {
 		ScriptEngineManager factory = new ScriptEngineManager();
-		this.engine = factory.getEngineByName("JavaScript");
+		this.engine = factory.getEngineByName("nashorn");
 	}
 
 	private String getTa4jPackagesList() {
@@ -213,11 +240,15 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	private Boolean executeTradingRule(String tradingRule, BarSeries barSeries, StockWatch stockWatch) {
 		String jsScript = scriptTemplete + tradingRule + endBracket;
 		try {
+		//	ScriptEngineManager factory = new ScriptEngineManager();
+		//	ScriptEngine engine = factory.getEngineByName("nashorn");
 			engine.eval(jsScript);
 			Object obj = engine.get("obj");
 			// create an Invocable object by casting the script engine object
 			Invocable inv = (Invocable) engine;
-			Boolean executeTrade = (Boolean) inv.invokeMethod(obj, "tradingRule", barSeries, stockWatch);
+			Integer lastIndex = barSeries.getEndIndex();
+			Boolean executeTrade = (Boolean) inv.invokeMethod(obj, "tradingRule", barSeries, lastIndex, stockWatch);
+			logger.info("Executing Trading Rule=" + jsScript  + " Result="+ executeTrade);
 			return executeTrade;
 		} catch (ScriptException | NoSuchMethodException e) {
 

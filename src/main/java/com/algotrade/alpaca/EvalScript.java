@@ -1,5 +1,6 @@
 package com.algotrade.alpaca;
 
+import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -108,7 +109,7 @@ public class EvalScript {
 				Map<String, ArrayList<io.github.mainstringargs.domain.alpaca.bar.Bar>> bars = alpacaAPI.getBars(BarsTimeFrame.FIFTEEN_MINUTE, "AAPL", null, start, end, null,
 						null);
 				ArrayList<io.github.mainstringargs.domain.alpaca.bar.Bar> barsL =  bars.get("AAPL");
-				BarSeries barSeries = AlpacaTa4jAdapter.generateBars(barsL);
+				BarSeries barSeries = AlpacaTa4jAdapter.generateBars(barsL,Duration.ofDays(1));
 				return barSeries;
 		    }
 	    

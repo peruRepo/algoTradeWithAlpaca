@@ -30,9 +30,9 @@ public class TradeStrategyController {
 	
 	@PostMapping("/alpaca/strategy/updateStrategy")
 	@ResponseBody
-	public String updateStrategy(@RequestBody StockTradeStrategy stockTradeStrategy){
+	public StockTradeStrategy updateStrategy(@RequestBody StockTradeStrategy stockTradeStrategy){
 		tradingStrategyService.storeStockTradeStrategy(stockTradeStrategy);
-		return "success";
+		return stockTradeStrategy;
 	}
 	
 	@GetMapping("/alpaca/strategy/getStrategy")

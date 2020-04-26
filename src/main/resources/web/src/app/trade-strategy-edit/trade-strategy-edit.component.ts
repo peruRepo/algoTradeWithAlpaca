@@ -14,8 +14,33 @@ export class TradeStrategyEditComponent implements OnInit {
 //  ticker = this.actRoute.snapshot.params['ticker'];
   ticker : string;
   strategyName : string;
-  stockTradeStrategy: any = {};
+  stockTradeStrategy: any = {
+      "ticker": "Enter your Ticker",
+      "quantity": 10,
+      "interval": 1,
+      "timeUnit": "MINUTES",
+      "intervalDuration": "ONE_MIN",
+      "tradeStrategy":{
+      "entryConditions": "function(barSeries, stockWatch){ \n\tclosePriceIndicator = new ClosePriceIndicator(barSeries);\n\tif(closePriceIndicator.getValue(barSeries.getEndIndex()).floatValue() < 568){\n\t\tstockWatch.setStopLossPercentage(10.0);\n\t\treturn true;\n\t}\n\treturn false;\n};",
+      "entrySignal": "buy",
+      "exitSignal": "sell",
+      "exitConditions": "function(barSeries, stockWatch){ \n\tclosePriceIndicator = new ClosePriceIndicator(barSeries);\n\tif(closePriceIndicator.getValue(barSeries.getEndIndex()).floatValue() > 569){\n\t\treturn true;\n\t}\n\treturn false;\n};"
+      },
+      "state": "WATCHING",
+      "stockWatch":{
+      "stopLossPercentage": 5.0,
+      "profitPercentage": 20.0,
+      "reenter" : true
+      },
+      "candleCount": 1000
+    };
   reEnterOptions : string[] = ["true","false"];
+  intervalDurationOptions : string[] = ["ONE_MIN","FIVE_MINUTE","FIFTEEN_MINUTE","ONE_DAY"];
+  tradeStrategyStates : string[] = ["INACTIVE","WATCHING","ENTRY_ORDER_PENDING","EXIT_ORDER_PENDING","ENTERED","COMPLETED"];
+  timeUnit : string[] = ["DAYS","MINUTES","HOURS"];
+  loading : boolean = false;
+
+
 
   constructor(
     public restApi: RestApiService,
@@ -67,9 +92,11 @@ export class TradeStrategyEditComponent implements OnInit {
   // Update employee data
   saveStockTradeStrategy() {
     if(window.confirm('Are you sure, you want to save?')){
+      this.loading = true;
       this.restApi.saveStockTradeStrategy(this.stockTradeStrategy).subscribe(data => {
         this.stockTradeStrategy = data;
-      })
+        this.loading = false;
+      });
     }
   }
 

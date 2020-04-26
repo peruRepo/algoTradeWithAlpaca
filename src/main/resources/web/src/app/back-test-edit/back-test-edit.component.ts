@@ -15,7 +15,29 @@ import { CSVUtil } from '../shared/csvUtil.service';
 
 export class BackTestEditComponent implements OnInit {
   strategyName = this.actRoute.snapshot.params['strategyName'];
-  backTestStrategy: BackTestStrategy = new BackTestStrategy();
+  backTestStrategy: any = {
+        "strategyName": "Enter your Back test name here!!",
+        "backTestRequest":{
+        "strategyName": "Enter your Back test name here",
+        "ticker": "Enter your Stock name here!!",
+        "quantity": 10,
+        "intervalDuration": "ONE_MIN",
+        "tradeStrategy":{
+          "entryConditions": "function(barSeries, stockWatch){ \n\tclosePriceIndicator = new ClosePriceIndicator(barSeries);\n\tif(closePriceIndicator.getValue(barSeries.getEndIndex()).floatValue() < 568){\n\t\tstockWatch.setStopLossPercentage(10.0);\n\t\treturn true;\n\t}\n\treturn false;\n};",
+          "entrySignal": "buy",
+          "exitSignal": "sell",
+          "exitConditions": "function(barSeries, stockWatch){ \n\tclosePriceIndicator = new ClosePriceIndicator(barSeries);\n\tif(closePriceIndicator.getValue(barSeries.getEndIndex()).floatValue() > 569){\n\t\treturn true;\n\t}\n\treturn false;\n};"
+        },
+        "stockWatch":{
+        "stopLossPercentage": -10.0,
+        "profitPercentage": 0.0,
+        "targetProfitPercentage": 15.0
+        },
+        "candleCount": 1000
+        },
+        "profitOrLoss": 0,
+        "profitPercentage": 0
+};
   backTestResponse : BackTestResponse = new BackTestResponse();
   profitDataSeries : number[] = [];
   timeSeriesData : Date[] = [];
