@@ -1,5 +1,6 @@
 package com.algotrade.alpaca;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -45,7 +46,7 @@ public class AlpacaApiTest {
 			Map<String, ArrayList<Bar>> bars = alpacaAPI.getBars(BarsTimeFrame.FIFTEEN_MINUTE, "AAPL", null, start, end, null,
 					null);
 			ArrayList<Bar> barsL =  bars.get("AAPL");
-			BarSeries barSeries = AlpacaTa4jAdapter.generateBars(barsL);
+			BarSeries barSeries = AlpacaTa4jAdapter.generateBars(barsL,Duration.ofDays(1));
 			
 			testWithIndicator(barSeries);
 	//		RSIIndicator  indicator = new RSIIndicator (barSeries, barsL.size());

@@ -56,6 +56,8 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 
 	@Autowired
 	private MarketDataService marketDataService;
+	
+	private ScriptEngine engine;
 
 	private HashSet<StockTradeStrategy> currentStrategyRegistry = new HashSet<>();
 
@@ -209,7 +211,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	@PostConstruct
 	private void configureJSEngine() {
 		ScriptEngineManager factory = new ScriptEngineManager();
-		this.engine = factory.getEngineByName("JavaScript");
+		this.engine = factory.getEngineByName("nashorn");
 	}
 
 	private String getTa4jPackagesList() {
@@ -238,8 +240,8 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	private Boolean executeTradingRule(String tradingRule, BarSeries barSeries, StockWatch stockWatch) {
 		String jsScript = scriptTemplete + tradingRule + endBracket;
 		try {
-			ScriptEngineManager factory = new ScriptEngineManager();
-			ScriptEngine engine = factory.getEngineByName("nashorn");
+		//	ScriptEngineManager factory = new ScriptEngineManager();
+		//	ScriptEngine engine = factory.getEngineByName("nashorn");
 			engine.eval(jsScript);
 			Object obj = engine.get("obj");
 			// create an Invocable object by casting the script engine object
