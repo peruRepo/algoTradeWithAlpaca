@@ -45,9 +45,9 @@
 
 		<!-- https://mvnrepository.com/artifact/org.dizitart/nitrite -->
 		<dependency>
-		    <groupId>org.dizitart</groupId>
-		    <artifactId>nitrite</artifactId>
-		    <version>3.4.1</version>
+			<groupId>org.dizitart</groupId>
+			<artifactId>nitrite</artifactId>
+			<version>3.4.1</version>
 		</dependency>
 
 
@@ -62,18 +62,18 @@
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>2.9.2</version>
 		</dependency>
-	
-	<!-- TA4j Lib for Technical analysis -->
+
+		<!-- TA4j Lib for Technical analysis -->
 		<dependency>
-		  <groupId>org.ta4j</groupId>
-		  <artifactId>ta4j-core</artifactId>
-		  <version>0.13</version>
+			<groupId>org.ta4j</groupId>
+			<artifactId>ta4j-core</artifactId>
+			<version>0.13</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.ta4j/ta4j-examples -->
 		<dependency>
-		    <groupId>org.ta4j</groupId>
-		    <artifactId>ta4j-examples</artifactId>
-		    <version>0.13</version>
+			<groupId>org.ta4j</groupId>
+			<artifactId>ta4j-examples</artifactId>
+			<version>0.13</version>
 		</dependency>
 
 		<dependency>
@@ -109,7 +109,27 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-
+			<plugin>
+				<artifactId>exec-maven-plugin</artifactId>
+				<groupId>org.codehaus.mojo</groupId>
+				<version>1.6.0</version>
+				<executions>
+					<execution>
+						<id>Build angular using ng</id>
+						<phase>install</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<executable>ng</executable>
+					<workingDirectory>src/main/resources/web</workingDirectory>
+					<arguments>
+						<argument>build</argument>
+					</arguments>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
