@@ -1,0 +1,114 @@
+<div class="container custom-container">
+  <div class="col-md-12">
+
+    <h3 class="mb-3 text-center">Back Test your Strategy </h3>
+
+    <div class="form-group">
+      <label>Stratey Name</label>
+      <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.strategyName" class="form-control" placeholder="StrategyName">
+    </div>
+
+    <div class="form-group">
+      <label>Ticker</label>
+      <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.ticker" class="form-control" placeholder="Ticker">
+    </div>
+
+    <div class="form-group">
+      <label>IntervalDuration</label>
+      <select [(ngModel)]="backTestStrategy.backTestRequest.intervalDuration" class="form-control">
+        <option *ngFor="let option of intervalDurationOptions">
+          {{option}}
+        </option>
+      </select>
+      <!--
+        <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.intervalDuration" class="form-control" placeholder="IntervalDuration">
+        -->
+
+    </div>
+    <div class="form-group">
+      <label>Quantity</label>
+      <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.quantity" class="form-control" placeholder="Quantity">
+    </div>
+
+    <div class="form-group">
+      <label>CandleCount</label>
+      <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.candleCount" class="form-control" placeholder="CandleCount">
+    </div>
+
+
+
+    <div class="form-group">
+      <label>StopLossPercentage</label>
+      <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.stockWatch.stopLossPercentage" class="form-control" placeholder="Stop Loss Percentage">
+    </div>
+
+    <div class="form-group">
+      <label>Target Profit Percentage</label>
+      <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.stockWatch.profitPercentage" class="form-control" placeholder="Target Profit Percentage">
+    </div>
+
+    <div class="form-group">
+      <label>Profit or Loss</label>
+      <input type="text" [(ngModel)]="backTestStrategy.profitOrLoss" class="form-control" placeholder="Profit Or Loss">
+    </div>
+
+    <div class="form-group">
+      <label>Profit or Loss Percentage</label>
+      <input type="text" [(ngModel)]="backTestStrategy.profitPercentage" class="form-control" placeholder="Profit Or Loss Percentage">
+    </div>
+
+    <div class="form-group">
+      <label>EntryConditions</label>
+      <br>
+        <textarea rows = "15" cols = "80" [(ngModel)]="backTestStrategy.backTestRequest.tradeStrategy.entryConditions"  placeholder="Entry Condition">
+          Enter entry condition here
+        </textarea>
+      <br>
+    </div>
+
+    <div class="form-group">
+      <label>EntrySignal</label>
+      <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.tradeStrategy.entrySignal" class="form-control" placeholder="Entry Signal">
+    </div>
+
+    <div class="form-group">
+      <label>ExitConditions</label>
+      <br>
+        <textarea rows = "15" cols = "80" [(ngModel)]="backTestStrategy.backTestRequest.tradeStrategy.exitConditions" placeholder="Exit Condition">
+          Enter exit condition here
+        </textarea>
+      <br>
+    </div>
+
+    <div class="form-group">
+      <label>ExitSignal</label>
+      <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.tradeStrategy.exitSignal" class="form-control" placeholder="Exit Signal">
+    </div>
+
+
+    <div class="form-group">
+      <button class="btn btn-success btn-lg btn-block" (click)="getBackTestStrategy()">fetch</button>
+    </div>
+
+    <div class="form-group" *ngIf="!loading">
+      <button class="btn btn-success btn-lg btn-block" (click)="executeBackTestStrategy()">Execute Back Test</button>
+    </div>
+
+    <div class="form-group" *ngIf="!loading">
+      <span class="btn btn-success btn-lg btn-block" [routerLink]="['/trade-strategy-edit']"  [queryParams]="{ strategyName: backTestStrategy.backTestRequest.strategyName }">Deploy Back Test</span>
+    </div>
+
+    <div class="app-loading" *ngIf="loading">
+      <div class="logo"></div>
+     <svg class="spinner" viewBox="25 25 50 50">
+       <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
+     </svg>
+   </div>
+
+
+    <div class="form-group">
+    <button (click)="downloadCSV()"> Download Trades </button>
+    </div>
+    <div echarts [options]="initialValue" [merge]= "dynamicData" class="demo-chart"></div>
+  </div>
+</div>

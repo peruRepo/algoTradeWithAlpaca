@@ -434,15 +434,16 @@ var BackTestEditComponent = /** @class */ (function () {
     };
     BackTestEditComponent.prototype.formDataforChart = function (backTestTrades) {
         var i = 0;
+        var eChartDataSeries = [];
         for (var _i = 0, backTestTrades_1 = backTestTrades; _i < backTestTrades_1.length; _i++) {
             var backTestTrade = backTestTrades_1[_i];
             var profitAndTime = [];
             profitAndTime.push(backTestTrade.exitTime);
             profitAndTime.push(backTestTrade.profitOrLoss);
-            this.eChartDataSeries.push(profitAndTime);
+            eChartDataSeries.push(profitAndTime);
         }
         var data = {
-            data: this.eChartDataSeries,
+            data: eChartDataSeries,
             type: 'bar'
         };
         this.dynamicData = this.initialValue;

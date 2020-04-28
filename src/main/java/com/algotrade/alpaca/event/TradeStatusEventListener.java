@@ -30,21 +30,31 @@ public class TradeStatusEventListener {
 		if (tradeUpdateMessage.getData().getOrder().getStatus().equalsIgnoreCase("filled")) { 
 			if(strategy.getState().equals(TradeStrategyState.ENTRY_ORDER_PENDING)){
 				strategy.setState(TradeStrategyState.ENTERED);
+				updateState(strategy);
 			} else if(strategy.getState().equals(TradeStrategyState.EXIT_ORDER_PENDING)) {
 				if(stockWatch.getReenter()){
-					strategy.setState(TradeStrategyState.WATCHING);					
+					strategy.setState(TradeStrategyState.WATCHING);		
+					updateState(strategy);
 				} else {
-					strategy.setState(TradeStrategyState.COMPLETED);					
+					strategy.setState(TradeStrategyState.COMPLETED);				
+					updateState(strategy);
 				}
 			}			
 		} else if(tradeUpdateMessage.getData().getOrder().getStatus().equalsIgnoreCase("canceled") ||
 				tradeUpdateMessage.getData().getOrder().getStatus().equalsIgnoreCase("expired")) {
 			if(strategy.getState().equals(TradeStrategyState.ENTRY_ORDER_PENDING)){
 				strategy.setState(TradeStrategyState.WATCHING);
+				updateState(strategy);
 			} else if(strategy.getState().equals(TradeStrategyState.EXIT_ORDER_PENDING)) {
 				strategy.setState(TradeStrategyState.ENTERED);
+				updateState(strategy);
 			}
 		}
+		
+	}
+
+	private void updateState(StockTradeStrategy strategy) {
+		tradeStrategyRepo.saveStrategy(strategy);
 		
 	}
 }
