@@ -247,7 +247,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 			Invocable inv = (Invocable) engine;
 			Integer lastIndex = barSeries.getEndIndex();
 			Boolean executeTrade = (Boolean) inv.invokeMethod(obj, "tradingRule", barSeries, lastIndex, stockWatch);
-			logger.info("Executing Trading Rule=" + jsScript  + " Result="+ executeTrade);
+	//		logger.info("Executing Trading Rule=" + jsScript  + " Result="+ executeTrade);
 			return executeTrade;
 		} catch (ScriptException | NoSuchMethodException e) {
 
