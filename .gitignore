@@ -2,3 +2,4 @@
 /.classpath
 .settings/
 /src/main/resources/web/node_modules/*
+/web/node_modules/*

@@ -57,7 +57,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	@Autowired
 	private MarketDataService marketDataService;
 	
-	private ScriptEngine engine;
+	//private ScriptEngine engine;
 
 	private HashSet<StockTradeStrategy> currentStrategyRegistry = new HashSet<>();
 
@@ -72,9 +72,8 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	}
 
 	// Every Five minutes scan for new Strategies
-	@Scheduled(fixedDelay = 300000)
-	// @Scheduled(cron="0 0/5 9-17 ? * MON-SAT")
-	
+	//@Scheduled(fixedDelay = 300000)
+	// @Scheduled(cron="0 0/5 9-17 ? * MON-SAT")	
 	public void scheduleTradingStrategy() {
 		
 		Stream<StockTradeStrategy> stockTradeStrategies = tradeStrategyRepo.getAllStrategies();
@@ -208,11 +207,11 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 		return marketDataService.getCurrentMarketData(ticker, candleDuration, candleCount);
 	}
 
-	@PostConstruct
-	private void configureJSEngine() {
-		ScriptEngineManager factory = new ScriptEngineManager();
-		this.engine = factory.getEngineByName("nashorn");
-	}
+//	@PostConstruct
+//	private void configureJSEngine() {
+//		ScriptEngineManager factory = new ScriptEngineManager();
+//		this.engine = factory.getEngineByName("nashorn");
+//	}
 
 	private String getTa4jPackagesList() {
 
@@ -240,15 +239,15 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	private Boolean executeTradingRule(String tradingRule, BarSeries barSeries, StockWatch stockWatch) {
 		String jsScript = scriptTemplete + tradingRule + endBracket;
 		try {
-		//	ScriptEngineManager factory = new ScriptEngineManager();
-		//	ScriptEngine engine = factory.getEngineByName("nashorn");
+		    ScriptEngineManager factory = new ScriptEngineManager();
+		    ScriptEngine engine = factory.getEngineByName("nashorn");
 			engine.eval(jsScript);
 			Object obj = engine.get("obj");
 			// create an Invocable object by casting the script engine object
 			Invocable inv = (Invocable) engine;
 			Integer lastIndex = barSeries.getEndIndex();
 			Boolean executeTrade = (Boolean) inv.invokeMethod(obj, "tradingRule", barSeries, lastIndex, stockWatch);
-			logger.info("Executing Trading Rule=" + jsScript  + " Result="+ executeTrade);
+	//		logger.info("Executing Trading Rule=" + jsScript  + " Result="+ executeTrade);
 			return executeTrade;
 		} catch (ScriptException | NoSuchMethodException e) {
 

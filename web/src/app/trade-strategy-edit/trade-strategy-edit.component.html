@@ -1,0 +1,116 @@
+<div class="container custom-container">
+  <div class="col-md-12">
+
+    <h3 class="mb-3 text-center">Update Trade Strategy</h3>
+
+    <div class="form-group">
+      <label>Ticker</label>
+      <input type="text" [(ngModel)]="stockTradeStrategy.ticker" class="form-control" placeholder="Ticker">
+    </div>
+
+    <div class="form-group">
+      <label>Quantity</label>
+      <input type="text" [(ngModel)]="stockTradeStrategy.quantity" class="form-control" placeholder="Quantity">
+    </div>
+
+    <div class="form-group">
+      <label>Interval</label>
+      <input type="text" [(ngModel)]="stockTradeStrategy.interval" class="form-control" placeholder="Interval">
+    </div>
+
+    <div class="form-group">
+      <label>TimeUnit</label>
+      <select [(ngModel)]="stockTradeStrategy.timeUnit" class="form-control">
+        <option *ngFor="let option of timeUnit">
+          {{option}}
+        </option>
+        </select>
+    </div>
+
+    <div class="form-group">
+      <label>IntervalDuration</label>
+      <select [(ngModel)]="stockTradeStrategy.intervalDuration" class="form-control">
+        <option *ngFor="let option of intervalDurationOptions">
+          {{option}}
+        </option>
+        </select>
+    </div>
+
+    <div class="form-group">
+      <label>State</label>
+      <select [(ngModel)]="stockTradeStrategy.state" class="form-control">
+        <option *ngFor="let option of tradeStrategyStates">
+          {{option}}
+        </option>
+        </select>
+    </div>
+
+    <div class="form-group">
+      <label>CandleCount</label>
+      <input type="text" [(ngModel)]="stockTradeStrategy.candleCount" class="form-control" placeholder="Candle Count">
+    </div>
+
+    <div class="form-group">
+      <label>StopLossPercentage</label>
+      <input type="text" [(ngModel)]="stockTradeStrategy.stockWatch.stopLossPercentage" class="form-control" placeholder="Stop Loss Percentage">
+    </div>
+
+    <div class="form-group">
+      <label>profitPercentage</label>
+      <input type="text" [(ngModel)]="stockTradeStrategy.stockWatch.profitPercentage" class="form-control" placeholder="Profit Percentage">
+    </div>
+
+    <div class="form-group">
+      <label>ReEnter?</label>
+      <select [(ngModel)]="stockTradeStrategy.stockWatch.reenter" class="form-control">
+        <option *ngFor="let option of reEnterOptions">
+          {{option}}
+        </option>
+        </select>
+    </div>
+
+    <div class="form-group">
+      <label>EntryConditions</label>
+      <br>
+        <textarea rows = "15" cols = "80" [(ngModel)]="stockTradeStrategy.tradeStrategy.entryConditions"  placeholder="Entry Condition">
+          Enter entry condition here
+        </textarea>
+      <br>
+    </div>
+
+    <div class="form-group">
+      <label>EntrySignal</label>
+      <input type="text" [(ngModel)]="stockTradeStrategy.tradeStrategy.entrySignal" class="form-control" placeholder="Entry Signal">
+    </div>
+
+    <div class="form-group">
+      <label>ExitConditions</label>
+      <br>
+        <textarea rows = "15" cols = "80" [(ngModel)]="stockTradeStrategy.tradeStrategy.exitConditions" placeholder="Exit Condition">
+          Enter exit condition here
+        </textarea>
+      <br>
+    </div>
+
+    <div class="form-group">
+      <label>ExitSignal</label>
+      <input type="text" [(ngModel)]="stockTradeStrategy.tradeStrategy.exitSignal" class="form-control" placeholder="Exit Signal">
+    </div>
+
+    <div class="app-loading" *ngIf="loading">
+      <div class="logo"></div>
+     <svg class="spinner" viewBox="25 25 50 50">
+       <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
+     </svg>
+   </div>
+
+    <div class="form-group">
+      <button class="btn btn-success btn-lg btn-block" (click)="getStockTradeStrategy()">fetch</button>
+    </div>
+
+    <div class="form-group">
+      <button class="btn btn-success btn-lg btn-block" (click)="saveStockTradeStrategy()">Update</button>
+    </div>
+
+  </div>
+</div>

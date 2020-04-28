@@ -112,14 +112,21 @@ public class AlpacaDataService  implements MarketDataService {
 		} 
 	    ZonedDateTime startTimeAfter = startTime;		
 		ZonedDateTime endTimeUntil = startTimeAfter.plusDays(daysOfData);
-		
-		while(!endTimeUntil.isAfter(endTime)) {
+		boolean endOfTimeReached = false;
+		while(!endOfTimeReached) {
 			try{
 				Map<String, ArrayList<Bar>> bars = alpacaAPI.getBars(timeFrame, ticker, maxCandleCount, null, null, startTimeAfter,
-						endTimeUntil);				
-				aggregatedbars.addAll(bars.get(ticker));
-				startTimeAfter = ZonedDateTime.ofInstant(Instant.ofEpochSecond(aggregatedbars.getLast().getT()), ZoneId.systemDefault());
-				endTimeUntil = endTimeUntil.plusDays(daysOfData);
+						endTimeUntil);		
+				if(bars != null){
+					aggregatedbars.addAll(bars.get(ticker));
+					startTimeAfter = ZonedDateTime.ofInstant(Instant.ofEpochSecond(aggregatedbars.getLast().getT()), ZoneId.systemDefault());
+					endTimeUntil = endTimeUntil.plusDays(daysOfData);
+					if(endTimeUntil.isAfter(endTime)){
+						endOfTimeReached = true;
+					}
+				} else {
+					endOfTimeReached = true;
+				}
 			} catch (AlpacaAPIRequestException e) {
 					throw new MarketDataException("Error while fetching AlpcaMarket data");
 			}
