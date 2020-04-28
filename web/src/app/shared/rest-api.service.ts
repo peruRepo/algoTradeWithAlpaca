@@ -96,7 +96,7 @@ export class RestApiService {
 
   handleError(error) {
      let errorMessage = '';
-     if(error.status == 0 || error.status == 200) {
+     if(error.status == 200) {
        return;
      }
      if(error.error instanceof ErrorEvent) {

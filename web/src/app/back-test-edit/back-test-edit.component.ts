@@ -6,6 +6,7 @@ import {BackTestResponse } from "../shared/backTestResponse";
 import {BackTestStrategy } from "../shared/backTestStrategy";
 import { EChartOption } from 'echarts';
 import { CSVUtil } from '../shared/csvUtil.service';
+import { retry, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'back-test-edit',
@@ -73,9 +74,14 @@ export class BackTestEditComponent implements OnInit {
 
 
   getBackTestStrategy() {
-    this.restApi.getBackTestStrategy(this.backTestStrategy.backTestRequest.strategyName).subscribe(data => {
+    this.restApi.getBackTestStrategy(this.backTestStrategy.backTestRequest.strategyName)
+    .subscribe(data => {
       this.backTestStrategy = data;
-    })
+    },
+      error => {
+        this.errorMessage = error.message;
+      }
+    )
   }
 
   // Update employee data
@@ -90,9 +96,9 @@ export class BackTestEditComponent implements OnInit {
     },
     error =>
     {
-    this.errorMessage = error;
-    this.loading = false;
-  }
+        this.errorMessage = error;
+        this.loading = false;
+    }
   )
   //  this.loading = false;
   }
@@ -119,6 +125,17 @@ export class BackTestEditComponent implements OnInit {
      let headerList = ['entryTime', 'entrySignal', 'priceAtEntry', 'exitTime', 'exitSignal', 'priceAtExit','profitOrLoss'];
      let fileName = "ExecutedTradesFor-"+this.backTestStrategy.backTestRequest.ticker;
      this.csvUtil.downloadFile(this.backTestResponse.trades,fileName,headerList);
+   }
+
+   handleError(error){
+     if(error.status == 0 || error.status == 200) {
+       return;
+     }
+     if(error.error instanceof ErrorEvent) {
+       this.errorMessage = error.error.message;
+     } else {
+       this.errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+     }
    }
 
   initialValue: EChartOption = {
