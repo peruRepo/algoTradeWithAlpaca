@@ -1,11 +1,6 @@
-# Angular 7 HttpClient
+# AlgoTrading
 
-Please find the step by step tutorial [Angular 7 HttpClient & Http Services to Consume RESTful API
-](https://www.positronx.io/angular-7-httpclient-http-service/)
-
-This project was built with Angular CLI version 7.2.3.
-
-Run `npm install` to install required dependencies.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.1.
 
 ## Development server
 
