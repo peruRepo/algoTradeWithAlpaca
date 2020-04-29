@@ -2,23 +2,22 @@ package com.algotrade.alpaca.event;
 
 import org.springframework.context.ApplicationEvent;
 
-import io.github.mainstringargs.domain.alpaca.websocket.trade.TradeUpdateMessage;
+import io.github.mainstringargs.domain.alpaca.order.Order;
 
 public class AlpaceTradeUpdateEvent extends ApplicationEvent {
 	
+	private Order order;
 
-	public AlpaceTradeUpdateEvent(TradeUpdateMessage tradeUpdateMessage) {
-		super(tradeUpdateMessage);
-		this.tradeUpdateMessage =  tradeUpdateMessage;
+	public AlpaceTradeUpdateEvent(Order order) {
+		super(order);
+		this.order =  order;
 	}
 
-	private TradeUpdateMessage tradeUpdateMessage;
-
-	public TradeUpdateMessage getTradeUpdateMessage() {
-		return tradeUpdateMessage;
+	public Order getOrder() {
+		return order;
 	}
 
-	public void setTradeUpdateMessage(TradeUpdateMessage tradeUpdateMessage) {
-		this.tradeUpdateMessage = tradeUpdateMessage;
+	public void setOrder(Order order) {
+		this.order = order;
 	}
 }

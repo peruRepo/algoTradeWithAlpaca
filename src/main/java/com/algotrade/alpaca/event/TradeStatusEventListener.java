@@ -11,6 +11,7 @@ import com.algotrade.alpaca.strategy.pojo.StockTradeStrategy;
 import com.algotrade.alpaca.strategy.pojo.StockWatch;
 import com.algotrade.alpaca.strategy.pojo.TradeStrategyState;
 
+import io.github.mainstringargs.domain.alpaca.order.Order;
 import io.github.mainstringargs.domain.alpaca.websocket.trade.TradeUpdateMessage;
 
 @Component
@@ -22,12 +23,12 @@ public class TradeStatusEventListener {
 	
 	@EventListener
 	public void listen(AlpaceTradeUpdateEvent alpaceTradeUpdateEvent){
-		TradeUpdateMessage tradeUpdateMessage = alpaceTradeUpdateEvent.getTradeUpdateMessage();
-		StockTradeStrategy strategy = tradeStrategyRepo.getStrategy(tradeUpdateMessage.getData().getOrder().getSymbol());
+		Order order = alpaceTradeUpdateEvent.getOrder();
+		StockTradeStrategy strategy = tradeStrategyRepo.getStrategy(order.getSymbol());
 		StockWatch stockWatch = strategy.getStockWatch();
 		
-		logger.info("Trade event received for " +tradeUpdateMessage.getData().getOrder().getSymbol() + " and Event is " + tradeUpdateMessage.getData().getOrder().getStatus());
-		if (tradeUpdateMessage.getData().getOrder().getStatus().equalsIgnoreCase("filled")) { 
+		logger.info("Trade event received for " +order.getSymbol() + " and Event is " + order.getStatus());
+		if (order.getStatus().equalsIgnoreCase("filled")) { 
 			if(strategy.getState().equals(TradeStrategyState.ENTRY_ORDER_PENDING)){
 				strategy.setState(TradeStrategyState.ENTERED);
 				updateState(strategy);
@@ -40,8 +41,8 @@ public class TradeStatusEventListener {
 					updateState(strategy);
 				}
 			}			
-		} else if(tradeUpdateMessage.getData().getOrder().getStatus().equalsIgnoreCase("canceled") ||
-				tradeUpdateMessage.getData().getOrder().getStatus().equalsIgnoreCase("expired")) {
+		} else if(order.getStatus().equalsIgnoreCase("canceled") ||
+				order.getStatus().equalsIgnoreCase("expired")) {
 			if(strategy.getState().equals(TradeStrategyState.ENTRY_ORDER_PENDING)){
 				strategy.setState(TradeStrategyState.WATCHING);
 				updateState(strategy);

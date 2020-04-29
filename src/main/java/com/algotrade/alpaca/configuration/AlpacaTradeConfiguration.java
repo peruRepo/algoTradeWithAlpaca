@@ -2,6 +2,7 @@ package com.algotrade.alpaca.configuration;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -58,5 +59,10 @@ public class AlpacaTradeConfiguration {
 		}
 		
 		return alpacaAPI;
+	}
+	
+	@Bean
+	public ConcurrentHashMap<String, String> pendingOrderRegistry() {
+		return new ConcurrentHashMap<String, String>();
 	}
 }

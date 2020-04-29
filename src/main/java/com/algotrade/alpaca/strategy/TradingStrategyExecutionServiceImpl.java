@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +37,8 @@ import com.algotrade.alpaca.strategy.pojo.StockTradeStrategy;
 import com.algotrade.alpaca.strategy.pojo.StockWatch;
 import com.algotrade.alpaca.strategy.pojo.TradeStrategyState;
 
+import io.github.mainstringargs.domain.alpaca.order.Order;
+
 @Component
 public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecutionServiceI {
 
@@ -57,6 +60,9 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	@Autowired
 	private MarketDataService marketDataService;
 	
+	@Autowired 
+	private ConcurrentHashMap<String, String> pendingOrderRegistry;
+	
 	//private ScriptEngine engine;
 
 	private HashSet<StockTradeStrategy> currentStrategyRegistry = new HashSet<>();
@@ -72,7 +78,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	}
 
 	// Every Five minutes scan for new Strategies
-	//@Scheduled(fixedDelay = 300000)
+	@Scheduled(fixedDelay = 300000)
 	// @Scheduled(cron="0 0/5 9-17 ? * MON-SAT")	
 	public void scheduleTradingStrategy() {
 		
@@ -126,9 +132,11 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 									tradeOrder.setTicker(stockTradeStrategy.getTicker());
 									if (stockTradeStrategy.getTradeStrategy().getEntrySignal()
 											.equalsIgnoreCase("buy")) {
-										tradingService.buyStock(tradeOrder);
+										Order order = tradingService.buyStock(tradeOrder);
+										pendingOrderRegistry.put(order.getId(),order.getStatus());
 									} else {
-										tradingService.sellStock(tradeOrder);
+										Order order = tradingService.sellStock(tradeOrder);
+										pendingOrderRegistry.put(order.getId(),order.getStatus());
 									}
 								}
 								tradeStrategyRepo.saveStrategy(stockTradeStrategy);
@@ -178,9 +186,11 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 								tradeOrder.setQuantity(stockTradeStrategy.getQuantity());
 								tradeOrder.setTicker(stockTradeStrategy.getTicker());
 								if (stockTradeStrategy.getTradeStrategy().getExitSignal().equalsIgnoreCase("buy")) {
-									tradingService.buyStock(tradeOrder);
+									Order order = tradingService.buyStock(tradeOrder);
+									pendingOrderRegistry.put(order.getId(),order.getStatus());
 								} else {
-									tradingService.sellStock(tradeOrder);
+									Order order = tradingService.sellStock(tradeOrder);
+									pendingOrderRegistry.put(order.getId(),order.getStatus());
 								}
 							}
 							tradeStrategyRepo.saveStrategy(stockTradeStrategy);
