@@ -109,6 +109,6 @@
     <div class="form-group">
     <button (click)="downloadCSV()"> Download Trades </button>
     </div>
-    <div echarts [options]="initialValue" [merge]= "dynamicData" class="demo-chart"></div>
+    <div echarts [options]="initialValue" [merge]= "dynamicData" [loading]="loading" class="demo-chart"></div>
   </div>
 </div>

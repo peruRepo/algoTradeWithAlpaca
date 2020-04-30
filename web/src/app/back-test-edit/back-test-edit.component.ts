@@ -87,12 +87,12 @@ export class BackTestEditComponent implements OnInit {
   // Update employee data
   executeBackTestStrategy() {
     this.loading = true;
+    this.dynamicData = {};
     this.restApi.executeBackTestStrategy(this.backTestStrategy.backTestRequest).subscribe(data => {
       this.backTestResponse = data;
       this.backTestStrategy.profitOrLoss = this.backTestResponse.profitOrLoss;
       this.backTestStrategy.profitPercentage = this.backTestResponse.profitPercentage;
       this.formDataforChart(this.backTestResponse.trades);
-      this.loading = false;
     },
     error =>
     {
@@ -105,7 +105,7 @@ export class BackTestEditComponent implements OnInit {
 
   formDataforChart(backTestTrades) {
     let i = 0;
-    let eChartDataSeries = [];
+    let eChartDataSeries :any[] = [];
     for(let backTestTrade of backTestTrades){
        let profitAndTime = [];
        profitAndTime.push(backTestTrade.exitTime);
@@ -116,9 +116,10 @@ export class BackTestEditComponent implements OnInit {
       data : eChartDataSeries,
       type : 'bar'
     };
+
     this.dynamicData=this.initialValue;
-    this.dynamicData.series = [];
     this.dynamicData.series.push(data);
+    this.loading = false;
   }
 
    downloadCSV() {
@@ -141,7 +142,7 @@ export class BackTestEditComponent implements OnInit {
   initialValue: EChartOption = {
     xAxis: {
       type: 'time',
-      splitNumber : 20
+      splitNumber : 40
     },
     yAxis: {
       type: 'value',
