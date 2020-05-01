@@ -93,6 +93,7 @@ export class BackTestEditComponent implements OnInit {
       this.backTestStrategy.profitOrLoss = this.backTestResponse.profitOrLoss;
       this.backTestStrategy.profitPercentage = this.backTestResponse.profitPercentage;
       this.formDataforChart(this.backTestResponse.trades);
+          this.loading = false;
     },
     error =>
     {
@@ -119,7 +120,6 @@ export class BackTestEditComponent implements OnInit {
 
     this.dynamicData=this.initialValue;
     this.dynamicData.series.push(data);
-    this.loading = false;
   }
 
    downloadCSV() {

@@ -906,7 +906,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.initialValue = {
           xAxis: {
             type: 'time',
-            splitNumber: 20
+            splitNumber: 40
           },
           yAxis: {
             type: 'value',
@@ -945,6 +945,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           this.restApi.getBackTestStrategy(this.backTestStrategy.backTestRequest.strategyName).subscribe(function (data) {
             _this5.backTestStrategy = data;
+          }, function (error) {
+            _this5.errorMessage = error.message;
           });
         } // Update employee data
 
@@ -954,6 +956,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var _this6 = this;
 
           this.loading = true;
+          this.dynamicData = {};
           this.restApi.executeBackTestStrategy(this.backTestStrategy.backTestRequest).subscribe(function (data) {
             _this6.backTestResponse = data;
             _this6.backTestStrategy.profitOrLoss = _this6.backTestResponse.profitOrLoss;
@@ -995,7 +998,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             type: 'bar'
           };
           this.dynamicData = this.initialValue;
-          this.dynamicData.series = [];
           this.dynamicData.series.push(data);
         }
       }, {
@@ -1004,6 +1006,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var headerList = ['entryTime', 'entrySignal', 'priceAtEntry', 'exitTime', 'exitSignal', 'priceAtExit', 'profitOrLoss'];
           var fileName = "ExecutedTradesFor-" + this.backTestStrategy.backTestRequest.ticker;
           this.csvUtil.downloadFile(this.backTestResponse.trades, fileName, headerList);
+        }
+      }, {
+        key: "handleError",
+        value: function handleError(error) {
+          if (error.status == 0 || error.status == 200) {
+            return;
+          }
+
+          if (error.error instanceof ErrorEvent) {
+            this.errorMessage = error.error.message;
+          } else {
+            this.errorMessage = "Error Code: ".concat(error.status, "\nMessage: ").concat(error.message);
+          }
         }
       }]);
 
@@ -1018,8 +1033,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       type: BackTestEditComponent,
       selectors: [["back-test-edit"]],
       decls: 73,
-      vars: 19,
-      consts: [[1, "container", "custom-container"], [1, "col-md-12"], [1, "mb-3", "text-center"], [1, "form-group"], ["type", "text", "placeholder", "StrategyName", 1, "form-control", 3, "ngModel", "ngModelChange"], ["type", "text", "placeholder", "Ticker", 1, "form-control", 3, "ngModel", "ngModelChange"], [1, "form-control", 3, "ngModel", "ngModelChange"], [4, "ngFor", "ngForOf"], ["type", "text", "placeholder", "Quantity", 1, "form-control", 3, "ngModel", "ngModelChange"], ["type", "text", "placeholder", "CandleCount", 1, "form-control", 3, "ngModel", "ngModelChange"], ["type", "text", "placeholder", "Stop Loss Percentage", 1, "form-control", 3, "ngModel", "ngModelChange"], ["type", "text", "placeholder", "Target Profit Percentage", 1, "form-control", 3, "ngModel", "ngModelChange"], ["type", "text", "placeholder", "Profit Or Loss", 1, "form-control", 3, "ngModel", "ngModelChange"], ["type", "text", "placeholder", "Profit Or Loss Percentage", 1, "form-control", 3, "ngModel", "ngModelChange"], ["rows", "15", "cols", "80", "placeholder", "Entry Condition", 3, "ngModel", "ngModelChange"], ["type", "text", "placeholder", "Entry Signal", 1, "form-control", 3, "ngModel", "ngModelChange"], ["rows", "15", "cols", "80", "placeholder", "Exit Condition", 3, "ngModel", "ngModelChange"], ["type", "text", "placeholder", "Exit Signal", 1, "form-control", 3, "ngModel", "ngModelChange"], [1, "btn", "btn-success", "btn-lg", "btn-block", 3, "click"], ["class", "form-group", 4, "ngIf"], ["class", "app-loading", 4, "ngIf"], [3, "click"], ["echarts", "", 1, "demo-chart", 3, "options", "merge"], [1, "btn", "btn-success", "btn-lg", "btn-block", 3, "routerLink", "queryParams"], [1, "app-loading"], [1, "logo"], ["viewBox", "25 25 50 50", 1, "spinner"], ["cx", "50", "cy", "50", "r", "20", "fill", "none", "stroke-width", "2", "stroke-miterlimit", "10", 1, "path"]],
+      vars: 20,
+      consts: [[1, "container", "custom-container"], [1, "col-md-12"], [1, "mb-3", "text-center"], [1, "form-group"], ["type", "text", "placeholder", "StrategyName", 1, "form-control", 3, "ngModel", "ngModelChange"], ["type", "text", "placeholder", "Ticker", 1, "form-control", 3, "ngModel", "ngModelChange"], [1, "form-control", 3, "ngModel", "ngModelChange"], [4, "ngFor", "ngForOf"], ["type", "text", "placeholder", "Quantity", 1, "form-control", 3, "ngModel", "ngModelChange"], ["type", "text", "placeholder", "CandleCount", 1, "form-control", 3, "ngModel", "ngModelChange"], ["type", "text", "placeholder", "Stop Loss Percentage", 1, "form-control", 3, "ngModel", "ngModelChange"], ["type", "text", "placeholder", "Target Profit Percentage", 1, "form-control", 3, "ngModel", "ngModelChange"], ["type", "text", "placeholder", "Profit Or Loss", 1, "form-control", 3, "ngModel", "ngModelChange"], ["type", "text", "placeholder", "Profit Or Loss Percentage", 1, "form-control", 3, "ngModel", "ngModelChange"], ["rows", "15", "cols", "80", "placeholder", "Entry Condition", 3, "ngModel", "ngModelChange"], ["type", "text", "placeholder", "Entry Signal", 1, "form-control", 3, "ngModel", "ngModelChange"], ["rows", "15", "cols", "80", "placeholder", "Exit Condition", 3, "ngModel", "ngModelChange"], ["type", "text", "placeholder", "Exit Signal", 1, "form-control", 3, "ngModel", "ngModelChange"], [1, "btn", "btn-success", "btn-lg", "btn-block", 3, "click"], ["class", "form-group", 4, "ngIf"], ["class", "app-loading", 4, "ngIf"], [3, "click"], ["echarts", "", 1, "demo-chart", 3, "options", "merge", "loading"], [1, "btn", "btn-success", "btn-lg", "btn-block", 3, "routerLink", "queryParams"], [1, "app-loading"], [1, "logo"], ["viewBox", "25 25 50 50", 1, "spinner"], ["cx", "50", "cy", "50", "r", "20", "fill", "none", "stroke", "#6495ED", "stroke-width", "2", "stroke-miterlimit", "10", 1, "path"]],
       template: function BackTestEditComponent_Template(rf, ctx) {
         if (rf & 1) {
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
@@ -1392,11 +1407,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](4);
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("options", ctx.initialValue)("merge", ctx.dynamicData);
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("options", ctx.initialValue)("merge", ctx.dynamicData)("loading", ctx.loading);
         }
       },
       directives: [_angular_forms__WEBPACK_IMPORTED_MODULE_5__["DefaultValueAccessor"], _angular_forms__WEBPACK_IMPORTED_MODULE_5__["NgControlStatus"], _angular_forms__WEBPACK_IMPORTED_MODULE_5__["NgModel"], _angular_forms__WEBPACK_IMPORTED_MODULE_5__["SelectControlValueAccessor"], _angular_common__WEBPACK_IMPORTED_MODULE_6__["NgForOf"], _angular_common__WEBPACK_IMPORTED_MODULE_6__["NgIf"], ngx_echarts__WEBPACK_IMPORTED_MODULE_7__["ɵa"], _angular_forms__WEBPACK_IMPORTED_MODULE_5__["NgSelectOption"], _angular_forms__WEBPACK_IMPORTED_MODULE_5__["ɵangular_packages_forms_forms_x"], _angular_router__WEBPACK_IMPORTED_MODULE_3__["RouterLink"]],
-      styles: [".demo-chart[_ngcontent-%COMP%] {\n  height: 400px;\n  width: 1200px\n}\n\n.tp-section[_ngcontent-%COMP%] {\n   display: flex;\n   align-content: center;\n   align-items: center;\n   height: 60px;\n}\n\n.tp-margin[_ngcontent-%COMP%] {\n   margin: 0 10px;\n}\n\nbody[_ngcontent-%COMP%], html[_ngcontent-%COMP%] {\n  height: 100%;\n}\n\n.app-loading[_ngcontent-%COMP%] {\n  position: relative;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  height: 100%;\n}\n\n.app-loading[_ngcontent-%COMP%]   .spinner[_ngcontent-%COMP%] {\n  height: 200px;\n  width: 200px;\n  -webkit-animation: rotate 2s linear infinite;\n          animation: rotate 2s linear infinite;\n  transform-origin: center center;\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  margin: auto;\n}\n\n.app-loading[_ngcontent-%COMP%]   .spinner[_ngcontent-%COMP%]   .path[_ngcontent-%COMP%] {\n  stroke-dasharray: 1, 200;\n  stroke-dashoffset: 0;\n  -webkit-animation: dash 1.5s ease-in-out infinite;\n          animation: dash 1.5s ease-in-out infinite;\n  stroke-linecap: round;\n  stroke: #ddd;\n}\n\n@-webkit-keyframes rotate {\n  100% {\n    transform: rotate(360deg);\n  }\n}\n\n@keyframes rotate {\n  100% {\n    transform: rotate(360deg);\n  }\n}\n\n@-webkit-keyframes dash {\n  0% {\n    stroke-dasharray: 1, 200;\n    stroke-dashoffset: 0;\n  }\n  50% {\n    stroke-dasharray: 89, 200;\n    stroke-dashoffset: -35px;\n  }\n  100% {\n    stroke-dasharray: 89, 200;\n    stroke-dashoffset: -124px;\n  }\n}\n\n@keyframes dash {\n  0% {\n    stroke-dasharray: 1, 200;\n    stroke-dashoffset: 0;\n  }\n  50% {\n    stroke-dasharray: 89, 200;\n    stroke-dashoffset: -35px;\n  }\n  100% {\n    stroke-dasharray: 89, 200;\n    stroke-dashoffset: -124px;\n  }\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvYmFjay10ZXN0LWVkaXQvYmFjay10ZXN0LWVkaXQuY29tcG9uZW50LmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLGFBQWE7RUFDYjtBQUNGOztBQUVBO0dBQ0csYUFBYTtHQUNiLHFCQUFxQjtHQUNyQixtQkFBbUI7R0FDbkIsWUFBWTtBQUNmOztBQUNBO0dBQ0csY0FBYztBQUNqQjs7QUFFQTtFQUNFLFlBQVk7QUFDZDs7QUFDQTtFQUNFLGtCQUFrQjtFQUNsQixhQUFhO0VBQ2Isc0JBQXNCO0VBQ3RCLG1CQUFtQjtFQUNuQix1QkFBdUI7RUFDdkIsWUFBWTtBQUNkOztBQUVBO0VBQ0UsYUFBYTtFQUNiLFlBQVk7RUFDWiw0Q0FBb0M7VUFBcEMsb0NBQW9DO0VBQ3BDLCtCQUErQjtFQUMvQixrQkFBa0I7RUFDbEIsTUFBTTtFQUNOLFNBQVM7RUFDVCxPQUFPO0VBQ1AsUUFBUTtFQUNSLFlBQVk7QUFDZDs7QUFFQTtFQUNFLHdCQUF3QjtFQUN4QixvQkFBb0I7RUFDcEIsaURBQXlDO1VBQXpDLHlDQUF5QztFQUN6QyxxQkFBcUI7RUFDckIsWUFBWTtBQUNkOztBQUVBO0VBQ0U7SUFDRSx5QkFBeUI7RUFDM0I7QUFDRjs7QUFKQTtFQUNFO0lBQ0UseUJBQXlCO0VBQzNCO0FBQ0Y7O0FBRUE7RUFDRTtJQUNFLHdCQUF3QjtJQUN4QixvQkFBb0I7RUFDdEI7RUFDQTtJQUNFLHlCQUF5QjtJQUN6Qix3QkFBd0I7RUFDMUI7RUFDQTtJQUNFLHlCQUF5QjtJQUN6Qix5QkFBeUI7RUFDM0I7QUFDRjs7QUFiQTtFQUNFO0lBQ0Usd0JBQXdCO0lBQ3hCLG9CQUFvQjtFQUN0QjtFQUNBO0lBQ0UseUJBQXlCO0lBQ3pCLHdCQUF3QjtFQUMxQjtFQUNBO0lBQ0UseUJBQXlCO0lBQ3pCLHlCQUF5QjtFQUMzQjtBQUNGIiwiZmlsZSI6InNyYy9hcHAvYmFjay10ZXN0LWVkaXQvYmFjay10ZXN0LWVkaXQuY29tcG9uZW50LmNzcyIsInNvdXJjZXNDb250ZW50IjpbIi5kZW1vLWNoYXJ0IHtcbiAgaGVpZ2h0OiA0MDBweDtcbiAgd2lkdGg6IDEyMDBweFxufVxuXG4udHAtc2VjdGlvbiB7XG4gICBkaXNwbGF5OiBmbGV4O1xuICAgYWxpZ24tY29udGVudDogY2VudGVyO1xuICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgIGhlaWdodDogNjBweDtcbn1cbi50cC1tYXJnaW4ge1xuICAgbWFyZ2luOiAwIDEwcHg7XG59XG5cbmJvZHksIGh0bWwge1xuICBoZWlnaHQ6IDEwMCU7XG59XG4uYXBwLWxvYWRpbmcge1xuICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsZXgtZGlyZWN0aW9uOiBjb2x1bW47XG4gIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICBoZWlnaHQ6IDEwMCU7XG59XG5cbi5hcHAtbG9hZGluZyAuc3Bpbm5lciB7XG4gIGhlaWdodDogMjAwcHg7XG4gIHdpZHRoOiAyMDBweDtcbiAgYW5pbWF0aW9uOiByb3RhdGUgMnMgbGluZWFyIGluZmluaXRlO1xuICB0cmFuc2Zvcm0tb3JpZ2luOiBjZW50ZXIgY2VudGVyO1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIHRvcDogMDtcbiAgYm90dG9tOiAwO1xuICBsZWZ0OiAwO1xuICByaWdodDogMDtcbiAgbWFyZ2luOiBhdXRvO1xufVxuXG4uYXBwLWxvYWRpbmcgLnNwaW5uZXIgLnBhdGgge1xuICBzdHJva2UtZGFzaGFycmF5OiAxLCAyMDA7XG4gIHN0cm9rZS1kYXNob2Zmc2V0OiAwO1xuICBhbmltYXRpb246IGRhc2ggMS41cyBlYXNlLWluLW91dCBpbmZpbml0ZTtcbiAgc3Ryb2tlLWxpbmVjYXA6IHJvdW5kO1xuICBzdHJva2U6ICNkZGQ7XG59XG5cbkBrZXlmcmFtZXMgcm90YXRlIHtcbiAgMTAwJSB7XG4gICAgdHJhbnNmb3JtOiByb3RhdGUoMzYwZGVnKTtcbiAgfVxufVxuXG5Aa2V5ZnJhbWVzIGRhc2gge1xuICAwJSB7XG4gICAgc3Ryb2tlLWRhc2hhcnJheTogMSwgMjAwO1xuICAgIHN0cm9rZS1kYXNob2Zmc2V0OiAwO1xuICB9XG4gIDUwJSB7XG4gICAgc3Ryb2tlLWRhc2hhcnJheTogODksIDIwMDtcbiAgICBzdHJva2UtZGFzaG9mZnNldDogLTM1cHg7XG4gIH1cbiAgMTAwJSB7XG4gICAgc3Ryb2tlLWRhc2hhcnJheTogODksIDIwMDtcbiAgICBzdHJva2UtZGFzaG9mZnNldDogLTEyNHB4O1xuICB9XG59XG4iXX0= */"]
+      styles: [".demo-chart[_ngcontent-%COMP%] {\n  height: 400px;\n  width: 1200px\n}\n\n.tp-section[_ngcontent-%COMP%] {\n   display: flex;\n   align-content: center;\n   align-items: center;\n   height: 60px;\n}\n\n.tp-margin[_ngcontent-%COMP%] {\n   margin: 0 10px;\n}\n\nbody[_ngcontent-%COMP%], html[_ngcontent-%COMP%] {\n  height: 100%;\n}\n\n.app-loading[_ngcontent-%COMP%] {\n  position: relative;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  height: 100%;\n\n}\n\n.app-loading[_ngcontent-%COMP%]   .spinner[_ngcontent-%COMP%] {\n  height: 200px;\n  width: 200px;\n  -webkit-animation: rotate 2s linear infinite;\n          animation: rotate 2s linear infinite;\n  transform-origin: center center;\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  margin: auto;\n}\n\n.app-loading[_ngcontent-%COMP%]   .spinner[_ngcontent-%COMP%]   .path[_ngcontent-%COMP%] {\n  stroke-dasharray: 1, 200;\n  stroke-dashoffset: 0;\n  -webkit-animation: dash 1.5s ease-in-out infinite;\n          animation: dash 1.5s ease-in-out infinite;\n  stroke-linecap: round;\n  stroke: #6495ED;\n}\n\n@-webkit-keyframes rotate {\n  100% {\n    transform: rotate(360deg);\n  }\n}\n\n@keyframes rotate {\n  100% {\n    transform: rotate(360deg);\n  }\n}\n\n@-webkit-keyframes dash {\n  0% {\n    stroke-dasharray: 1, 200;\n    stroke-dashoffset: 0;\n  }\n  50% {\n    stroke-dasharray: 89, 200;\n    stroke-dashoffset: -35px;\n  }\n  100% {\n    stroke-dasharray: 89, 200;\n    stroke-dashoffset: -124px;\n  }\n}\n\n@keyframes dash {\n  0% {\n    stroke-dasharray: 1, 200;\n    stroke-dashoffset: 0;\n  }\n  50% {\n    stroke-dasharray: 89, 200;\n    stroke-dashoffset: -35px;\n  }\n  100% {\n    stroke-dasharray: 89, 200;\n    stroke-dashoffset: -124px;\n  }\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvYmFjay10ZXN0LWVkaXQvYmFjay10ZXN0LWVkaXQuY29tcG9uZW50LmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLGFBQWE7RUFDYjtBQUNGOztBQUVBO0dBQ0csYUFBYTtHQUNiLHFCQUFxQjtHQUNyQixtQkFBbUI7R0FDbkIsWUFBWTtBQUNmOztBQUNBO0dBQ0csY0FBYztBQUNqQjs7QUFFQTtFQUNFLFlBQVk7QUFDZDs7QUFDQTtFQUNFLGtCQUFrQjtFQUNsQixhQUFhO0VBQ2Isc0JBQXNCO0VBQ3RCLG1CQUFtQjtFQUNuQix1QkFBdUI7RUFDdkIsWUFBWTs7QUFFZDs7QUFFQTtFQUNFLGFBQWE7RUFDYixZQUFZO0VBQ1osNENBQW9DO1VBQXBDLG9DQUFvQztFQUNwQywrQkFBK0I7RUFDL0Isa0JBQWtCO0VBQ2xCLE1BQU07RUFDTixTQUFTO0VBQ1QsT0FBTztFQUNQLFFBQVE7RUFDUixZQUFZO0FBQ2Q7O0FBRUE7RUFDRSx3QkFBd0I7RUFDeEIsb0JBQW9CO0VBQ3BCLGlEQUF5QztVQUF6Qyx5Q0FBeUM7RUFDekMscUJBQXFCO0VBQ3JCLGVBQWU7QUFDakI7O0FBRUE7RUFDRTtJQUNFLHlCQUF5QjtFQUMzQjtBQUNGOztBQUpBO0VBQ0U7SUFDRSx5QkFBeUI7RUFDM0I7QUFDRjs7QUFFQTtFQUNFO0lBQ0Usd0JBQXdCO0lBQ3hCLG9CQUFvQjtFQUN0QjtFQUNBO0lBQ0UseUJBQXlCO0lBQ3pCLHdCQUF3QjtFQUMxQjtFQUNBO0lBQ0UseUJBQXlCO0lBQ3pCLHlCQUF5QjtFQUMzQjtBQUNGOztBQWJBO0VBQ0U7SUFDRSx3QkFBd0I7SUFDeEIsb0JBQW9CO0VBQ3RCO0VBQ0E7SUFDRSx5QkFBeUI7SUFDekIsd0JBQXdCO0VBQzFCO0VBQ0E7SUFDRSx5QkFBeUI7SUFDekIseUJBQXlCO0VBQzNCO0FBQ0YiLCJmaWxlIjoic3JjL2FwcC9iYWNrLXRlc3QtZWRpdC9iYWNrLXRlc3QtZWRpdC5jb21wb25lbnQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmRlbW8tY2hhcnQge1xuICBoZWlnaHQ6IDQwMHB4O1xuICB3aWR0aDogMTIwMHB4XG59XG5cbi50cC1zZWN0aW9uIHtcbiAgIGRpc3BsYXk6IGZsZXg7XG4gICBhbGlnbi1jb250ZW50OiBjZW50ZXI7XG4gICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgaGVpZ2h0OiA2MHB4O1xufVxuLnRwLW1hcmdpbiB7XG4gICBtYXJnaW46IDAgMTBweDtcbn1cblxuYm9keSwgaHRtbCB7XG4gIGhlaWdodDogMTAwJTtcbn1cbi5hcHAtbG9hZGluZyB7XG4gIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgZGlzcGxheTogZmxleDtcbiAgZmxleC1kaXJlY3Rpb246IGNvbHVtbjtcbiAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gIGhlaWdodDogMTAwJTtcblxufVxuXG4uYXBwLWxvYWRpbmcgLnNwaW5uZXIge1xuICBoZWlnaHQ6IDIwMHB4O1xuICB3aWR0aDogMjAwcHg7XG4gIGFuaW1hdGlvbjogcm90YXRlIDJzIGxpbmVhciBpbmZpbml0ZTtcbiAgdHJhbnNmb3JtLW9yaWdpbjogY2VudGVyIGNlbnRlcjtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICB0b3A6IDA7XG4gIGJvdHRvbTogMDtcbiAgbGVmdDogMDtcbiAgcmlnaHQ6IDA7XG4gIG1hcmdpbjogYXV0bztcbn1cblxuLmFwcC1sb2FkaW5nIC5zcGlubmVyIC5wYXRoIHtcbiAgc3Ryb2tlLWRhc2hhcnJheTogMSwgMjAwO1xuICBzdHJva2UtZGFzaG9mZnNldDogMDtcbiAgYW5pbWF0aW9uOiBkYXNoIDEuNXMgZWFzZS1pbi1vdXQgaW5maW5pdGU7XG4gIHN0cm9rZS1saW5lY2FwOiByb3VuZDtcbiAgc3Ryb2tlOiAjNjQ5NUVEO1xufVxuXG5Aa2V5ZnJhbWVzIHJvdGF0ZSB7XG4gIDEwMCUge1xuICAgIHRyYW5zZm9ybTogcm90YXRlKDM2MGRlZyk7XG4gIH1cbn1cblxuQGtleWZyYW1lcyBkYXNoIHtcbiAgMCUge1xuICAgIHN0cm9rZS1kYXNoYXJyYXk6IDEsIDIwMDtcbiAgICBzdHJva2UtZGFzaG9mZnNldDogMDtcbiAgfVxuICA1MCUge1xuICAgIHN0cm9rZS1kYXNoYXJyYXk6IDg5LCAyMDA7XG4gICAgc3Ryb2tlLWRhc2hvZmZzZXQ6IC0zNXB4O1xuICB9XG4gIDEwMCUge1xuICAgIHN0cm9rZS1kYXNoYXJyYXk6IDg5LCAyMDA7XG4gICAgc3Ryb2tlLWRhc2hvZmZzZXQ6IC0xMjRweDtcbiAgfVxufVxuIl19 */"]
     });
     /*@__PURE__*/
 
@@ -1669,7 +1684,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         value: function handleError(error) {
           var errorMessage = '';
 
-          if (error.status == 0 || error.status == 200) {
+          if (error.status == 200) {
             return;
           }
 
