@@ -7,6 +7,10 @@ import {BackTestStrategy } from "../shared/backTestStrategy";
 import { EChartOption } from 'echarts';
 import { CSVUtil } from '../shared/csvUtil.service';
 import { retry, catchError } from 'rxjs/operators';
+import { TemplateRef } from '@angular/core';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import {TechnicalIndicatorTemplate} from "../shared/indicator-template";
+import indicatorTemplates  from "../trade-repository/technical-indicator-template.json";
 
 @Component({
   selector: 'back-test-edit',
@@ -47,12 +51,16 @@ export class BackTestEditComponent implements OnInit {
   intervalDurationOptions : string[] = ["ONE_MIN","FIVE_MINUTE","FIFTEEN_MINUTE","ONE_DAY"];
   loading : boolean = false;
   errorMessage : string = "";
+  modalRef: BsModalRef;
+  indicatorTemplates : any[] = indicatorTemplates;
+  technicalIndicatorTemplates : any[] = [];
 
   constructor(
     public restApi: RestApiService,
     public actRoute: ActivatedRoute,
     public router: Router,
-    public csvUtil : CSVUtil
+    public csvUtil : CSVUtil,
+    private modalService: BsModalService
   ) {
     this.actRoute.params.subscribe( params => {
       console.log(params);
@@ -63,7 +71,16 @@ export class BackTestEditComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.technicalIndicatorTemplates = this.indicatorTemplates;
+//    this.readTechincalIndicatorTemplate();
     this.getBackTestStrategyWithParam();
+   }
+
+
+  readTechincalIndicatorTemplate() {
+     this.restApi.getTechnicalIndicatorTemplate().subscribe(data => {
+       this.technicalIndicatorTemplates = data;
+     })
    }
 
   getBackTestStrategyWithParam() {
@@ -87,12 +104,13 @@ export class BackTestEditComponent implements OnInit {
   // Update employee data
   executeBackTestStrategy() {
     this.loading = true;
+    this.dynamicData = {};
     this.restApi.executeBackTestStrategy(this.backTestStrategy.backTestRequest).subscribe(data => {
       this.backTestResponse = data;
       this.backTestStrategy.profitOrLoss = this.backTestResponse.profitOrLoss;
       this.backTestStrategy.profitPercentage = this.backTestResponse.profitPercentage;
       this.formDataforChart(this.backTestResponse.trades);
-      this.loading = false;
+          this.loading = false;
     },
     error =>
     {
@@ -105,7 +123,7 @@ export class BackTestEditComponent implements OnInit {
 
   formDataforChart(backTestTrades) {
     let i = 0;
-    let eChartDataSeries = [];
+    let eChartDataSeries :any[] = [];
     for(let backTestTrade of backTestTrades){
        let profitAndTime = [];
        profitAndTime.push(backTestTrade.exitTime);
@@ -116,8 +134,8 @@ export class BackTestEditComponent implements OnInit {
       data : eChartDataSeries,
       type : 'bar'
     };
+
     this.dynamicData=this.initialValue;
-    this.dynamicData.series = [];
     this.dynamicData.series.push(data);
   }
 
@@ -141,7 +159,7 @@ export class BackTestEditComponent implements OnInit {
   initialValue: EChartOption = {
     xAxis: {
       type: 'time',
-      splitNumber : 20
+      splitNumber : 40
     },
     yAxis: {
       type: 'value',
@@ -154,4 +172,10 @@ export class BackTestEditComponent implements OnInit {
     }]
   }
 
+
+  openModal(template: TemplateRef<any>) {
+    this.modalRef = this.modalService.show(template);
+
+  //  this.readTechincalIndicatorTemplate();
+  }
 }

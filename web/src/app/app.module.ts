@@ -18,7 +18,9 @@ import { TradeStrategyEditComponent } from './trade-strategy-edit/trade-strategy
 import { TradeStrategyBrowseComponent } from './trade-strategy-browse/trade-strategy-browse.component';
 import { BackTestEditComponent } from './back-test-edit/back-test-edit.component';
 import { BackTestBrowseComponent } from './back-test-browse/back-test-browse.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 
 @NgModule({
@@ -34,6 +36,8 @@ import { BackTestBrowseComponent } from './back-test-browse/back-test-browse.com
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    BrowserAnimationsModule,
+    ModalModule.forRoot(),
     NgxEchartsModule
   ],
   providers: [],

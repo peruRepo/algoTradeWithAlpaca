@@ -37,7 +37,6 @@ public class AlpacaEventFactory {
 	
     @PostConstruct
 	public void listenAndPropagateAlpacaEvent(){
-    	
         alpacaAPI.addAlpacaStreamListener(new AlpacaStreamListenerAdapter(
                 AlpacaStreamMessageType.ACCOUNT_UPDATES,
                 AlpacaStreamMessageType.TRADE_UPDATES) {
@@ -63,6 +62,7 @@ public class AlpacaEventFactory {
 				if( order.getStatus().equalsIgnoreCase("filled") || 
 						order.getStatus().equalsIgnoreCase("cancelled") ||
 						order.getStatus().equalsIgnoreCase("expired")){
+					logger.info("Order for the ticker="+order.getSymbol()+" is "+order.getStatus());
 					pendingOrderRegistry.remove(orderId);
 					AlpaceTradeUpdateEvent event = new AlpaceTradeUpdateEvent(order);
 					applicationEventPublisher.publishEvent(event);
