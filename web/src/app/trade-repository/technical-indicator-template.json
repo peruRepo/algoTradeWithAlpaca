@@ -1,0 +1,26 @@
+[
+  {
+    "indicatorName": "Buy_Based_on_Price_Point",
+    "indicatorTemplate": "function(barSeries, index, stockWatch){\n            closePriceIndicator = new ClosePriceIndicator(barSeries);\n  \nif (closePriceIndicator.getValue(index).floatValue() < 500) {\n                return true;\n            }\n            return false;\n        };\n        "
+  },
+  {
+    "indicatorName": "EMA_30_AND_EMA5",
+    "indicatorTemplate": "function(barSeries, index, stockWatch){\n    closePriceIndicator = new ClosePriceIndicator(barSeries);\n    ema30Indicator = new EMAIndicator(closePriceIndicator, 30);\n    ema5Indicator = new EMAIndicator(closePriceIndicator, 5);\n\n    if (ema5Indicator.getValue(index).floatValue() >\n       ema30Indicator.getValue(index).floatValue()) {\n        return true;\n    }\n    return false;\n};"
+  },
+  {
+    "indicatorName": "MACD_and_RSI",
+    "indicatorTemplate": "\n      function(barSeries, index, stockWatch){\n        closePriceIndicator = new ClosePriceIndicator(barSeries);\n        rsiIndicator = new RSIIndicator(closePriceIndicator,14);\n        macdIndicator = new MACDIndicator(closePriceIndicator);\n        signalIndicator = new EMAIndicator(macdIndicator, 9);\n       if(macdIndicator.getValue(index).isLessThan(signalIndicator.getValue(index)) ||\n           rsiIndicator.getValue(index).floatValue() > 60 ){\n      \t\treturn true;\n      \t}\n      \treturn false;\n      };"
+  },
+  {
+    "indicatorName": "Bollinger",
+    "indicatorTemplate": "function(barSeries, index, stockWatch){\n    \tmedianPriceIndicator = new MedianPriceIndicator(barSeries);\n      ema30Indicator = new EMAIndicator(medianPriceIndicator, 30);\n      bollingerBandsMiddleIndicator =  new BollingerBandsMiddleIndicator(ema30Indicator);\n      standardDeviationIndicator = new StandardDeviationIndicator(medianPriceIndicator, 30);\n      bollingerBandsUpperIndicator = new BollingerBandsUpperIndicator(bollingerBandsMiddleIndicator, standardDeviationIndicator);\n      bollingerBandsLowerIndicator = new BollingerBandsLowerIndicator(bollingerBandsMiddleIndicator, standardDeviationIndicator);\n\n    \tif(medianPriceIndicator.getValue(index).isGreaterThan(bollingerBandsUpperIndicator.getValue(index))){\n    \t\treturn true;\n    \t}\n    \treturn false;\n    };"
+  },
+  {
+    "indicatorName": "ADX",
+    "indicatorTemplate": "  function(barSeries, index, stockWatch){\n         adxIndicator = new ADXIndicator(barSeries,14,14);\n       \t if(adxIndicator.getValue(index).intValue() > 25 ){\n       \t    return true;\n       \t  }\n       \t  return false;\n        };"
+  },
+  {
+    "indicatorName": "StochasticRSI",
+    "indicatorTemplate": "    function(barSeries, index, stockWatch){\n           closePriceIndicator = new ClosePriceIndicator(barSeries);\n           stochasticRSIIndicator = new StochasticRSIIndicator(closePriceIndicator,14);\n         \t if(stochasticRSIIndicator.getValue(index).intValue() < 20 ){\n         \t    return true;\n         \t  }\n         \t  return false;\n          };"
+  }
+]

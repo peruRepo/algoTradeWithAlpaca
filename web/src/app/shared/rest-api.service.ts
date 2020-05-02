@@ -6,6 +6,7 @@ import { BackTestRequest } from './backTestRequest';
 import { BackTestResponse } from './backTestResponse';
 import { Observable, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
+import {TechnicalIndicatorTemplate} from "../shared/indicator-template";
 
 @Injectable({
   providedIn: 'root'
@@ -110,5 +111,15 @@ export class RestApiService {
     return throwError(errorMessage);
   //  return errorMessage;
   }
+
+
+  public getTechnicalIndicatorTemplate(): Observable<TechnicalIndicatorTemplate[]> {
+      return this.http.get<TechnicalIndicatorTemplate[]>("../trade-repository/technical-indicator-template.json")
+      .pipe(
+        retry(1),
+        catchError(this.handleError)
+      );
+  }
+
 
 }

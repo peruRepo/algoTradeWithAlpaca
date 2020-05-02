@@ -7,6 +7,10 @@ import {BackTestStrategy } from "../shared/backTestStrategy";
 import { EChartOption } from 'echarts';
 import { CSVUtil } from '../shared/csvUtil.service';
 import { retry, catchError } from 'rxjs/operators';
+import { TemplateRef } from '@angular/core';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import {TechnicalIndicatorTemplate} from "../shared/indicator-template";
+import indicatorTemplates  from "../trade-repository/technical-indicator-template.json";
 
 @Component({
   selector: 'back-test-edit',
@@ -47,12 +51,16 @@ export class BackTestEditComponent implements OnInit {
   intervalDurationOptions : string[] = ["ONE_MIN","FIVE_MINUTE","FIFTEEN_MINUTE","ONE_DAY"];
   loading : boolean = false;
   errorMessage : string = "";
+  modalRef: BsModalRef;
+  indicatorTemplates : any[] = indicatorTemplates;
+  technicalIndicatorTemplates : any[] = [];
 
   constructor(
     public restApi: RestApiService,
     public actRoute: ActivatedRoute,
     public router: Router,
-    public csvUtil : CSVUtil
+    public csvUtil : CSVUtil,
+    private modalService: BsModalService
   ) {
     this.actRoute.params.subscribe( params => {
       console.log(params);
@@ -63,7 +71,16 @@ export class BackTestEditComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.technicalIndicatorTemplates = this.indicatorTemplates;
+//    this.readTechincalIndicatorTemplate();
     this.getBackTestStrategyWithParam();
+   }
+
+
+  readTechincalIndicatorTemplate() {
+     this.restApi.getTechnicalIndicatorTemplate().subscribe(data => {
+       this.technicalIndicatorTemplates = data;
+     })
    }
 
   getBackTestStrategyWithParam() {
@@ -155,4 +172,10 @@ export class BackTestEditComponent implements OnInit {
     }]
   }
 
+
+  openModal(template: TemplateRef<any>) {
+    this.modalRef = this.modalService.show(template);
+
+  //  this.readTechincalIndicatorTemplate();
+  }
 }
