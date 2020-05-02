@@ -30,6 +30,7 @@ import com.algotrade.alpaca.data.pojo.TradeOrder;
 import com.algotrade.alpaca.data.repository.TradeStrategyRepo;
 import com.algotrade.alpaca.data.service.MarketDataService;
 import com.algotrade.alpaca.service.PortfolioServiceI;
+import com.algotrade.alpaca.service.TradingCircuitBreakerI;
 import com.algotrade.alpaca.service.TradingServiceI;
 import com.algotrade.alpaca.strategy.exception.TradeStrategyExecutionException;
 import com.algotrade.alpaca.strategy.exception.TradeStrategyExecutionInterruption;
@@ -62,6 +63,10 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	
 	@Autowired 
 	private ConcurrentHashMap<String, String> pendingOrderRegistry;
+	
+	
+	@Autowired
+	private TradingCircuitBreakerI tradingCircuitBreakerI;
 	
 	//private ScriptEngine engine;
 
@@ -123,7 +128,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 								Boolean isTradingRuleSucceeds = executeTradingRule(
 										stockTradeStrategy.getTradeStrategy().getEntryConditions(), barSeries,
 										stockWatch);
-								if (isTradingRuleSucceeds) {
+								if (isTradingRuleSucceeds && tradingCircuitBreakerI.allowedToEnterTrade()) {
 									logger.info(stockTradeStrategy.getTradeStrategy().getEntrySignal()
 											+ " order is requested!");
 									stockTradeStrategy.setState(TradeStrategyState.ENTRY_ORDER_PENDING);
