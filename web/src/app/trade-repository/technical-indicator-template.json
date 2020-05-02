@@ -11,6 +11,7 @@
     "indicatorName": "MACD_and_RSI",
     "indicatorTemplate": "\n      function(barSeries, index, stockWatch){\n        closePriceIndicator = new ClosePriceIndicator(barSeries);\n        rsiIndicator = new RSIIndicator(closePriceIndicator,14);\n        macdIndicator = new MACDIndicator(closePriceIndicator);\n        signalIndicator = new EMAIndicator(macdIndicator, 9);\n       if(macdIndicator.getValue(index).isLessThan(signalIndicator.getValue(index)) ||\n           rsiIndicator.getValue(index).floatValue() > 60 ){\n      \t\treturn true;\n      \t}\n      \treturn false;\n      };"
   },
+  
   {
     "indicatorName": "Bollinger",
     "indicatorTemplate": "function(barSeries, index, stockWatch){\n    \tmedianPriceIndicator = new MedianPriceIndicator(barSeries);\n      ema30Indicator = new EMAIndicator(medianPriceIndicator, 30);\n      bollingerBandsMiddleIndicator =  new BollingerBandsMiddleIndicator(ema30Indicator);\n      standardDeviationIndicator = new StandardDeviationIndicator(medianPriceIndicator, 30);\n      bollingerBandsUpperIndicator = new BollingerBandsUpperIndicator(bollingerBandsMiddleIndicator, standardDeviationIndicator);\n      bollingerBandsLowerIndicator = new BollingerBandsLowerIndicator(bollingerBandsMiddleIndicator, standardDeviationIndicator);\n\n    \tif(medianPriceIndicator.getValue(index).isGreaterThan(bollingerBandsUpperIndicator.getValue(index))){\n    \t\treturn true;\n    \t}\n    \treturn false;\n    };"
