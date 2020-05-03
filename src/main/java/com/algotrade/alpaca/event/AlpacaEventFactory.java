@@ -1,11 +1,9 @@
 package com.algotrade.alpaca.event;
 
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiConsumer;
 
 import javax.annotation.PostConstruct;
 
-import org.hibernate.validator.internal.util.logging.Log_.logger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +32,13 @@ public class AlpacaEventFactory {
 	@Autowired 
 	private ConcurrentHashMap<String, String> pendingOrderRegistry;
 	
+	@Autowired
+	private AlpacaWebSocketService alpacaWebSocketService;
+	
 	
     @PostConstruct
 	public void listenAndPropagateAlpacaEvent(){
-        alpacaAPI.addAlpacaStreamListener(new AlpacaStreamListenerAdapter(
+    	alpacaWebSocketService.addListener(new AlpacaStreamListenerAdapter(
                 AlpacaStreamMessageType.ACCOUNT_UPDATES,
                 AlpacaStreamMessageType.TRADE_UPDATES) {
             @Override
