@@ -7,6 +7,7 @@ import { BackTestResponse } from './backTestResponse';
 import { Observable, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
 import {TechnicalIndicatorTemplate} from "../shared/indicator-template";
+import { TickerSuggestionResponse } from '../shared/stock-suggestion-response';
 
 @Injectable({
   providedIn: 'root'
@@ -78,6 +79,14 @@ export class RestApiService {
     )
   }
 
+  getStockSuggestion(tickerSearchString): Observable<TickerSuggestionResponse> {
+    return this.http.get<TickerSuggestionResponse>(this.apiURL + '/alpaca/getTickerSuggestion?tickerSearchString=' + tickerSearchString)
+    .pipe(
+      retry(1),
+      catchError(this.handleError)
+    )
+  }
+  
 
   deleteStockTradeStrategy(ticker) : Observable<any> {
     return this.http.delete<any>(this.apiURL + '/alpaca/strategy/removeStrategy?ticker=' + ticker)

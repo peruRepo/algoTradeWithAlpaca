@@ -1,6 +1,9 @@
 package com.algotrade.alpaca.event;
 
+import java.util.LinkedList;
 import java.util.List;
+
+import javax.validation.constraints.Null;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,11 +26,11 @@ public class AlpacaWebSocketService {
 	private String keyId = System.getProperty("alpca.api.keyId");
 	private String secret = System.getProperty("alpca.api.secret");
 	
-    private List<AlpacaStreamListener> listeners;
+    private List<AlpacaStreamListener> listeners = new LinkedList<AlpacaStreamListener>();
 
 	@Scheduled(initialDelay=2000, fixedDelay = 1200000)
 	public void refreshWebSocketConnection() {
-		if(alpacaWebsocketClient.isConnected()){
+		if(alpacaWebsocketClient != null &&  alpacaWebsocketClient.isConnected()){
 			alpacaWebsocketClient.disconnect();
 		}
 		this.alpacaWebsocketClient = new AlpacaWebsocketClient(keyId, secret, baseURL);

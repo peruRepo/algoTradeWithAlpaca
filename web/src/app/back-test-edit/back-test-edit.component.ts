@@ -11,6 +11,11 @@ import { TemplateRef } from '@angular/core';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import {TechnicalIndicatorTemplate} from "../shared/indicator-template";
 import indicatorTemplates  from "../trade-repository/technical-indicator-template.json";
+import { noop, Observable, Observer, of } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { TickerSuggestion } from '../shared/stock-suggestion';
+import { TickerSuggestionResponse } from '../shared/stock-suggestion-response';
+import { TypeaheadMatch } from 'ngx-bootstrap/typeahead/typeahead-match.class';
 
 @Component({
   selector: 'back-test-edit',
@@ -24,7 +29,7 @@ export class BackTestEditComponent implements OnInit {
         "strategyName": "Enter your Back test name here!!",
         "backTestRequest":{
         "strategyName": "Enter your Back test name here",
-        "ticker": "Enter your Stock name here!!",
+        "ticker": "",
         "quantity": 10,
         "intervalDuration": "ONE_MIN",
         "tradeStrategy":{
@@ -54,6 +59,9 @@ export class BackTestEditComponent implements OnInit {
   modalRef: BsModalRef;
   indicatorTemplates : any[] = indicatorTemplates;
   technicalIndicatorTemplates : any[] = [];
+  tickerSuggestion$: Observable<TickerSuggestion[]>;
+  tickerSuggestionList : TickerSuggestion[] = [];
+  tickerSearchString : string;
 
   constructor(
     public restApi: RestApiService,
@@ -72,23 +80,45 @@ export class BackTestEditComponent implements OnInit {
 
   ngOnInit() {
     this.technicalIndicatorTemplates = this.indicatorTemplates;
-//    this.readTechincalIndicatorTemplate();
     this.getBackTestStrategyWithParam();
+    this.registerTickerSuggestionObservable();
    }
 
-
-  readTechincalIndicatorTemplate() {
-     this.restApi.getTechnicalIndicatorTemplate().subscribe(data => {
-       this.technicalIndicatorTemplates = data;
-     })
-   }
 
   getBackTestStrategyWithParam() {
-    this.restApi.getBackTestStrategy(this.strategyName).subscribe(data => {
-      this.backTestStrategy = data;
-    })
+    if(this.strategyName){
+      this.restApi.getBackTestStrategy(this.strategyName).subscribe(data => {
+        this.backTestStrategy = data;
+      });
+    }
   }
 
+  registerTickerSuggestionObservable () {
+    this.tickerSuggestion$ = new Observable((observer: Observer<string>) => {
+      observer.next(this.backTestStrategy.backTestRequest.ticker);
+    }).pipe(
+      switchMap((tickerSearchString: string) => {
+        this.tickerSuggestionList  = [];
+        if (tickerSearchString) {
+
+          return this.restApi.getStockSuggestion(tickerSearchString)
+          .pipe(
+            map((data: TickerSuggestionResponse) => data && data.tickers || [] ),
+            tap(
+            () => noop,
+            err => {
+                        // in case of http error
+                        this.errorMessage = err && err.message || 'Something goes wrong';
+                      })
+                );
+       }
+        else {
+          return of([]);
+      }
+
+      })
+    );
+  }
 
   getBackTestStrategy() {
     this.restApi.getBackTestStrategy(this.backTestStrategy.backTestRequest.strategyName)
@@ -170,6 +200,11 @@ export class BackTestEditComponent implements OnInit {
       data : [],
       type: 'line'
     }]
+  }
+
+
+  onSelectingTicker(event: TypeaheadMatch): void {
+      this.backTestStrategy.backTestRequest.ticker = event.item.ticker;
   }
 
 
