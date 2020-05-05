@@ -4,6 +4,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,10 +16,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.mainstringargs.alpaca.AlpacaAPI;
 import io.github.mainstringargs.alpaca.rest.exception.AlpacaAPIRequestException;
 import io.github.mainstringargs.domain.alpaca.account.Account;
+import io.github.mainstringargs.polygon.PolygonAPI;
 
 @Configuration
 @EnableScheduling
 public class AlpacaTradeConfiguration {
+	
+	private Logger logger = LoggerFactory.getLogger(AlpacaTradeConfiguration.class);
 	
 	@Value("${alpaca.api.version}")
 	private String apiVersion;
@@ -46,7 +51,7 @@ public class AlpacaTradeConfiguration {
 	}
 
 	@Bean
-	public AlpacaAPI alpacaAPI(){
+	public AlpacaAPI alpacaAPI() throws AlpacaAPIRequestException {
 
 		keyId = System.getProperty("alpca.api.keyId");
 		secret = System.getProperty("alpca.api.secret");
@@ -54,11 +59,21 @@ public class AlpacaTradeConfiguration {
 		try {
 			Account alpacaAccount = alpacaAPI.getAccount();
 		} catch (AlpacaAPIRequestException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error happened while trying setup the bean AlpacaAPI",e);
+			throw e;
 		}
 		
 		return alpacaAPI;
+	}
+	
+	
+	@Bean
+	public PolygonAPI polygonAPI(){
+
+		keyId = System.getProperty("alpca.api.keyId");
+
+		return  new PolygonAPI(keyId);
+
 	}
 	
 	@Bean

@@ -1,23 +1,21 @@
 package com.algotrade.alpaca.strategy;
 
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.hibernate.validator.internal.util.logging.Log_.logger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
-import com.algotrade.alpaca.account.AlpacaAccountServiceI;
 import com.algotrade.alpaca.service.TradingCircuitBreakerI;
 
 import io.github.mainstringargs.alpaca.AlpacaAPI;
 import io.github.mainstringargs.alpaca.rest.exception.AlpacaAPIRequestException;
 import io.github.mainstringargs.domain.alpaca.account.Account;
 import io.github.mainstringargs.domain.alpaca.accountconfiguration.AccountConfiguration;
-import io.github.mainstringargs.domain.alpaca.order.Order;
 
+@Component
 public class TradingCircuitBreaker implements TradingCircuitBreakerI {
 
 	private static final Logger logger = LoggerFactory.getLogger(TradingCircuitBreaker.class);

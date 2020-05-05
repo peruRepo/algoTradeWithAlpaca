@@ -84,7 +84,8 @@
 		<dependency>
 			<groupId>io.github.mainstringargs</groupId>
 			<artifactId>alpaca-java</artifactId>
-			<version>5.0.8</version>
+			<!--  <version>5.0.8</version> -->
+			   <version>5.0.12</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>

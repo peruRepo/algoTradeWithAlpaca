@@ -10,7 +10,19 @@
 
     <div class="form-group">
       <label>Ticker</label>
-      <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.ticker" class="form-control" placeholder="Ticker">
+      <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.ticker"
+       [typeahead]="tickerSuggestion$"
+       [typeaheadAsync]="true"
+       typeaheadWaitMs="1000"
+       [typeaheadItemTemplate]="customListTemplate"
+       (typeaheadOnSelect)="onSelectingTicker($event)"
+       class="form-control"
+       placeholder="Ticker"
+       >
+
+       <ng-template #customListTemplate let-model="item">
+          <span><strong>{{model.ticker}}</strong> - {{model.name}}</span>
+        </ng-template>
     </div>
 
     <div class="form-group">

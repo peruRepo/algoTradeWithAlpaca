@@ -72,6 +72,7 @@ export class TradeStrategyEditComponent implements OnInit {
         this.stockTradeStrategy.ticker = backTestStrategy.backTestRequest.ticker;
         this.stockTradeStrategy.quantity = backTestStrategy.backTestRequest.quantity;
         this.stockTradeStrategy.interval = 1;
+        this.stockTradeStrategy.timeUnit = "MINUTES";
         this.stockTradeStrategy.intervalDuration = backTestStrategy.backTestRequest.intervalDuration;
         this.stockTradeStrategy.state = "WATCHING";
         this.stockTradeStrategy.candleCount=backTestStrategy.backTestRequest.candleCount;

@@ -21,7 +21,7 @@ import { BackTestBrowseComponent } from './back-test-browse/back-test-browse.com
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ModalModule } from 'ngx-bootstrap/modal';
-
+import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 
 @NgModule({
   declarations: [
@@ -38,6 +38,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     FormsModule,
     BrowserAnimationsModule,
     ModalModule.forRoot(),
+    TypeaheadModule.forRoot(),
     NgxEchartsModule
   ],
   providers: [],
