@@ -1,0 +1,33 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="card-title"> Back Test Browse </h4>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table">
+            <thead class=" text-primary">
+                  <th>Strategy Name</th>
+                  <th>Ticker</th>
+                  <th>IntervalDuration</th>
+                  <th>profit Percentage </th>
+                  <th>Action </th>
+            </thead>
+            <tbody>
+                <tr *ngFor="let backTestStrategy of backTestStrategies">
+                  <td  class="text-left">{{backTestStrategy.strategyName}}</td>
+                  <td class="text-left">{{backTestStrategy.backTestRequest.ticker}}</td>
+                  <td class="text-left">{{backTestStrategy.backTestRequest.intervalDuration}}</td>
+                  <td class="text-left">{{backTestStrategy.profitPercentage}}</td>
+                  <td class="nc-icon nc-settings" routerLink="backtest/{{backTestStrategy.strategyName}}"></td>
+                  <td class="nc-icon nc-simple-remove" (click)="deleteBackTestStrategy(backTestStrategy.strategyName)"></td>
+                </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,36 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="card-title"> Trade Strategy Browse </h4>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table">
+            <thead class=" text-primary">
+              <th>Ticker</th>
+              <th>Interval</th>
+              <th>IntervalDuration</th>
+              <th>TimeUnit</th>
+              <th>State</th>
+              <th>CandleCount</th>
+              <th>Action</th>
+            </thead>
+            <tbody>
+                <tr *ngFor="let stockTradeStrategy of stockTradeStrategies">
+                    <td class="text-left">{{stockTradeStrategy.ticker}}</td>
+                    <td class="text-left">{{stockTradeStrategy.interval}}</td>
+                    <td class="text-left">{{stockTradeStrategy.intervalDuration}}</td>
+                    <td class="text-left">{{stockTradeStrategy.timeUnit}}</td>
+                    <td class="text-left">{{stockTradeStrategy.state}}</td>
+                    <td class="text-left">{{stockTradeStrategy.candleCount}}</td>
+                  <td class="nc-icon nc-settings" [routerLink]="['/trading-strategy-edit']"  [queryParams]="{ ticker: stockTradeStrategy.ticker}"></td>
+                  <td class="nc-icon nc-simple-remove" (click)="deleteStockStrategy(stockTradeStrategy.ticker)"></td>
+                </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
