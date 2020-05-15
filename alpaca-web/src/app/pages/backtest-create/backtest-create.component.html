@@ -1,0 +1,206 @@
+<div class="row">
+    <div class="col-md-12">
+      <div class="card card-user">
+        <div class="card-header">
+          <h5 class="card-title">Create a new Back Test for your strategy</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+              <div class="col-md-5 pr-1">
+                <div class="form-group">
+                  <label>Give your Stratey a name</label>
+                  <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.strategyName" class="form-control">
+                </div>
+              </div>
+              <div class="col-md-3 px-1">
+                <div class="form-group">
+                  <label>Ticker</label>
+                  <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.ticker"
+                   [typeahead]="tickerSuggestion$"
+                   [typeaheadAsync]="true"
+                   typeaheadWaitMs="1000"
+                   [typeaheadItemTemplate]="customListTemplate"
+                   (typeaheadOnSelect)="onSelectingTicker($event)"
+                   class="form-control"
+                   placeholder="Ticker"
+                   ><ng-template #customListTemplate let-model="item">
+                      <span><strong>{{model.ticker}}</strong> - {{model.name}}</span>
+                    </ng-template>
+                </div>
+              </div>
+              <div class="col-md-4 pl-1">
+                <div class="form-group">
+                  <label>IntervalDuration</label>
+                  <select [(ngModel)]="backTestStrategy.backTestRequest.intervalDuration" class="form-control">
+                    <option class="form-control" *ngFor="let option of intervalDurationOptions">
+                      {{option}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 pr-1">
+                <div class="form-group">
+                  <label>Quantity</label>
+                  <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.quantity" class="form-control" placeholder="Quantity">
+                </div>
+              </div>
+              <div class="col-md-6 pl-1">
+                <div class="form-group">
+                  <label>CandleCount</label>
+                  <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.candleCount" class="form-control" placeholder="CandleCount">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>StopLossPercentage</label>
+                  <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.stockWatch.stopLossPercentage" class="form-control" placeholder="Stop Loss Percentage">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Target Profit Percentage</label>
+                  <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.stockWatch.profitPercentage" class="form-control" placeholder="Target Profit Percentage">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>EntrySignal</label>
+                  <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.tradeStrategy.entrySignal" class="form-control" placeholder="Entry Signal">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <table>
+                    <tr>
+                      <td>
+                        <label>EntryConditions</label>
+                        <br>
+                          <textarea class="form-control col-xs-12" rows = "15" cols = "80" [(ngModel)]="backTestStrategy.backTestRequest.tradeStrategy.entryConditions"  placeholder="Entry Condition">
+                            Enter entry condition here
+                          </textarea>
+                        <br>
+                    </td>
+                    <td>
+                      <button class="fa fa-question-circle" style="font-size:24px;border-radius:24px" (click)="openModal(template)" ></button>
+                      <ng-template #template>
+                          <div class="col-md-30">
+                          <div class="modal-header">
+                            <h4 class="modal-title pull-left">Technical Indicator Template</h4>
+                            <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <table class="table table-bordered">
+                              <thead>
+                                <tr>
+                                  <th scope="col">Technical Indicator Name</th>
+                                  <th scope="col">Template</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let technicalIndicatorTemplate of technicalIndicatorTemplates">
+                                  <td>{{technicalIndicatorTemplate.indicatorName}}</td>
+                                  <td>{{technicalIndicatorTemplate.indicatorTemplate}}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                          </div>
+                      </ng-template>
+                    </td>
+                    </tr>
+                    </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Exit Signal</label>
+                  <input type="text" [(ngModel)]="backTestStrategy.backTestRequest.tradeStrategy.exitSignal" class="form-control" placeholder="Entry Signal">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <table>
+                    <tr>
+                      <td>
+                        <label>Exit Conditions</label>
+                        <br>
+                          <textarea class="form-control col-xs-12" rows = "15" cols = "80" [(ngModel)]="backTestStrategy.backTestRequest.tradeStrategy.exitConditions"  placeholder="Exit Condition">
+                            Enter exit condition here
+                          </textarea>
+                        <br>
+                    </td>
+                    <td>
+                      <button class="fa fa-question-circle" style="font-size:24px;border-radius:24px" (click)="openModal(template)" ></button>
+                      <ng-template #template>
+                          <div class="col-md-30">
+                          <div class="modal-header">
+                            <h4 class="modal-title pull-left">Technical Indicator Template</h4>
+                            <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <table class="table table-bordered">
+                              <thead>
+                                <tr>
+                                  <th scope="col">Technical Indicator Name</th>
+                                  <th scope="col">Template</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let technicalIndicatorTemplate of technicalIndicatorTemplates">
+                                  <td>{{technicalIndicatorTemplate.indicatorName}}</td>
+                                  <td>{{technicalIndicatorTemplate.indicatorTemplate}}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                          </div>
+                      </ng-template>
+                    </td>
+                    </tr>
+                    </table>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="row">
+              <div class="col-md-6 pr-1">
+                <div class="form-group">
+                  <label>Profit or Loss</label>
+                  <div class="form-control" readonly> {{backTestStrategy.profitOrLoss}} </div>
+                </div>
+              </div>
+              <div class="col-md-6 pl-1">
+                <div class="form-group">
+                  <label>Profit or Loss Percentage</label>
+                  <div class="form-control" readonly> {{backTestStrategy.profitPercentage}} </div>
+                </div>
+              </div>
+            </div>
+
+
+
+            <div class="row">
+              <div class="update ml-auto mr-auto">
+                <button type="submit" class="btn btn-primary btn-round">BackTest</button>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+</div>
