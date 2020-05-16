@@ -1,5 +1,6 @@
 package com.algotrade.alpaca.service;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import io.github.mainstringargs.domain.alpaca.order.Order;
@@ -12,4 +13,6 @@ public interface PortfolioServiceI {
 	public PortfolioHistory getPortFolio();
 	public ArrayList<Position> getOpenPositions();
 	public Position getOpenPosition(String ticker);
+	public ArrayList<Order> getRecentOrders(Integer days , Integer maximumResult);
+
 }

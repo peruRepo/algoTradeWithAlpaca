@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import io.github.mainstringargs.alpaca.AlpacaAPI;
 import io.github.mainstringargs.alpaca.rest.exception.AlpacaAPIRequestException;
@@ -47,6 +48,7 @@ public class AlpacaTradeConfiguration {
 	//	mapper.registerModule(module);	
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		mapper.setDateFormat(df);
+		mapper.registerModule(new JavaTimeModule());
 		return mapper;
 	}
 

@@ -1636,7 +1636,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       "class": ''
     }, {
       path: '/backtestbrowse',
-      title: 'BackTest',
+      title: 'Executed BackTest',
       icon: 'nc-bulb-63',
       "class": ''
     }, //  { path: '/user',                    title: 'User Profile',      icon:'nc-single-02',  class: '' },

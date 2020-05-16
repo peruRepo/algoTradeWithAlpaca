@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { RestApiService } from "../../services/rest-api.service";
+import {Position } from "../../model/position";
+import { Order } from "../../model/order";
 import Chart from 'chart.js';
-
+import { DatePipe } from '@angular/common';
 
 @Component({
     selector: 'dashboard-cmp',
@@ -16,7 +19,44 @@ export class DashboardComponent implements OnInit{
   public chartEmail;
   public chartHours;
 
+  openPositions : Position[] = [];
+  orders : Order[] = [];
+  datePipe = new DatePipe('en');
+
+  constructor(public restApi: RestApiService) {
+   }
+
+  populateOpenPositions()  {
+    this.restApi.getOpenPosition().subscribe((data : Position[]) => {
+          this.openPositions = data ;
+        }
+      );
+
+  }
+
+
+  populateExecutedOrders()  {
+    //this.datePipe = this.injector.get(DatePipe);
+    this.restApi.getExecutedOrders(100,10).subscribe((data : Order[]) => {
+          this.orders = data ;
+          for(let order of this.orders){
+            order.filledAtFormatted = this.datePipe.transform(order.filledAt,'MM/dd/yyyy hh:mm');
+          }
+      }
+      );
+
+  }
+
+
+
+
+
+
+
     ngOnInit(){
+
+      this.populateOpenPositions();
+      this.populateExecutedOrders();
       this.chartColor = "#FFFFFF";
 
       this.canvas = document.getElementById("chartHours");

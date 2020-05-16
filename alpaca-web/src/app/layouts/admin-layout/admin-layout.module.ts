@@ -24,6 +24,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TradingStrategyBrowseComponent } from '../../pages/trading-strategy-browse/trading-strategy-browse.component'
 import { TradeStrategyEditComponent } from '../../pages/trade-strategy-edit/trade-strategy-edit.component'
 
+
 @NgModule({
   imports: [
     CommonModule,

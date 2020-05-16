@@ -3,6 +3,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { StockTradeStrategy } from '../model/stockTradeStrategy';
 import { BackTestStrategy } from '../model/backTestStrategy';
 import { BackTestRequest } from '../model/backTestRequest';
+import { Position } from '../model/position';
+import { Order } from '../model/order';
 import { BackTestResponse } from '../model/backTestResponse';
 import { Observable, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
@@ -65,6 +67,22 @@ export class RestApiService {
 
   saveStockTradeStrategy(stockTradeStrategy): Observable<StockTradeStrategy> {
     return this.http.post<StockTradeStrategy>(this.apiURL + '/alpaca/strategy/updateStrategy', JSON.stringify(stockTradeStrategy), this.httpOptions)
+    .pipe(
+      retry(1),
+      catchError(this.handleError)
+    )
+  }
+
+  getOpenPosition() : Observable<Position[]> {
+    return this.http.get<Position[]>(this.apiURL + '/alpaca/getOpenPosition')
+    .pipe(
+      retry(1),
+      catchError(this.handleError)
+    )
+  }
+
+  getExecutedOrders(maxDays,maxRows) : Observable<Order[]> {
+    return this.http.get<Order[]>(this.apiURL + '/alpaca/getOrders?days=' + maxDays+'&maxRows='+maxRows)
     .pipe(
       retry(1),
       catchError(this.handleError)
