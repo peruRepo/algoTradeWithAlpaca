@@ -1645,6 +1645,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     //  { path: '/notifications',           title: 'Notification',   icon:'nc-bullet-list-67',    class: '' },
     //  { path: '/icons',                   title: 'Icons',             icon:'nc-bell-55', class: '' },
     {
+      path: '/orders',
+      title: 'Executed Orders',
+      icon: 'nc-bullet-list-67',
+      "class": ''
+    }, {
       path: '/upgrade',
       title: 'Switch to Live Trade',
       icon: 'nc-spaceship',

@@ -4,3 +4,4 @@
 /src/main/resources/web/node_modules/*
 /src/main/resources/alpaca-web/node_modules/*
 /web/node_modules/*
+/alpaca-web/node_modules/*

@@ -23,7 +23,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TradingStrategyBrowseComponent } from '../../pages/trading-strategy-browse/trading-strategy-browse.component'
 import { TradeStrategyEditComponent } from '../../pages/trade-strategy-edit/trade-strategy-edit.component'
-
+import { OrderBrowseComponent } from '../../pages/orders/order-browse.component';
 
 @NgModule({
   imports: [
@@ -48,7 +48,8 @@ import { TradeStrategyEditComponent } from '../../pages/trade-strategy-edit/trad
     BackTestCreateComponent,
     BackTestBrowseComponent,
     TradingStrategyBrowseComponent,
-    TradeStrategyEditComponent
+    TradeStrategyEditComponent,
+    OrderBrowseComponent
   ]
 })
 
