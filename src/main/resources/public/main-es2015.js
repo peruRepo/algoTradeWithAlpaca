@@ -876,7 +876,7 @@ const ROUTES = [
     { path: '/dashboard', title: 'Dashboard', icon: 'nc-bank', class: '' },
     { path: '/backtest', title: 'New Strategy', icon: 'nc-simple-add', class: '' },
     { path: '/trading-strategy-browse', title: 'Deployed Triggers', icon: 'nc-sound-wave', class: '' },
-    { path: '/backtestbrowse', title: 'BackTest', icon: 'nc-bulb-63', class: '' },
+    { path: '/backtestbrowse', title: 'Executed BackTest', icon: 'nc-bulb-63', class: '' },
     //  { path: '/user',                    title: 'User Profile',      icon:'nc-single-02',  class: '' },
     //  { path: '/table',                   title: 'Table List',        icon:'nc-tile-56',    class: '' },
     //  { path: '/typography',              title: 'Typography',        icon:'nc-caps-small', class: '' },
