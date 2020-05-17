@@ -11,7 +11,7 @@
           <div class="col-7 col-md-8">
             <div class="numbers">
               <p class="card-category">Availiable Fund </p>
-              <p class="card-title">1000$
+              <p class="card-title"> {{account.cash}}$
                 <p>
             </div>
           </div>
@@ -20,7 +20,7 @@
       <div class="card-footer ">
         <hr>
         <div class="stats">
-          <i class="fa fa-refresh"></i> Update Now
+          <i class="fa fa-refresh " (click)="refresh()"></i> Update Now
         </div>
       </div>
     </div>
@@ -36,8 +36,8 @@
           </div>
           <div class="col-7 col-md-8">
             <div class="numbers">
-              <p class="card-category">Today P/L</p>
-              <p class="card-title">$ 100</p>
+              <p class="card-category">Unrealized P/L</p>
+              <p class="card-title">$ {{unrealizedPl}}</p>
             </div>
           </div>
         </div>
@@ -46,7 +46,6 @@
         <hr>
         <div class="stats">
           <i class="fa fa-refresh"></i>
-          <i class="card-category pull-right">25%</i>
         </div>
       </div>
     </div>
@@ -63,7 +62,7 @@
           <div class="col-7 col-md-8">
             <div class="numbers">
               <p class="card-category">Orders Executed Today</p>
-              <p class="card-title">23
+              <p class="card-title">{{orderExecutedToday}}
                 <p>
             </div>
           </div>
@@ -88,9 +87,8 @@
           </div>
           <div class="col-7 col-md-8">
             <div class="numbers">
-              <p class="card-category">Followers</p>
-              <p class="card-title">+45K
-                <p>
+              <p class="card-category">Active Triggers</p>
+              <p class="card-title">10</p>
             </div>
           </div>
         </div>
@@ -120,8 +118,9 @@
                   <th>Entry Price</th>
                   <th>Qty</th>
                   <th>Market Value</th>
+                  <th>Unrealized P/L</th>
+                  <th>Today P/L</th>
                   <th>Unrealized P/L %</th>
-                  <th>Today P/L %</th>
             </thead>
             <tbody>
                 <tr *ngFor="let position of openPositions">
@@ -130,8 +129,9 @@
                   <td class="text-left">{{position.avgEntryPrice}}</td>
                   <td class="text-left">{{position.qty}}</td>
                   <td class="text-left">{{position.marketValue}}</td>
+                  <td class="text-left">{{position.unrealizedPl}}</td>
+                  <td class="text-left">{{position.unrealizedIntradayPl}}</td>
                   <td class="text-left">{{position.unrealizedPlpc}}</td>
-                  <td class="text-left">{{position.unrealizedIntradayPlpc}}</td>
                 </tr>
             </tbody>
           </table>
@@ -145,7 +145,7 @@
   <div class="col-md-12">
     <div class="card">
       <div class="card-header">
-        <h4 class="card-title">Executed Orders</h4>
+        <h4 class="card-title">Recently Executed Orders </h4>
       </div>
       <div class="card-body">
         <div class="table-responsive">
@@ -163,13 +163,16 @@
                   <td  class="text-left">{{order.symbol}}</td>
                   <td class="text-left">{{order.filledAvgPrice}}</td>
                   <td class="text-left">{{order.qty}}</td>
-                  <td class="text-left">{{order.type}}</td>
+                  <td class="text-left">{{order.side}}</td>
                   <td class="text-left">{{order.status}}</td>
                   <td class="text-left">{{order.filledAtFormatted}}</td>
                 </tr>
             </tbody>
           </table>
         </div>
+      </div>
+      <div class="card-footer ">
+        <p class="card-category hoverActivate col-sm-4" routerLink="/orders">Click here to see more orders</p>
       </div>
     </div>
   </div>

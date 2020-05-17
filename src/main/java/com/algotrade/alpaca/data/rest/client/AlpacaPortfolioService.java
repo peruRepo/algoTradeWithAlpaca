@@ -17,6 +17,7 @@ import io.github.mainstringargs.alpaca.AlpacaAPI;
 import io.github.mainstringargs.alpaca.enums.Direction;
 import io.github.mainstringargs.alpaca.enums.OrderStatus;
 import io.github.mainstringargs.alpaca.rest.exception.AlpacaAPIRequestException;
+import io.github.mainstringargs.domain.alpaca.account.Account;
 import io.github.mainstringargs.domain.alpaca.order.Order;
 import io.github.mainstringargs.domain.alpaca.portfoliohistory.PortfolioHistory;
 import io.github.mainstringargs.domain.alpaca.position.Position;
@@ -77,6 +78,16 @@ public class AlpacaPortfolioService implements PortfolioServiceI {
 			throw new AlpacaAPIException(e.getMessage());
 		}
 
+	}
+
+	@Override
+	public Account getAccount() {		
+		try {
+			return alpacaAPI.getAccount();
+		} catch (AlpacaAPIRequestException e) {
+			logger.error("Exception happened while getting account  and exception is =", e);
+			throw new AlpacaAPIException(e.getMessage());
+		}
 	}
 
 }
