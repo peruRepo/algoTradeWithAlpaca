@@ -200,7 +200,7 @@ export class BackTestCreateComponent implements OnInit{
     },
     series: [{
       data : [],
-      type: 'line'
+      type: 'bar'
     }]
   }
 
@@ -215,4 +215,8 @@ export class BackTestCreateComponent implements OnInit{
 
 //    this.readTechincalIndicatorTemplate();
   }
+
+
+
+
 }
