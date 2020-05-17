@@ -4,11 +4,13 @@ import {Position } from "../../model/position";
 import { Order } from "../../model/order";
 import Chart from 'chart.js';
 import { DatePipe } from '@angular/common';
+import { Account } from '../../model/account';
 
 @Component({
     selector: 'dashboard-cmp',
     moduleId: module.id,
-    templateUrl: 'dashboard.component.html'
+    templateUrl: 'dashboard.component.html',
+    styleUrls: ['./dashboard.component.css']
 })
 
 export class DashboardComponent implements OnInit{
@@ -22,24 +24,42 @@ export class DashboardComponent implements OnInit{
   openPositions : Position[] = [];
   orders : Order[] = [];
   datePipe = new DatePipe('en');
+  account: Account;
+  unrealizedPl : number = 0;
+  orderExecutedToday : number = 0;
 
   constructor(public restApi: RestApiService) {
-   }
+  }
 
   populateOpenPositions()  {
+    this.unrealizedPl = 0;
     this.restApi.getOpenPosition().subscribe((data : Position[]) => {
           this.openPositions = data ;
+          for (let position of this.openPositions){
+            this.unrealizedPl = this.unrealizedPl + parseFloat(position.unrealizedPl);
+          }
         }
       );
 
   }
 
+ refresh() {
+   this.populateOpenPositions();
+   this.populateExecutedOrders();
+   this.populateAccount();
 
+ }
   populateExecutedOrders()  {
     //this.datePipe = this.injector.get(DatePipe);
-    this.restApi.getExecutedOrders(100,10).subscribe((data : Order[]) => {
+    this.orderExecutedToday = 0;
+    let today = new Date().toDateString();
+    this.restApi.getExecutedOrders(100,5).subscribe((data : Order[]) => {
           this.orders = data ;
           for(let order of this.orders){
+            let thatDay = new Date(order.filledAt).toDateString()
+            if(today === thatDay){
+              this.orderExecutedToday = this.orderExecutedToday + 1;
+            }
             order.filledAtFormatted = this.datePipe.transform(order.filledAt,'MM/dd/yyyy hh:mm');
           }
       }
@@ -48,7 +68,12 @@ export class DashboardComponent implements OnInit{
   }
 
 
-
+ populateAccount() {
+   this.restApi.getAccount().subscribe((data : Account) => {
+         this.account = data ;
+       }
+     );
+ }
 
 
 
@@ -57,6 +82,7 @@ export class DashboardComponent implements OnInit{
 
       this.populateOpenPositions();
       this.populateExecutedOrders();
+      this.populateAccount();
       this.chartColor = "#FFFFFF";
 
       this.canvas = document.getElementById("chartHours");

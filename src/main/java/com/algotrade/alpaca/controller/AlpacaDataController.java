@@ -15,6 +15,7 @@ import com.algotrade.alpaca.data.polygon.pojo.RecentTradeData;
 import com.algotrade.alpaca.data.rest.client.PolygonMarketDataClient;
 import com.algotrade.alpaca.service.PortfolioServiceI;
 
+import io.github.mainstringargs.domain.alpaca.account.Account;
 import io.github.mainstringargs.domain.alpaca.order.Order;
 import io.github.mainstringargs.domain.alpaca.portfoliohistory.PortfolioHistory;
 import io.github.mainstringargs.domain.alpaca.position.Position;
@@ -58,5 +59,11 @@ public class AlpacaDataController {
 	@ResponseBody
 	public ArrayList<Order> getRecentlyExecutedOrders(@RequestParam(name = "days")Integer days, @RequestParam(name = "maxRows")Integer maxRows){
 		return portfolioServiceI.getRecentOrders(days, maxRows);
+	}
+	
+	@GetMapping("/alpaca/getAccount")
+	@ResponseBody
+	public Account getAccount(){
+		return portfolioServiceI.getAccount();
 	}
 }

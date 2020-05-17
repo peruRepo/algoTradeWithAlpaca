@@ -4,6 +4,7 @@ import { StockTradeStrategy } from '../model/stockTradeStrategy';
 import { BackTestStrategy } from '../model/backTestStrategy';
 import { BackTestRequest } from '../model/backTestRequest';
 import { Position } from '../model/position';
+import { Account } from '../model/account';
 import { Order } from '../model/order';
 import { BackTestResponse } from '../model/backTestResponse';
 import { Observable, throwError } from 'rxjs';
@@ -75,6 +76,14 @@ export class RestApiService {
 
   getOpenPosition() : Observable<Position[]> {
     return this.http.get<Position[]>(this.apiURL + '/alpaca/getOpenPosition')
+    .pipe(
+      retry(1),
+      catchError(this.handleError)
+    )
+  }
+
+  getAccount() : Observable<Account> {
+    return this.http.get<Account>(this.apiURL + '/alpaca/getAccount')
     .pipe(
       retry(1),
       catchError(this.handleError)
