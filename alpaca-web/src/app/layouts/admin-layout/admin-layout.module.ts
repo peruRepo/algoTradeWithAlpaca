@@ -24,6 +24,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TradingStrategyBrowseComponent } from '../../pages/trading-strategy-browse/trading-strategy-browse.component'
 import { TradeStrategyEditComponent } from '../../pages/trade-strategy-edit/trade-strategy-edit.component'
 import { OrderBrowseComponent } from '../../pages/orders/order-browse.component';
+import { StrategySuggestionModule } from '../../shared/modal/strategy-suggestion/strategy-suggestion.module';
 
 @NgModule({
   imports: [
@@ -34,7 +35,8 @@ import { OrderBrowseComponent } from '../../pages/orders/order-browse.component'
     NgxEchartsModule,
     TypeaheadModule.forRoot(),
     BsDropdownModule.forRoot(),
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    StrategySuggestionModule
   ],
   declarations: [
     DashboardComponent,

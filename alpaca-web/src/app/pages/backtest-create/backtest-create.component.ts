@@ -16,6 +16,8 @@ import { map, switchMap, tap } from 'rxjs/operators';
 import { TickerSuggestion } from '../../model/stock-suggestion';
 import { TickerSuggestionResponse } from '../../model/stock-suggestion-response';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead/typeahead-match.class';
+import { ModalService } from '../../shared/modal/service/modalService.service';
+
 
 @Component({
     selector: 'backtest-create-cmp',
@@ -70,7 +72,8 @@ export class BackTestCreateComponent implements OnInit{
     public actRoute: ActivatedRoute,
     public router: Router,
     public csvUtil : CSVUtil,
-   private modalService: BsModalService
+   private modalService: ModalService,
+   private bsmodalService: BsModalService
   ) {
     this.actRoute.params.subscribe( params => {
       console.log(params);
@@ -210,12 +213,19 @@ export class BackTestCreateComponent implements OnInit{
   }
 
 
-  openModal(template: TemplateRef<any>) {
-        this.modalRef = this.modalService.show(template);
+  openModal(id : string) {
+      this.modalService.open(id);
 
 //    this.readTechincalIndicatorTemplate();
   }
 
+  openBSModal(template: TemplateRef<any>) {
+  //  this.modalRef = this.bsmodalService.show(template);
+    this.modalRef = this.bsmodalService.show(
+     template,
+      Object.assign({}, { class: 'modal-xl' })
+    );
+    }
 
 
 

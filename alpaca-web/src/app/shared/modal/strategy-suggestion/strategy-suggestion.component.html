@@ -1,0 +1,35 @@
+<div class="strategy-suggestion">
+    <div class="strategy-suggestion-body">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title pull-left">Technical Indicator Template</h4>
+              <button type="button" class="close pull-right" aria-label="Close" (click)="close()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Technical Indicator Name</th>
+                    <th>Template</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let technicalIndicatorTemplate of technicalIndicatorTemplates">
+                    <td>{{technicalIndicatorTemplate.indicatorName}}</td>
+                    <td>{{technicalIndicatorTemplate.indicatorTemplate}}</td>
+                  </tr>
+                </tbody>
+              </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+<div class="strategy-suggestion-background"></div>
