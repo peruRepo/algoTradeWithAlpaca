@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AdminLayoutRoutes } from './admin-layout.routing';
 
@@ -25,6 +25,7 @@ import { TradingStrategyBrowseComponent } from '../../pages/trading-strategy-bro
 import { TradeStrategyEditComponent } from '../../pages/trade-strategy-edit/trade-strategy-edit.component'
 import { OrderBrowseComponent } from '../../pages/orders/order-browse.component';
 import { StrategySuggestionModule } from '../../shared/modal/strategy-suggestion/strategy-suggestion.module';
+import { DecimalPipe } from '@angular/common';
 
 @NgModule({
   imports: [
@@ -36,7 +37,8 @@ import { StrategySuggestionModule } from '../../shared/modal/strategy-suggestion
     TypeaheadModule.forRoot(),
     BsDropdownModule.forRoot(),
     ModalModule.forRoot(),
-    StrategySuggestionModule
+    StrategySuggestionModule,
+    ReactiveFormsModule
   ],
   declarations: [
     DashboardComponent,

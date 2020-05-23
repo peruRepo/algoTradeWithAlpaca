@@ -4,8 +4,15 @@
       <div class="card-header">
         <h4 class="card-title"> Back Test Browse </h4>
       </div>
+      <form>
+        <div class="form-group form-inline">
+            <input class="form-control ml-2" type="text" [formControl]="filter" />
+        </div>
+      </form>
       <div class="card-body">
-        <div class="table-responsive">
+        <div class="col-md-4">
+         </div>
+         <div class="table-responsive">
           <table class="table">
             <thead class=" text-primary">
                   <th>Strategy Name</th>
@@ -15,13 +22,21 @@
                   <th>Action </th>
             </thead>
             <tbody>
-                <tr *ngFor="let backTestStrategy of backTestStrategies">
-                  <td  class="text-left">{{backTestStrategy.strategyName}}</td>
-                  <td class="text-left">{{backTestStrategy.backTestRequest.ticker}}</td>
-                  <td class="text-left">{{backTestStrategy.backTestRequest.intervalDuration}}</td>
-                  <td class="text-left">{{backTestStrategy.profitPercentage}}</td>
-                  <td class="nc-icon nc-settings" routerLink="backtest/{{backTestStrategy.strategyName}}"></td>
-                  <td class="nc-icon nc-simple-remove" (click)="deleteBackTestStrategy(backTestStrategy.strategyName)"></td>
+                <tr *ngFor="let backTestStrategy of backTestStrategiesObserve$ | async">
+                    <td  class="text-left">
+                      <ngb-highlight [result]="backTestStrategy.strategyName" [term]="filter.value"></ngb-highlight>
+                    </td>
+                    <td  class="text-left">
+                      <ngb-highlight [result]="backTestStrategy.backTestRequest.ticker" [term]="filter.value"></ngb-highlight>
+                    </td>
+                    <td  class="text-left">
+                      <ngb-highlight [result]="backTestStrategy.backTestRequest.intervalDuration" ></ngb-highlight>
+                    </td>
+                    <td  class="text-left">
+                      <ngb-highlight [result]="backTestStrategy.profitPercentage"></ngb-highlight>
+                    </td>
+                    <td class="nc-icon nc-settings" routerLink="backtest/{{backTestStrategy.strategyName}}"></td>
+                    <td class="nc-icon nc-simple-remove" (click)="deleteBackTestStrategy(backTestStrategy.strategyName)">
                 </tr>
             </tbody>
           </table>
@@ -29,5 +44,4 @@
       </div>
     </div>
   </div>
-
 </div>

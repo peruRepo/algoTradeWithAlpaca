@@ -922,6 +922,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     var _angular_common_http__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(
     /*! @angular/common/http */
     "./node_modules/@angular/common/__ivy_ngcc__/fesm2015/http.js");
+    /* harmony import */
+
+
+    var _angular_common__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(
+    /*! @angular/common */
+    "./node_modules/@angular/common/__ivy_ngcc__/fesm2015/common.js");
 
     var AppModule = function AppModule() {
       _classCallCheck(this, AppModule);
@@ -932,7 +938,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       imports: [_angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_1__["BrowserAnimationsModule"], _angular_router__WEBPACK_IMPORTED_MODULE_3__["RouterModule"].forRoot(_app_routing__WEBPACK_IMPORTED_MODULE_10__["AppRoutes"], {
         useHash: true
       }), _sidebar_sidebar_module__WEBPACK_IMPORTED_MODULE_5__["SidebarModule"], _shared_navbar_navbar_module__WEBPACK_IMPORTED_MODULE_7__["NavbarModule"], ngx_toastr__WEBPACK_IMPORTED_MODULE_4__["ToastrModule"].forRoot(), _shared_footer_footer_module__WEBPACK_IMPORTED_MODULE_6__["FooterModule"], _shared_fixedplugin_fixedplugin_module__WEBPACK_IMPORTED_MODULE_8__["FixedPluginModule"], _angular_common_http__WEBPACK_IMPORTED_MODULE_12__["HttpClientModule"]],
-      providers: [],
+      providers: [_angular_common__WEBPACK_IMPORTED_MODULE_13__["DecimalPipe"]],
       bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_9__["AppComponent"]]
     })], AppModule);
     /***/
