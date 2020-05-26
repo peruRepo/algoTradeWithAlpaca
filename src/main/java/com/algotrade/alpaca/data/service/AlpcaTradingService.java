@@ -1,4 +1,4 @@
-package com.algotrade.alpaca.data.rest.client;
+package com.algotrade.alpaca.data.service;
 
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import io.github.mainstringargs.domain.alpaca.order.Order;
 import io.github.mainstringargs.domain.alpaca.portfoliohistory.PortfolioHistory;
 import io.github.mainstringargs.domain.alpaca.position.Position;
 
-@Component("alpacaService")
+//@Component("alpacaService")
 public class AlpcaTradingService implements TradingServiceI {
 	private static final Logger logger = LoggerFactory.getLogger(AlpcaTradingService.class);
 	

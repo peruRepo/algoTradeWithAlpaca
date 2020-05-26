@@ -20,10 +20,9 @@ import io.github.mainstringargs.domain.alpaca.account.Account;
 import io.github.mainstringargs.polygon.PolygonAPI;
 
 @Configuration
-@EnableScheduling
-public class AlpacaTradeConfiguration {
+public class TradeServiceProviderConfiguration {
 	
-	private Logger logger = LoggerFactory.getLogger(AlpacaTradeConfiguration.class);
+	private Logger logger = LoggerFactory.getLogger(TradeServiceProviderConfiguration.class);
 	
 	@Value("${alpaca.api.version}")
 	private String apiVersion;
@@ -52,22 +51,22 @@ public class AlpacaTradeConfiguration {
 		return mapper;
 	}
 
-	@Bean
-	public AlpacaAPI alpacaAPI() throws AlpacaAPIRequestException {
-
-		keyId = System.getProperty("alpca.api.keyId");
-		secret = System.getProperty("alpca.api.secret");
-		AlpacaAPI alpacaAPI =  new AlpacaAPI(apiVersion, keyId, secret, baseURL, baseDataUrl);
-		try {
-			Account alpacaAccount = alpacaAPI.getAccount();
-		} catch (AlpacaAPIRequestException e) {
-			logger.error("Error happened while trying setup the bean AlpacaAPI",e);
-			throw e;
-		}
-		
-		return alpacaAPI;
-	}
-	
+//	@Bean
+//	public AlpacaAPI alpacaAPI() throws AlpacaAPIRequestException {
+//
+//		keyId = System.getProperty("alpca.api.keyId");
+//		secret = System.getProperty("alpca.api.secret");
+//		AlpacaAPI alpacaAPI =  new AlpacaAPI(apiVersion, keyId, secret, baseURL, baseDataUrl);
+//		try {
+//			Account alpacaAccount = alpacaAPI.getAccount();
+//		} catch (AlpacaAPIRequestException e) {
+//			logger.error("Error happened while trying setup the bean AlpacaAPI",e);
+//			throw e;
+//		}
+//		
+//		return alpacaAPI;
+//	}
+//	
 	
 	@Bean
 	public PolygonAPI polygonAPI(){

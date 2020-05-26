@@ -13,7 +13,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-import javax.annotation.PostConstruct;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -27,39 +26,33 @@ import org.springframework.stereotype.Component;
 import org.ta4j.core.BarSeries;
 
 import com.algotrade.alpaca.data.pojo.TradeOrder;
+import com.algotrade.alpaca.data.pojo.TradeOrderResponse;
 import com.algotrade.alpaca.data.repository.TradeStrategyRepo;
-import com.algotrade.alpaca.data.service.MarketDataService;
-import com.algotrade.alpaca.service.PortfolioServiceI;
+import com.algotrade.alpaca.data.rest.client.TradingService;
 import com.algotrade.alpaca.service.TradingCircuitBreakerI;
-import com.algotrade.alpaca.service.TradingServiceI;
 import com.algotrade.alpaca.strategy.exception.TradeStrategyExecutionException;
 import com.algotrade.alpaca.strategy.exception.TradeStrategyExecutionInterruption;
 import com.algotrade.alpaca.strategy.pojo.StockTradeStrategy;
 import com.algotrade.alpaca.strategy.pojo.StockWatch;
 import com.algotrade.alpaca.strategy.pojo.TradeStrategyState;
 
-import io.github.mainstringargs.domain.alpaca.order.Order;
-
 @Component
 public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecutionServiceI {
 
 	private static final Logger logger = LoggerFactory.getLogger(TradingStrategyExecutionServiceImpl.class);
 
+
 	private ScheduledExecutorService tradeScheduledThreadPool = Executors.newScheduledThreadPool(20);
 
 	private ScheduledExecutorService mainScheduledThreadPool = Executors.newScheduledThreadPool(20);
+
 
 	@Autowired
 	private TradeStrategyRepo tradeStrategyRepo;
 
 	@Autowired
-	private TradingServiceI tradingService;
+	private TradingService tradingService;
 
-	@Autowired
-	private PortfolioServiceI portfolioService;
-
-	@Autowired
-	private MarketDataService marketDataService;
 	
 	@Autowired 
 	private ConcurrentHashMap<String, String> pendingOrderRegistry;
@@ -137,11 +130,12 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 									tradeOrder.setTicker(stockTradeStrategy.getTicker());
 									if (stockTradeStrategy.getTradeStrategy().getEntrySignal()
 											.equalsIgnoreCase("buy")) {
-										Order order = tradingService.buyStock(tradeOrder);
-										pendingOrderRegistry.put(order.getId(),order.getStatus());
+										TradeOrderResponse orderResponse = tradingService.buyStock(tradeOrder);
+										pendingOrderRegistry.put(orderResponse.getId(),orderResponse.getStatus());
 									} else {
-										Order order = tradingService.sellStock(tradeOrder);
-										pendingOrderRegistry.put(order.getId(),order.getStatus());
+										TradeOrderResponse orderResponse = tradingService.sellStock(tradeOrder);
+										pendingOrderRegistry.put(orderResponse.getId(),orderResponse.getStatus());
+
 									}
 								}
 								tradeStrategyRepo.saveStrategy(stockTradeStrategy);
@@ -174,7 +168,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 					if(stockTradeStrategy != null){
 					if (stockTradeStrategy.getState().equals(TradeStrategyState.ENTERED)) {
 						StockWatch stockWatch = stockTradeStrategy.getStockWatch();
-						String unrealizedProfitPercentage = portfolioService.getOpenPosition(ticker)
+						String unrealizedProfitPercentage = tradingService.getOpenPositionBySymbol(ticker)
 								.getUnrealizedPlpc();
 						stockWatch.setProfitPercentage(Double.parseDouble(unrealizedProfitPercentage));
 
@@ -191,11 +185,12 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 								tradeOrder.setQuantity(stockTradeStrategy.getQuantity());
 								tradeOrder.setTicker(stockTradeStrategy.getTicker());
 								if (stockTradeStrategy.getTradeStrategy().getExitSignal().equalsIgnoreCase("buy")) {
-									Order order = tradingService.buyStock(tradeOrder);
-									pendingOrderRegistry.put(order.getId(),order.getStatus());
+									TradeOrderResponse orderResponse = tradingService.buyStock(tradeOrder);
+									pendingOrderRegistry.put(orderResponse.getId(),orderResponse.getStatus());
 								} else {
-									Order order = tradingService.sellStock(tradeOrder);
-									pendingOrderRegistry.put(order.getId(),order.getStatus());
+									TradeOrderResponse orderResponse = tradingService.sellStock(tradeOrder);
+									pendingOrderRegistry.put(orderResponse.getId(),orderResponse.getStatus());
+
 								}
 							}
 							tradeStrategyRepo.saveStrategy(stockTradeStrategy);
@@ -219,7 +214,8 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	}
 
 	private BarSeries getBarSeriesForGivenDuration(String ticker, Integer candleCount, String candleDuration) {
-		return marketDataService.getCurrentMarketData(ticker, candleDuration, candleCount);
+		return tradingService.getMarketDataForGivenDuration(ticker, candleDuration, candleCount);
+
 	}
 
 //	@PostConstruct
@@ -232,8 +228,6 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 
 		try {
 			URI uri = TradingStrategyExecutionServiceImpl.class.getResource("/meta/StrategyPackagesList.txt").toURI();
-			// URI uri = new
-			// URI("file:///Users/sriram/Documents/Study/Projects/Algo/AlgoTradeWithAlpaca/src/main/resources/meta/StrategyPackagesList.txt");
 			List<String> lines = Files.readAllLines(Paths.get(uri));
 			StringBuilder packagesNames = new StringBuilder();
 			for (String line : lines) {
@@ -262,7 +256,6 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 			Invocable inv = (Invocable) engine;
 			Integer lastIndex = barSeries.getEndIndex();
 			Boolean executeTrade = (Boolean) inv.invokeMethod(obj, "tradingRule", barSeries, lastIndex, stockWatch);
-	//		logger.info("Executing Trading Rule=" + jsScript  + " Result="+ executeTrade);
 			return executeTrade;
 		} catch (ScriptException | NoSuchMethodException e) {
 

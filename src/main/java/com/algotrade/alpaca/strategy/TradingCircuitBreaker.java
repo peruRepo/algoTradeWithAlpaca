@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.algotrade.alpaca.data.rest.client.TradingService;
 import com.algotrade.alpaca.service.TradingCircuitBreakerI;
 
 import io.github.mainstringargs.alpaca.AlpacaAPI;
@@ -23,7 +24,7 @@ public class TradingCircuitBreaker implements TradingCircuitBreakerI {
 	private AtomicBoolean allowToTrade = new AtomicBoolean(false);
 
 	@Autowired
-	private AlpacaAPI alpacaAPI;
+	private TradingService tradingService;
 
 	@Override
 	public boolean allowedToEnterTrade() {
@@ -32,19 +33,16 @@ public class TradingCircuitBreaker implements TradingCircuitBreakerI {
 
 	@Scheduled(fixedDelay = 60000)
 	public void monitorTradeActivities() {
-		try {
-			Account account = alpacaAPI.getAccount();
-			Float cahPower = Float.parseFloat(account.getCash());
-			if(cahPower < 500){
-				allowToTrade.set(false);
-				AccountConfiguration accountConfiguration = new AccountConfiguration();
-				accountConfiguration.setSuspendTrade(true);
-				alpacaAPI.setAccountConfiguration(accountConfiguration);
-			}
-		} catch (AlpacaAPIRequestException e) {
-			logger.error("Exception happend while trying to get the monitor account and order activities "
-					+ " and exception is=", e);
+
+		Account account = tradingService.getAccount();
+		Float cahPower = Float.parseFloat(account.getCash());
+		if(cahPower < 500){
+			allowToTrade.set(false);
+			AccountConfiguration accountConfiguration = new AccountConfiguration();
+			accountConfiguration.setSuspendTrade(true);
+			tradingService.setAccountConfiguration(accountConfiguration);
 		}
+
 	}
 
 }

@@ -11,6 +11,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.algotrade.alpaca.data.rest.client.TradingService;
+
 import io.github.mainstringargs.alpaca.AlpacaAPI;
 import io.github.mainstringargs.alpaca.rest.exception.AlpacaAPIRequestException;
 import io.github.mainstringargs.alpaca.websocket.listener.AlpacaStreamListenerAdapter;
@@ -23,8 +25,9 @@ import io.github.mainstringargs.domain.alpaca.websocket.trade.TradeUpdateMessage
 public class AlpacaEventFactory {
 	
 	private static Logger logger = LoggerFactory.getLogger(AlpacaEventFactory.class);
+
 	@Autowired
-	private AlpacaAPI alpacaAPI;
+	private TradingService tradingService;
 	
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
@@ -58,19 +61,17 @@ public class AlpacaEventFactory {
     @Scheduled(fixedDelay = 300000)
     public void checkPendingOrderRegistry(){
     	 for(String orderId : pendingOrderRegistry.keySet()){
-    		 try {
-				Order order = alpacaAPI.getOrder(orderId, false);
-				if( order.getStatus().equalsIgnoreCase("filled") || 
-						order.getStatus().equalsIgnoreCase("cancelled") ||
-						order.getStatus().equalsIgnoreCase("expired")){
-					logger.info("Order for the ticker="+order.getSymbol()+" is "+order.getStatus());
-					pendingOrderRegistry.remove(orderId);
-					AlpaceTradeUpdateEvent event = new AlpaceTradeUpdateEvent(order);
-					applicationEventPublisher.publishEvent(event);
-				}
-			} catch (AlpacaAPIRequestException e) {
-				logger.error("Exception happend while trying to get the Order status for the orderId="+orderId+" and exception is=",e);
+
+			Order order = tradingService.getOrder(orderId);
+			if( order.getStatus().equalsIgnoreCase("filled") || 
+					order.getStatus().equalsIgnoreCase("cancelled") ||
+					order.getStatus().equalsIgnoreCase("expired")){
+				logger.info("Order for the ticker="+order.getSymbol()+" is "+order.getStatus());
+				pendingOrderRegistry.remove(orderId);
+				AlpaceTradeUpdateEvent event = new AlpaceTradeUpdateEvent(order);
+				applicationEventPublisher.publishEvent(event);
 			}
+
     	 }
 
     }
