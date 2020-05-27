@@ -34,7 +34,9 @@ public class AlpacaPaperTradingServiceProvider implements TradingServiceProvider
 	@Override
 	public AlpacaAPI getTradingAPI() throws TradingServiceProviderException {
 
-		if(StringUtils.isEmpty(keyId) || StringUtils.isEmpty(keyId)) {
+		keyId = System.getProperty("alpca.api.keyId");
+		secret = System.getProperty("alpca.api.secret");
+		if(StringUtils.isEmpty(keyId) || StringUtils.isEmpty(secret)) {
 			throw new TradingServiceProviderException("Alpaca Paper trading api connection is not established!");
 		}
 		AlpacaAPI alpacaAPI =  new AlpacaAPI(apiVersion, keyId, secret, baseURL, baseDataUrl);

@@ -1,6 +1,7 @@
 package com.algotrade.alpaca.controller;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.algotrade.alpaca.data.polygon.pojo.AggregatesResponse;
 import com.algotrade.alpaca.data.polygon.pojo.RecentTradeData;
 import com.algotrade.alpaca.data.rest.client.PolygonMarketDataClient;
+import com.algotrade.alpaca.data.rest.client.TradingService;
 import com.algotrade.alpaca.service.PortfolioServiceI;
 
 import io.github.mainstringargs.domain.alpaca.account.Account;
@@ -27,8 +29,8 @@ public class AlpacaDataController {
 	@Autowired
 	private PolygonMarketDataClient polygonMarketDataClient;
 	
-	@Autowired
-	private PortfolioServiceI portfolioServiceI;
+	@Autowired 
+	private TradingService tradingService;
 	
 	@GetMapping("/alpaca/getHistoryData")
 	@ResponseBody
@@ -51,19 +53,19 @@ public class AlpacaDataController {
 	
 	@GetMapping("/alpaca/getOpenPosition")
 	@ResponseBody
-	public ArrayList<Position> getOpenPosition(){
-		return portfolioServiceI.getOpenPositions();
+	public List<Position> getOpenPosition(){
+		return  tradingService.getOpenPositions();
 	}
 
 	@GetMapping("/alpaca/getOrders")
 	@ResponseBody
-	public ArrayList<Order> getRecentlyExecutedOrders(@RequestParam(name = "days")Integer days, @RequestParam(name = "maxRows")Integer maxRows){
-		return portfolioServiceI.getRecentOrders(days, maxRows);
+	public List<Order> getRecentlyExecutedOrders(@RequestParam(name = "days")Integer days, @RequestParam(name = "maxRows")Integer maxRows){
+		return (ArrayList<Order>) tradingService.getOrders(days, maxRows);
 	}
 	
 	@GetMapping("/alpaca/getAccount")
 	@ResponseBody
 	public Account getAccount(){
-		return portfolioServiceI.getAccount();
+		return tradingService.getAccount();
 	}
 }

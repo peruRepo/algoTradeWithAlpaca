@@ -12,7 +12,7 @@ import io.github.mainstringargs.alpaca.rest.exception.AlpacaAPIRequestException;
 import io.github.mainstringargs.alpaca.websocket.client.AlpacaWebsocketClient;
 import io.github.mainstringargs.domain.alpaca.account.Account;
 
-@Profile("paper")
+@Profile("live")
 @Component
 public class AlpacaLiveTradingServiceProvider implements TradingServiceProvider<AlpacaAPI, AlpacaWebsocketClient>{
 	
@@ -34,7 +34,9 @@ public class AlpacaLiveTradingServiceProvider implements TradingServiceProvider<
 	@Override
 	public AlpacaAPI getTradingAPI() throws TradingServiceProviderException {
 
-		if(StringUtils.isEmpty(keyId) || StringUtils.isEmpty(keyId)) {
+		keyId = System.getProperty("alpca.api.keyId");
+		secret = System.getProperty("alpca.api.secret");
+		if(StringUtils.isEmpty(keyId) || StringUtils.isEmpty(secret)) {
 			throw new TradingServiceProviderException("Alpaca Paper trading api connection is not established!");
 		}
 		AlpacaAPI alpacaAPI =  new AlpacaAPI(apiVersion, keyId, secret, baseURL, baseDataUrl);
