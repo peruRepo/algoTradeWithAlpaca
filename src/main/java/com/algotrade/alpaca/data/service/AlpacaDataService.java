@@ -24,7 +24,7 @@ import io.github.mainstringargs.alpaca.enums.BarsTimeFrame;
 import io.github.mainstringargs.alpaca.rest.exception.AlpacaAPIRequestException;
 import io.github.mainstringargs.domain.alpaca.bar.Bar;
 
-@Component
+//@Component
 public class AlpacaDataService  implements MarketDataService {
 	private static final Logger logger = LoggerFactory.getLogger(AlpacaDataService.class);
 	

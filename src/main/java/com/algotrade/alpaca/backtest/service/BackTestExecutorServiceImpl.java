@@ -26,6 +26,7 @@ import com.algotrade.alpaca.backtest.pojo.BackTestResponse;
 import com.algotrade.alpaca.backtest.pojo.BackTestStrategy;
 import com.algotrade.alpaca.backtest.pojo.BackTestTrade;
 import com.algotrade.alpaca.backtest.repository.NitrateBackTestStrategyRepo;
+import com.algotrade.alpaca.data.rest.client.TradingService;
 import com.algotrade.alpaca.data.service.MarketDataService;
 
 import io.github.mainstringargs.alpaca.enums.BarsTimeFrame;
@@ -35,8 +36,9 @@ public class BackTestExecutorServiceImpl implements BackTestExecutorService {
 	
 	  private BarSeriesManager seriesManager = new BarSeriesManager();
 	
-	  @Autowired
-	  private MarketDataService marketDataService;
+  
+	 @Autowired 
+	 private TradingService tradingService;
 	  
 	 @Autowired
 	 private NitrateBackTestStrategyRepo nitrateBackTestStrategyRepo;
@@ -54,7 +56,7 @@ public class BackTestExecutorServiceImpl implements BackTestExecutorService {
 				startTime = endTime.minus(100, ChronoUnit.DAYS);
 			}
 
-			BarSeries barSeries =marketDataService.getHistoricalMarketData(ticker,
+			BarSeries barSeries = tradingService.getMarketData(ticker,
 				backTestRequest.getIntervalDuration(), 
 				backTestRequest.getCandleCount(),
 				startTime, 
@@ -122,11 +124,5 @@ public class BackTestExecutorServiceImpl implements BackTestExecutorService {
 		  return backTestResponse;
 	  }
 
-	public MarketDataService getMarketDataService() {
-		return marketDataService;
-	}
 
-	public void setMarketDataService(MarketDataService marketDataService) {
-		this.marketDataService = marketDataService;
-	}
 }
