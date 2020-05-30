@@ -11,6 +11,7 @@ import { Observable, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
 import {TechnicalIndicatorTemplate} from "../model/indicator-template";
 import { TickerSuggestionResponse } from '../model/stock-suggestion-response';
+import { PortfolioHistory } from '../model/portfolioHistory';
 
 @Injectable({
   providedIn: 'root'
@@ -92,6 +93,14 @@ export class RestApiService {
 
   getExecutedOrders(maxDays,maxRows) : Observable<Order[]> {
     return this.http.get<Order[]>(this.apiURL + '/alpaca/getOrders?days=' + maxDays+'&maxRows='+maxRows)
+    .pipe(
+      retry(1),
+      catchError(this.handleError)
+    )
+  }
+
+  getPopulatePortfolio(durationInMonth) : Observable<PortfolioHistory> {
+    return this.http.get<PortfolioHistory>(this.apiURL + '/alpaca/getPortFolioHistory?month=' + durationInMonth)
     .pipe(
       retry(1),
       catchError(this.handleError)

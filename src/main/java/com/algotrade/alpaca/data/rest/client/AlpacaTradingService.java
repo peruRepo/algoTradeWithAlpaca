@@ -2,6 +2,7 @@ package com.algotrade.alpaca.data.rest.client;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
@@ -32,6 +34,8 @@ import io.github.mainstringargs.alpaca.enums.Direction;
 import io.github.mainstringargs.alpaca.enums.OrderSide;
 import io.github.mainstringargs.alpaca.enums.OrderStatus;
 import io.github.mainstringargs.alpaca.enums.OrderTimeInForce;
+import io.github.mainstringargs.alpaca.enums.PortfolioPeriodUnit;
+import io.github.mainstringargs.alpaca.enums.PortfolioTimeFrame;
 import io.github.mainstringargs.alpaca.rest.exception.AlpacaAPIRequestException;
 import io.github.mainstringargs.alpaca.websocket.client.AlpacaWebsocketClient;
 import io.github.mainstringargs.alpaca.websocket.listener.AlpacaStreamListener;
@@ -39,6 +43,7 @@ import io.github.mainstringargs.domain.alpaca.account.Account;
 import io.github.mainstringargs.domain.alpaca.accountconfiguration.AccountConfiguration;
 import io.github.mainstringargs.domain.alpaca.bar.Bar;
 import io.github.mainstringargs.domain.alpaca.order.Order;
+import io.github.mainstringargs.domain.alpaca.portfoliohistory.PortfolioHistory;
 import io.github.mainstringargs.domain.alpaca.position.Position;
 
 @Component
@@ -277,6 +282,21 @@ public class AlpacaTradingService implements TradingService {
 		for(AlpacaStreamListener listener : listeners){
 			this.alpacaWebsocketClient.addListener(listener);
 		}
+	}
+
+	@Override
+	public PortfolioHistory getProPortfolioHistory(Integer periodLength) {
+		PortfolioPeriodUnit alpacaPeriodUnit = PortfolioPeriodUnit.MONTH;
+        PortfolioTimeFrame timeFrame = PortfolioTimeFrame.ONE_DAY;
+        LocalDate dateEnd = null;
+        Boolean extendedHours = null;
+		try {
+			return alpacaAPI.getPortfolioHistory(periodLength , alpacaPeriodUnit, timeFrame, dateEnd, extendedHours);
+		} catch (AlpacaAPIRequestException e) {
+			logger.error("Exception happend while trying to get Portfolio history and exception is=",e);
+		}
+		
+		return null;
 	}
 
 }
