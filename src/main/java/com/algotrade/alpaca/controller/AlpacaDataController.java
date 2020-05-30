@@ -68,4 +68,10 @@ public class AlpacaDataController {
 	public Account getAccount(){
 		return tradingService.getAccount();
 	}
+	
+	@GetMapping("/alpaca/getPortFolioHistory")
+	@ResponseBody
+	public PortfolioHistory getPortFolioHistory(@RequestParam(name = "month")Integer numberOfMonth ){
+		return tradingService.getProPortfolioHistory(numberOfMonth);
+	}
 }

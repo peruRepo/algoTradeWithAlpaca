@@ -2,6 +2,7 @@ package com.algotrade.alpaca.data.rest.client;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.ta4j.core.BarSeries;
 
@@ -12,6 +13,7 @@ import io.github.mainstringargs.alpaca.websocket.listener.AlpacaStreamListener;
 import io.github.mainstringargs.domain.alpaca.account.Account;
 import io.github.mainstringargs.domain.alpaca.accountconfiguration.AccountConfiguration;
 import io.github.mainstringargs.domain.alpaca.order.Order;
+import io.github.mainstringargs.domain.alpaca.portfoliohistory.PortfolioHistory;
 import io.github.mainstringargs.domain.alpaca.position.Position;
 
 
@@ -38,5 +40,7 @@ public interface TradingService {
 			Integer candleCount);
 	
 	public void regsiterListener(AlpacaStreamListener listener);
+	
+	public PortfolioHistory getProPortfolioHistory(Integer periodLength);
 	
 }
