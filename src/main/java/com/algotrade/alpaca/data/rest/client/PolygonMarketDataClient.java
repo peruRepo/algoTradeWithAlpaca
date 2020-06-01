@@ -1,10 +1,7 @@
 package com.algotrade.alpaca.data.rest.client;
 
-import java.io.InputStream;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -12,16 +9,12 @@ import org.springframework.web.client.RestTemplate;
 
 import com.algotrade.alpaca.data.polygon.pojo.AggregatesResponse;
 import com.algotrade.alpaca.data.polygon.pojo.RecentTradeData;
-import com.mashape.unirest.http.HttpResponse;
 
-import io.github.mainstringargs.domain.polygon.tickers.TickersResponse;
-import io.github.mainstringargs.polygon.PolygonAPI;
 import io.github.mainstringargs.polygon.PolygonConstants;
 import io.github.mainstringargs.polygon.enums.Market;
 import io.github.mainstringargs.polygon.enums.StockType;
 import io.github.mainstringargs.polygon.enums.TickerSort;
 import io.github.mainstringargs.polygon.rest.PolygonRequestBuilder;
-import io.github.mainstringargs.polygon.rest.exception.PolygonAPIRequestException;
 
 @Component
 public class PolygonMarketDataClient  implements MarketDataClient {
@@ -33,16 +26,14 @@ public class PolygonMarketDataClient  implements MarketDataClient {
 	@Value("${polygon.host}")
 	private String polygonHost;
 	
-	private String apiKeyId = System.getProperty("alpca.api.keyId");
+	private String apiKeyId = System.getenv("alpca_live_api_keyId");
 	
 	@Value("${alpaca.api.histrorical.trade.path}")
 	private String historticalTradeURIPath;
 	
 	@Value("${alpaca.api.recent.trade.path}")
 	private String recentTradeURIPath;
-	
-	@Autowired
-	private PolygonAPI polygonAPI;
+
 	
 	
 	/*

@@ -283,6 +283,16 @@ public class AlpacaTradingService implements TradingService {
 			this.alpacaWebsocketClient.addListener(listener);
 		}
 	}
+	
+	@PostConstruct
+	private void setWebSocketClient() throws TradingServiceProviderException {
+		try {
+			this.alpacaWebsocketClient = tradingServiceProvider.getWebSocketClientAPI();
+		} catch (TradingServiceProviderException e) {
+			logger.error("Exception happend while trying to get WebSocket client and exception is=",e);
+			throw e;
+		}
+	}
 
 	@Override
 	public PortfolioHistory getProPortfolioHistory(Integer periodLength) {

@@ -30,7 +30,6 @@ export class DashboardComponent implements OnInit{
   unrealizedPl : number = 0;
   orderExecutedToday : number = 0;
   portfolioHistory : PortfolioHistory;
-  fundAndEquityValueDataSet : any;
   profitValueDataSet : any;
 
   constructor(public restApi: RestApiService) {
@@ -90,15 +89,11 @@ export class DashboardComponent implements OnInit{
 
 
           for(let i = 0; i < this.portfolioHistory.equity.length; i++  ) {
-             let timeSeriesData1 = { x : "", y : "" };
-             let timeSeriesData2 = { x : "", y : "" };
+             let timeSeriesData = { x : "", y : "" };
 
-             timeSeriesData1.x = new Date(parseInt(this.portfolioHistory.timestamp[i])*1000).toDateString();
-             timeSeriesData1.y = this.portfolioHistory.equity[i];
-             timeSeriesData2.x = timeSeriesData1.x;
-             timeSeriesData2.y = this.portfolioHistory.profitLoss[i];
+             timeSeriesData.x = new Date(parseInt(this.portfolioHistory.timestamp[i])*1000).toDateString();
+             timeSeriesData.y = this.portfolioHistory.profitLoss[i];
              this.profitValueDataSet.data.push(timeSeriesData2);
-      //       this.fundAndEquityValueDataSet.data.push(timeSeriesData1);
           }
           this.chartProfitAndFund.update();
         }
@@ -120,15 +115,6 @@ export class DashboardComponent implements OnInit{
       this.canvas = document.getElementById("chartProfitAndFund");
       this.ctx = this.canvas.getContext("2d");
 
-      this.fundAndEquityValueDataSet = {
-          borderColor: "rgba(153,255,51,0.4)",
-          backgroundColor: "rgba(153,255,51,0.4)",
-          pointRadius: 0,
-          pointHoverRadius: 0,
-          borderWidth: 3,
-            data: [
-          ]
-        };
       this.profitValueDataSet = {
             label: "Profit Or Loss",
                 borderColor: "rgba(243, 174, 174, 0.5)",
@@ -144,8 +130,7 @@ export class DashboardComponent implements OnInit{
         type: 'line',
 
         data: {
-              datasets: [this.fundAndEquityValueDataSet,
-                     this.profitValueDataSet ]
+              datasets: [this.profitValueDataSet ]
         },
         options: {
           legend: {

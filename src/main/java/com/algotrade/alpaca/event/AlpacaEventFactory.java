@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 
 import com.algotrade.alpaca.data.rest.client.TradingService;
 
-import io.github.mainstringargs.alpaca.AlpacaAPI;
-import io.github.mainstringargs.alpaca.rest.exception.AlpacaAPIRequestException;
 import io.github.mainstringargs.alpaca.websocket.listener.AlpacaStreamListenerAdapter;
 import io.github.mainstringargs.alpaca.websocket.message.AlpacaStreamMessageType;
 import io.github.mainstringargs.domain.alpaca.order.Order;
@@ -35,13 +33,13 @@ public class AlpacaEventFactory {
 	@Autowired 
 	private ConcurrentHashMap<String, String> pendingOrderRegistry;
 	
-	@Autowired
-	private AlpacaWebSocketService alpacaWebSocketService;
+//	@Autowired
+//	private AlpacaWebSocketService alpacaWebSocketService;
 	
 	
     @PostConstruct
 	public void listenAndPropagateAlpacaEvent(){
-    	alpacaWebSocketService.addListener(new AlpacaStreamListenerAdapter(
+    	tradingService.regsiterListener(new AlpacaStreamListenerAdapter(
                 AlpacaStreamMessageType.ACCOUNT_UPDATES,
                 AlpacaStreamMessageType.TRADE_UPDATES) {
             @Override

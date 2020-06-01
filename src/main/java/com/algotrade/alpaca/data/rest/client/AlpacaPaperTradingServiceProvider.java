@@ -18,10 +18,8 @@ public class AlpacaPaperTradingServiceProvider implements TradingServiceProvider
 	
 	private static final Logger logger = LoggerFactory.getLogger(AlpacaPaperTradingServiceProvider.class);
 	
-	@Value("${alpaca.api.baseURL}")
 	private String baseURL;
 	
-	@Value("${alpaca.api.baseDataUrl}")
 	private String baseDataUrl;
 	
 	@Value("${alpaca.api.version}")
@@ -34,8 +32,11 @@ public class AlpacaPaperTradingServiceProvider implements TradingServiceProvider
 	@Override
 	public AlpacaAPI getTradingAPI() throws TradingServiceProviderException {
 
-		keyId = System.getProperty("alpca.api.keyId");
-		secret = System.getProperty("alpca.api.secret");
+		keyId = System.getenv("alpca_paper_api_keyId");
+		logger.info("KeyId"+keyId);
+		secret = System.getenv("alpca_paper_api_secret");
+		baseURL = System.getenv("alpaca_paper_api_baseURL");
+		baseDataUrl = System.getProperty("alpaca_api_baseDataUrl");
 		if(StringUtils.isEmpty(keyId) || StringUtils.isEmpty(secret)) {
 			throw new TradingServiceProviderException("Alpaca Paper trading api connection is not established!");
 		}
