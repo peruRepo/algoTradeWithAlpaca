@@ -33,10 +33,9 @@ public class AlpacaPaperTradingServiceProvider implements TradingServiceProvider
 	public AlpacaAPI getTradingAPI() throws TradingServiceProviderException {
 
 		keyId = System.getenv("alpca_paper_api_keyId");
-		logger.info("KeyId"+keyId);
 		secret = System.getenv("alpca_paper_api_secret");
 		baseURL = System.getenv("alpaca_paper_api_baseURL");
-		baseDataUrl = System.getProperty("alpaca_api_baseDataUrl");
+		baseDataUrl = System.getenv("alpaca_api_baseDataUrl");
 		if(StringUtils.isEmpty(keyId) || StringUtils.isEmpty(secret)) {
 			throw new TradingServiceProviderException("Alpaca Paper trading api connection is not established!");
 		}

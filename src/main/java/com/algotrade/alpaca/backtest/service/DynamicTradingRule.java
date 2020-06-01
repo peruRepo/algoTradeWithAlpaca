@@ -1,6 +1,9 @@
 package com.algotrade.alpaca.backtest.service;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -79,7 +82,7 @@ public class DynamicTradingRule implements Rule{
 
 	
 	
-	private static String getTa4jPackagesList()  {
+	private static String getTa4jPackagesList2()  {
 		
 		try {
 			URI uri = DynamicTradingRule.class.getResource("/meta/StrategyPackagesList.txt").toURI();
@@ -100,7 +103,32 @@ public class DynamicTradingRule implements Rule{
 
 	}
 	
+	private static String getTa4jPackagesList() {
+		BufferedReader reader = null;
+		try {
+			InputStream in = DynamicTradingRule.class.getResourceAsStream("/meta/StrategyPackagesList.txt");
+			reader = new BufferedReader(new InputStreamReader(in));
+			
+			StringBuilder packagesNames = new StringBuilder();
+		    String line;
+		     
+		    while ((line = reader.readLine()) != null) {
+		    	packagesNames.append(line);
+		    	packagesNames.append(",");
+		    }
+			if (packagesNames.length() > 0) {
+				packagesNames.deleteCharAt(packagesNames.length() - 1);
+			}
+			reader.close();
+		    return packagesNames.toString();
+		    
+		} catch (IOException e) {
+			logger.error("Exception happend while trying to read package meta data ", e);
+			return "";
+		}
 
+
+	}
 	
 	private Boolean executeTradingRule(String tradingRule, BarSeries barSeries, Integer index, StockWatch stockWatch, TradingRecord tradingRecord) {
 			

@@ -16,7 +16,7 @@ public class NitriteDBConfiguration {
 	@Bean("nitriteDB")
 	@Profile("paper")
 	public Nitrite init_nitrite_paper_DB(){
-		String fileLocation = System.getenv("db.location");
+		String fileLocation = System.getenv("db_location");
 		Nitrite db = Nitrite.builder()
 		        .filePath(fileLocation+"AlpacaTrade.db")
 		        .openOrCreate();
@@ -26,7 +26,7 @@ public class NitriteDBConfiguration {
 	@Bean("nitriteDB")
 	@Profile("live")
 	public Nitrite init_nitrite_live_DB(){
-		String fileLocation = System.getenv("db.location");
+		String fileLocation = System.getenv("db_location");
 		Nitrite db = Nitrite.builder()
 		        .filePath(fileLocation+"Live_AlpacaTrade.db")
 		        .openOrCreate();
