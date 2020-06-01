@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import io.github.mainstringargs.alpaca.websocket.client.AlpacaWebsocketClient;
 import io.github.mainstringargs.alpaca.websocket.listener.AlpacaStreamListener;
 
-@Component
+//@Component
 public class AlpacaWebSocketService {
 
 	private AlpacaWebsocketClient alpacaWebsocketClient;
@@ -23,8 +23,8 @@ public class AlpacaWebSocketService {
 	@Value("${alpaca.api.version}")
 	private String apiVersion;
 	
-	private String keyId = System.getProperty("alpca.api.keyId");
-	private String secret = System.getProperty("alpca.api.secret");
+	private String keyId = System.getenv("alpca.paperapi.keyId");
+	private String secret = System.getenv("alpca.paper.api.secret");
 	
     private List<AlpacaStreamListener> listeners = new LinkedList<AlpacaStreamListener>();
 

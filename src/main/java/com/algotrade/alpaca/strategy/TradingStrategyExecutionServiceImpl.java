@@ -1,6 +1,9 @@
 package com.algotrade.alpaca.strategy;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -224,7 +227,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 //		this.engine = factory.getEngineByName("nashorn");
 //	}
 
-	private String getTa4jPackagesList() {
+	private String getTa4jPackagesList2() {
 
 		try {
 			URI uri = TradingStrategyExecutionServiceImpl.class.getResource("/meta/StrategyPackagesList.txt").toURI();
@@ -245,6 +248,34 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 
 	}
 
+	
+	private String getTa4jPackagesList() {
+		BufferedReader reader = null;
+		try {
+			InputStream in = TradingStrategyExecutionServiceImpl.class.getResourceAsStream("/meta/StrategyPackagesList.txt");
+			reader = new BufferedReader(new InputStreamReader(in));
+			
+			StringBuilder packagesNames = new StringBuilder();
+		    String line;
+		     
+		    while ((line = reader.readLine()) != null) {
+		    	packagesNames.append(line);
+		    	packagesNames.append(",");
+		    }
+			if (packagesNames.length() > 0) {
+				packagesNames.deleteCharAt(packagesNames.length() - 1);
+			}
+			reader.close();
+		    return packagesNames.toString();
+		    
+		} catch (IOException e) {
+			logger.error("Exception happend while trying to read package meta data ", e);
+			return "";
+		}
+
+
+	}
+	
 	private Boolean executeTradingRule(String tradingRule, BarSeries barSeries, StockWatch stockWatch) {
 		String jsScript = scriptTemplete + tradingRule + endBracket;
 		try {
