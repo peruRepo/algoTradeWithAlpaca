@@ -12,11 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.algotrade.alpaca.strategy.TradingStrategyExecutionServiceI;
+import com.algotrade.alpaca.service.TradingCircuitBreakerI;
 import com.algotrade.alpaca.strategy.TradingStrategyServiceI;
 import com.algotrade.alpaca.strategy.pojo.StockTradeStrategy;
-import com.algotrade.alpaca.strategy.pojo.StockWatch;
-import com.algotrade.alpaca.strategy.pojo.TradeStrategy;
 
 @RestController
 @CrossOrigin
@@ -26,7 +24,7 @@ public class TradeStrategyController {
 	private TradingStrategyServiceI tradingStrategyService;
 	
 	@Autowired
-	private TradingStrategyExecutionServiceI tradingStrategyExecutionService;
+	private TradingCircuitBreakerI tradingCircuitBreakerI;
 	
 	@PostMapping("/alpaca/strategy/updateStrategy")
 	@ResponseBody
@@ -52,89 +50,11 @@ public class TradeStrategyController {
 		tradingStrategyService.removeTradingStrategy(ticker);		
 	}
 	
-	@GetMapping("/alpaca/strategy/getStrategyTemplate")
+	@GetMapping("/alpaca/strategy/stop")
 	@ResponseBody
-	public StockTradeStrategy getStrategyTemplate(String ticker){
-		return getStrategyTemplate();		
+	public String stopAllTrade(){
+		tradingCircuitBreakerI.stopAllTradeActivities();	
+		return "trading is Halted";
 	}
 	
-	@GetMapping("/alpaca/strategy/executeStrategy")
-	@ResponseBody
-	public String executeStrategy(String ticker){
-		tradingStrategyExecutionService.executeStrategies();
-		return "success";
-	}
-	
-	private StockTradeStrategy getStrategyTemplate(){
-		StockTradeStrategy stockTradeStrategy = new StockTradeStrategy();
-		stockTradeStrategy.setTicker("TSLA");
-		stockTradeStrategy.setInterval(2);
-		stockTradeStrategy.setTimeUnit("MINUTES");
-		stockTradeStrategy.setState("WATCHING");
-		stockTradeStrategy.setQuantity(10);
-		stockTradeStrategy.setCandleCount(500);
-		// Based on enum BarsTimeFrame
-		stockTradeStrategy.setIntervalDuration("FIVE_MINUTE");
-		TradeStrategy tradeStrategy = new TradeStrategy();
-//		String entryConditions = 
-//				"  function entryCondition(stockMarketData, stockWatch){" + 
-//				"   	 if (stockMarketData.currentPrice <= 500) { " + 
-//				"       	 	stockWatch.stopLossPercentage = 10;" + 
-//				"        	    return \"buy\";" + 
-//				"    		} \n" + 
-//				"  };\n" + 
-//				"  entryCondition(stockMarketData, stockWatch);";
-	    String buyRule = "function(barSeries, index, stockWatch){ \n" + 
-	    		"	closePriceIndicator = new ClosePriceIndicator(barSeries);\n" + 
-	    		"	if(closePriceIndicator.getValue(index).floatValue() < 500){\n" + 
-	    		"		stockWatch.setStopLossPercentage(-10.0);\n" + 
-	    		"		return true;\n" + 
-	    		"	}\n" + 
-	    		"	return false;\n" + 
-	    		"};";
-	    String sellRule = "function(barSeries, index , stockWatch){ \n" + 
-	    		"	closePriceIndicator = new ClosePriceIndicator(barSeries);\n" + 
-	    		"	if(closePriceIndicator.getValue(index).floatValue() > 700){\n" + 
-	    		"		// stockWatch.setStopLossPercentage(3.0);\n" + 
-	    		"		return true;\n" + 
-	    		"	} else if(stockWatch.getProfitPercentage() <=  stockWatch.getStopLossPercentage()) {\n" + 
-	    		"		return true;\n" + 
-	    		"	}\n" + 
-	    		"	return false;\n" + 
-	    		"	};";
-	    
-		String entryConditions="function(barSeries, index, stockWatch){ \n" + 
-				"	closePriceIndicator = new ClosePriceIndicator(barSeries);\n" + 
-				"	if(closePriceIndicator.getValue(barSeries.getEndIndex()).floatValue() < 560){\n" + 
-				"		stockWatch.setStopLossPercentage(10.0);\n" + 
-				"		return true;\n" + 
-				"	}\n" + 
-				"	return false;\n" + 
-				"};";
-		tradeStrategy.setEntryConditions(buyRule);
-		String exitConditions="function(barSeries, stockWatch){ \n" + 
-				"	closePriceIndicator = new ClosePriceIndicator(barSeries);\n" + 
-				"	if(closePriceIndicator.getValue(barSeries.getEndIndex()).floatValue() > 570){\n" + 
-				"		return true;\n" + 
-				"	}\n" + 
-				"	return false;\n" + 
-				"};";
-//		String exitConditions = 
-//				"  function exitCondition(stockMarketData, stockWatch){\n" + 
-//				"    if (stockMarketData.totalProfitPercentage <= stockWatch.stopLossPercentage){ \n" + 
-//				"        return \"sell\"; \n" + 
-//				"    } else { \n" + 
-//				"        stockWatch.stopLossPercentage = stockWatch.stopLossPercentage + stockMarketData.totalProfitPercentage;\n" + 
-//				"        return stockWatch;\n" + 
-//				"      }\n" + 
-//				"  }\n" + 
-//				"  exitCondition(stockMarketData, stockWatch);";
-		tradeStrategy.setExitConditions(sellRule);		
-		stockTradeStrategy.setTradeStrategy(tradeStrategy);
-		StockWatch stockWatch = new StockWatch();
-		stockWatch.setStopLossPercentage(10.0);
-		stockTradeStrategy.setStockWatch(stockWatch);
-		return stockTradeStrategy;
-		
-	}
 }
