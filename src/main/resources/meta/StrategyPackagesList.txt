@@ -16,3 +16,4 @@ org.ta4j.core.indicators.pivotpoints
 org.ta4j.core.indicators.statistics
 org.ta4j.core.indicators.helpers
 org.ta4j.core.indicators.volume
+com.algotrade.alpaca.logger.LoggerFactory

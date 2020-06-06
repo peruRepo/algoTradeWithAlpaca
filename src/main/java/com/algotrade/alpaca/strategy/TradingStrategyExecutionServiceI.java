@@ -1,5 +1,5 @@
 package com.algotrade.alpaca.strategy;
 
 public interface TradingStrategyExecutionServiceI {
-	public void executeStrategies();
+	public void scheduleTradingStrategy();
 }

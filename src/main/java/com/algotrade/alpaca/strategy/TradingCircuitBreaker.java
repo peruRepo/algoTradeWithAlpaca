@@ -45,4 +45,10 @@ public class TradingCircuitBreaker implements TradingCircuitBreakerI {
 
 	}
 
+	public void stopAllTradeActivities() {
+		allowToTrade.set(false);
+		AccountConfiguration accountConfiguration = new AccountConfiguration();
+		accountConfiguration.setSuspendTrade(true);
+		tradingService.setAccountConfiguration(accountConfiguration);
+	}
 }

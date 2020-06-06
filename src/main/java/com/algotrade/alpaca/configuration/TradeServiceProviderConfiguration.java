@@ -9,11 +9,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @Configuration
+@EnableScheduling
 public class TradeServiceProviderConfiguration {
 	
 	private Logger logger = LoggerFactory.getLogger(TradeServiceProviderConfiguration.class);

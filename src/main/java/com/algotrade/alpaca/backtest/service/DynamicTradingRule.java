@@ -55,7 +55,7 @@ public class DynamicTradingRule implements Rule{
 	private void createJSInvokable(String dynamicJSbasedRule) {
 		String jsScript = scriptTemplete + dynamicJSbasedRule + endBracket;
 		ScriptEngineManager factory = new ScriptEngineManager();
-		ScriptEngine engine = factory.getEngineByName("JavaScript");
+		ScriptEngine engine = factory.getEngineByName("nashorn");
 		try {
 			engine.eval(jsScript);
 		} catch (ScriptException e) {
@@ -82,26 +82,6 @@ public class DynamicTradingRule implements Rule{
 
 	
 	
-	private static String getTa4jPackagesList2()  {
-		
-		try {
-			URI uri = DynamicTradingRule.class.getResource("/meta/StrategyPackagesList.txt").toURI();
-			List<String> lines  = Files.readAllLines(Paths.get(uri));
-			StringBuilder packagesNames = new StringBuilder();
-			for (String line : lines) {
-				packagesNames.append(line);
-				packagesNames.append(",");
-			}
-			if (packagesNames.length() > 0) {
-				packagesNames.deleteCharAt(packagesNames.length() - 1);
-			}
-			return packagesNames.toString();
-		} catch (IOException | URISyntaxException e) {
-			logger.error("Exception happend while trying to read package meta data ",e);
-			return "";
-		}
-
-	}
 	
 	private static String getTa4jPackagesList() {
 		BufferedReader reader = null;

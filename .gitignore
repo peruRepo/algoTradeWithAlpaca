@@ -5,3 +5,4 @@
 /src/main/resources/alpaca-web/node_modules/*
 /web/node_modules/*
 /alpaca-web/node_modules/*
+/docker/

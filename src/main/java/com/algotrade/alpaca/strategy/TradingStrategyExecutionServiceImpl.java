@@ -38,7 +38,14 @@ import com.algotrade.alpaca.strategy.exception.TradeStrategyExecutionInterruptio
 import com.algotrade.alpaca.strategy.pojo.StockTradeStrategy;
 import com.algotrade.alpaca.strategy.pojo.StockWatch;
 import com.algotrade.alpaca.strategy.pojo.TradeStrategyState;
+import com.algotrade.alpaca.strategy.util.TradingStrategyUtil;
 
+/*
+ * This Class is core of the application and does the below operation.
+ * 1. scan for any change or new strategy as per schedule (Refer scheduleTradingStrategy() method)
+ * 2. Execute Strategy as per intended schedule 
+ * 
+ */
 @Component
 public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecutionServiceI {
 
@@ -64,23 +71,20 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	@Autowired
 	private TradingCircuitBreakerI tradingCircuitBreakerI;
 	
-	//private ScriptEngine engine;
-
 	private HashSet<StockTradeStrategy> currentStrategyRegistry = new HashSet<>();
 
-	private String scriptTemplete = " var obj = new Object();\n" + " var ta4jCorePackage = new JavaImporter( "
-			+ getTa4jPackagesList() + ");\n" + " with(ta4jCorePackage) {\n" + "   obj.tradingRule = ";
+	private String scriptTemplete = TradingStrategyUtil.getTradingScriptTemplateString();
 	private final String endBracket = "}";
 
-	public void executeStrategies() {
-		mainScheduledThreadPool.scheduleAtFixedRate(() -> {
-			scheduleTradingStrategy();
-		}, 0, 1, TimeUnit.MINUTES);
-	}
-
+	
+	// Scheduler configuration to scan for strategy
+	
 	// Every Five minutes scan for new Strategies
-   @Scheduled(fixedDelay = 300000)
-	//@Scheduled(cron="0 0/5 9-17 ? * MON-SAT")	
+	@Scheduled(fixedDelay = 5000)
+	
+	// Below configuration can be used to scan for strategy from 9am to 5pm every day for every five min
+	// fron Monday to Friday
+	//@Scheduled(cron="0 0/5 9-17 ? * MON-FRI")	
 	public void scheduleTradingStrategy() {
 		
 		Stream<StockTradeStrategy> stockTradeStrategies = tradeStrategyRepo.getAllStrategies();
@@ -93,6 +97,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 						Runnable entryCommand = getEntryRunnable(stockTradeStrategy.getTicker());
 						tradeScheduledThreadPool.scheduleWithFixedDelay(entryCommand, 0, stockTradeStrategy.getInterval(),
 								TimeUnit.valueOf(stockTradeStrategy.getTimeUnit()));
+						
 						Runnable exitCommand = getExitRunnable(stockTradeStrategy.getTicker());
 						tradeScheduledThreadPool.scheduleWithFixedDelay(exitCommand, 0, stockTradeStrategy.getInterval(),
 								TimeUnit.valueOf(stockTradeStrategy.getTimeUnit()));
@@ -120,6 +125,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 							StockWatch stockWatch = stockTradeStrategy.getStockWatch();
 							BarSeries barSeries = getBarSeriesForGivenDuration(stockTradeStrategy.getTicker(),
 									stockTradeStrategy.getCandleCount(), stockTradeStrategy.getIntervalDuration());
+							
 							if (barSeries != null) {
 								Boolean isTradingRuleSucceeds = executeTradingRule(
 										stockTradeStrategy.getTradeStrategy().getEntryConditions(), barSeries,
@@ -173,7 +179,8 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 						StockWatch stockWatch = stockTradeStrategy.getStockWatch();
 						String unrealizedProfitPercentage = tradingService.getOpenPositionBySymbol(ticker)
 								.getUnrealizedPlpc();
-						stockWatch.setProfitPercentage(Double.parseDouble(unrealizedProfitPercentage));
+
+						stockWatch.setProfitPercentage(Double.parseDouble(unrealizedProfitPercentage)*100);
 
 						BarSeries barSeries = getBarSeriesForGivenDuration(stockTradeStrategy.getTicker(),
 								stockTradeStrategy.getCandleCount(), stockTradeStrategy.getIntervalDuration());
@@ -221,60 +228,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 
 	}
 
-//	@PostConstruct
-//	private void configureJSEngine() {
-//		ScriptEngineManager factory = new ScriptEngineManager();
-//		this.engine = factory.getEngineByName("nashorn");
-//	}
 
-	private String getTa4jPackagesList2() {
-
-		try {
-			URI uri = TradingStrategyExecutionServiceImpl.class.getResource("/meta/StrategyPackagesList.txt").toURI();
-			List<String> lines = Files.readAllLines(Paths.get(uri));
-			StringBuilder packagesNames = new StringBuilder();
-			for (String line : lines) {
-				packagesNames.append(line);
-				packagesNames.append(",");
-			}
-			if (packagesNames.length() > 0) {
-				packagesNames.deleteCharAt(packagesNames.length() - 1);
-			}
-			return packagesNames.toString();
-		} catch (IOException | URISyntaxException e) {
-			logger.error("Exception happend while trying to read package meta data ", e);
-			return "";
-		}
-
-	}
-
-	
-	private String getTa4jPackagesList() {
-		BufferedReader reader = null;
-		try {
-			InputStream in = TradingStrategyExecutionServiceImpl.class.getResourceAsStream("/meta/StrategyPackagesList.txt");
-			reader = new BufferedReader(new InputStreamReader(in));
-			
-			StringBuilder packagesNames = new StringBuilder();
-		    String line;
-		     
-		    while ((line = reader.readLine()) != null) {
-		    	packagesNames.append(line);
-		    	packagesNames.append(",");
-		    }
-			if (packagesNames.length() > 0) {
-				packagesNames.deleteCharAt(packagesNames.length() - 1);
-			}
-			reader.close();
-		    return packagesNames.toString();
-		    
-		} catch (IOException e) {
-			logger.error("Exception happend while trying to read package meta data ", e);
-			return "";
-		}
-
-
-	}
 	
 	private Boolean executeTradingRule(String tradingRule, BarSeries barSeries, StockWatch stockWatch) {
 		String jsScript = scriptTemplete + tradingRule + endBracket;
