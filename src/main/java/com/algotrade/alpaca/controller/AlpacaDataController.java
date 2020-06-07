@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +32,9 @@ public class AlpacaDataController {
 	
 	@Autowired 
 	private TradingService tradingService;
+	
+	@Autowired 
+	private Environment env;
 	
 	@GetMapping("/alpaca/getHistoryData")
 	@ResponseBody
@@ -73,5 +77,11 @@ public class AlpacaDataController {
 	@ResponseBody
 	public PortfolioHistory getPortFolioHistory(@RequestParam(name = "month")Integer numberOfMonth ){
 		return tradingService.getProPortfolioHistory(numberOfMonth);
+	}
+	
+	@GetMapping("/alpaca/getProfile")
+	@ResponseBody
+	public String getCurrentProfile(){
+		return env.getActiveProfiles()[0];
 	}
 }
