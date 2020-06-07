@@ -84,7 +84,6 @@ export class DashboardComponent implements OnInit{
   populatePortfolio(durationInMonth) {
     this.restApi.getPopulatePortfolio(durationInMonth).subscribe((data : PortfolioHistory) => {
           this.portfolioHistory = data;
-          this.fundAndEquityValueDataSet.data = [];
           this.profitValueDataSet.data = [];
 
 
@@ -93,7 +92,7 @@ export class DashboardComponent implements OnInit{
 
              timeSeriesData.x = new Date(parseInt(this.portfolioHistory.timestamp[i])*1000).toDateString();
              timeSeriesData.y = this.portfolioHistory.profitLoss[i];
-             this.profitValueDataSet.data.push(timeSeriesData2);
+             this.profitValueDataSet.data.push(timeSeriesData);
           }
           this.chartProfitAndFund.update();
         }
