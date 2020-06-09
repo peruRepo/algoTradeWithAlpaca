@@ -18,10 +18,11 @@ public class NitriteDBConfiguration {
 	public Nitrite init_nitrite_paper_DB(){
 		String fileLocation = System.getenv("db_location");
 		Nitrite db = Nitrite.builder()
-		        .filePath(fileLocation+"AlpacaTrade.db")
+		        .filePath(fileLocation+"Paper_AlpacaTrade.db")
 		        .openOrCreate();
 		return db;
 	}
+	
 	
 	@Bean("nitriteDB")
 	@Profile("live")
@@ -39,8 +40,18 @@ public class NitriteDBConfiguration {
 	}
 	
 	@Bean
-	public ObjectRepository<BackTestStrategy> backTestStrategyRepo(Nitrite nitriteDB){
-		return nitriteDB.getRepository(BackTestStrategy.class);
+	public ObjectRepository<BackTestStrategy> backTestStrategyRepo(){
+		Nitrite backTestDB = initBackTestDB();
+		return backTestDB.getRepository(BackTestStrategy.class);
 	}
 	
+	private Nitrite initBackTestDB(){
+		String fileLocation = System.getenv("db_location");
+		Nitrite db = Nitrite.builder()
+		        .filePath(fileLocation+"BackTest.db")
+		        .openOrCreate();
+		return db;
+	}
+	
+
 }
