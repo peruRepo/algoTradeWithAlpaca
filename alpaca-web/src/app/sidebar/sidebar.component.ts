@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-
+import { RestApiService } from "../services/rest-api.service";
+import { TitleCasePipe } from '@angular/common';
+import { EnvProfile } from '../model/envProfile';
 
 export interface RouteInfo {
     path: string;
@@ -32,7 +34,21 @@ export const ROUTES: RouteInfo[] = [
 
 export class SidebarComponent implements OnInit {
     public menuItems: any[];
+    envProfile : string = '';
+    titleCasePipe : TitleCasePipe = new TitleCasePipe();
+
+    constructor(public restApi: RestApiService) {
+    }
+
     ngOnInit() {
         this.menuItems = ROUTES.filter(menuItem => menuItem);
+        this.populateEnvProfile();
+    }
+
+    populateEnvProfile() {
+      this.restApi.getEnvProfile().subscribe((data : EnvProfile) => {
+      this.envProfile =  this.titleCasePipe.transform(data.envProfile);
+          }
+      );
     }
 }

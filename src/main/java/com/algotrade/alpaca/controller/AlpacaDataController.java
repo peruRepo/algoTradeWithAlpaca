@@ -8,10 +8,12 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.algotrade.alpaca.data.pojo.EnvProfile;
 import com.algotrade.alpaca.data.polygon.pojo.AggregatesResponse;
 import com.algotrade.alpaca.data.polygon.pojo.RecentTradeData;
 import com.algotrade.alpaca.data.rest.client.PolygonMarketDataClient;
@@ -19,6 +21,7 @@ import com.algotrade.alpaca.data.rest.client.TradingService;
 import com.algotrade.alpaca.service.PortfolioServiceI;
 
 import io.github.mainstringargs.domain.alpaca.account.Account;
+import io.github.mainstringargs.domain.alpaca.accountconfiguration.AccountConfiguration;
 import io.github.mainstringargs.domain.alpaca.order.Order;
 import io.github.mainstringargs.domain.alpaca.portfoliohistory.PortfolioHistory;
 import io.github.mainstringargs.domain.alpaca.position.Position;
@@ -81,7 +84,25 @@ public class AlpacaDataController {
 	
 	@GetMapping("/alpaca/getProfile")
 	@ResponseBody
-	public String getCurrentProfile(){
-		return env.getActiveProfiles()[0];
+	public EnvProfile getCurrentProfile(){
+		EnvProfile envProfile = new EnvProfile();
+		envProfile.setEnvProfile(env.getActiveProfiles()[0]);
+		return envProfile;
+	}
+	
+	@GetMapping("/alpaca/suspendAllTrade")
+	public String suspendAllTrade(){
+		AccountConfiguration accountConfiguration = new AccountConfiguration();
+		accountConfiguration.setSuspendTrade(true);
+		tradingService.setAccountConfiguration(accountConfiguration);		
+		return "{ \"status\" : \"success\" }";
+	}
+	
+	@GetMapping("/alpaca/resumeAllTrade")
+	public String resumeAllTrade(){
+		AccountConfiguration accountConfiguration = new AccountConfiguration();
+		accountConfiguration.setSuspendTrade(false);
+		tradingService.setAccountConfiguration(accountConfiguration);		
+		return "{ \"status\" : \"success\" }";
 	}
 }

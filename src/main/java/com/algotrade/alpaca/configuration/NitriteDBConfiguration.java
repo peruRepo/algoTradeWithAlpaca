@@ -39,19 +39,34 @@ public class NitriteDBConfiguration {
 		return nitriteDB.getRepository(StockTradeStrategy.class);
 	}
 	
-	@Bean
-	public ObjectRepository<BackTestStrategy> backTestStrategyRepo(){
-		Nitrite backTestDB = initBackTestDB();
+	@Bean("liveBackTestStrategyRepo")
+	@Profile("live")
+	public ObjectRepository<BackTestStrategy> liveBackTestStrategyRepo(){
+		Nitrite backTestDB = initLiveBackTestDB();
 		return backTestDB.getRepository(BackTestStrategy.class);
 	}
 	
-	private Nitrite initBackTestDB(){
+	private Nitrite initLiveBackTestDB(){
+		String fileLocation = System.getenv("db_location");
+		Nitrite db = Nitrite.builder()
+		        .filePath(fileLocation+"LiveBackTest.db")
+		        .openOrCreate();
+		return db;
+	}
+	
+
+	@Bean("paperBackTestStrategyRepo")
+	@Profile("paper")
+	public ObjectRepository<BackTestStrategy> paperBackTestStrategyRepo(){
+		Nitrite backTestDB = initPaperBackTestDB();
+		return backTestDB.getRepository(BackTestStrategy.class);
+	}
+	
+	private Nitrite initPaperBackTestDB(){
 		String fileLocation = System.getenv("db_location");
 		Nitrite db = Nitrite.builder()
 		        .filePath(fileLocation+"BackTest.db")
 		        .openOrCreate();
 		return db;
 	}
-	
-
 }

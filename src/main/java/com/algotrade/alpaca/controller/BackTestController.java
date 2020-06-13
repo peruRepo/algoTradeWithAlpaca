@@ -33,6 +33,11 @@ public class BackTestController {
 		return backTestExecutorService.executeStrategy(backTestRequest);		
 	}
 	
+	@PostMapping("alpaca/backtest/store")
+	public String storeBackTest(@RequestBody BackTestStrategy backTestStrategy) {
+		backTestExecutorService.storeStrategy(backTestStrategy);
+		return "success";
+	}
 	
 	@GetMapping("alpaca/backtest/getBackTest")
 	public BackTestStrategy getBackTest(@RequestParam("strategyName") String strategyName) {
@@ -49,4 +54,5 @@ public class BackTestController {
 		nitrateBackTestStrategyRepo.removeStrategy(strategyName);
 		return "sucess";	
 	}
+	
 }
