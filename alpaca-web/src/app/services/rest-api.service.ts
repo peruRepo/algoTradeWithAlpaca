@@ -23,7 +23,8 @@ import { PortfolioHistory } from '../model/portfolioHistory';
 export class RestApiService {
 
   // Define API
-  apiURL = 'http://localhost:8080';
+  apiURL = '';
+  //apiURL = '';
 
   constructor(private http: HttpClient) { }
 

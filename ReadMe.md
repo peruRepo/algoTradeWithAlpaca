@@ -1,11 +1,13 @@
 ![](wiki/images/AlpacaWithJava.jpg)
 #   Algo Trading With Alpaca API
+
 #### 	What does this app do?
 	This app allows you to back test and configuring trigger trading strategy based on technical indicators and price point.
 #### Prerequisite 
 	1. SignUp for Alpaca API https://alpaca.markets/
 	2. Minimal Programming
-	 
+#### Can I use this for live trading?
+	Proect is still in development, So consider using it only for Paper trading as of now.j
 	
 ####  What is Nashorn doing here?
 	Cute Nashorn here enables you to express the strategy with JavaScript syntax but will be converted to byte code in the runtime.
@@ -13,6 +15,7 @@
 	Refer https://www.baeldung.com/java-nashorn
 
 ####  How do I back test my idea?
+	Below Screenshare might guide.?
 
 		
 		

@@ -10,48 +10,31 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @Configuration
 @EnableScheduling
-public class TradeServiceProviderConfiguration {
-	
-	private Logger logger = LoggerFactory.getLogger(TradeServiceProviderConfiguration.class);
-	
-	private String apiVersion;
-	
-	private String keyId;
-	
-	private String secret;
-	
-	private String baseURL;
-	
-	private String baseDataUrl;
+public class AlgoTradeWithAlpacaConfiguration {
 	
 	
 	@Bean
 	public ObjectMapper objectMapper(){
 		ObjectMapper mapper = new ObjectMapper();
-//		SimpleModule module = new SimpleModule();
-	//	module.addDeserializer(StockTradeStrategy.class, new StockTradeStrategyDeserializer());
-	//	mapper.registerModule(module);	
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		mapper.setDateFormat(df);
 		mapper.registerModule(new JavaTimeModule());
 		return mapper;
 	}
 
+	
+	@Bean
+	public RestTemplate RestTemplate() {
+		return new RestTemplate();
+	}
 
-	
-//	  @Bean public PolygonAPI polygonAPI(){ 
-//			keyId =  System.getProperty("alpca.live.api.keyId"); 
-//			return new PolygonAPI(keyId);
-//	  
-//	  }
-	 
-	
 	
 	@Bean
 	public ConcurrentHashMap<String, String> pendingOrderRegistry() {

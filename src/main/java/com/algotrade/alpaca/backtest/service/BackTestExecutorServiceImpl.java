@@ -35,7 +35,6 @@ import com.algotrade.alpaca.data.rest.client.TradingService;
 import io.github.mainstringargs.alpaca.enums.BarsTimeFrame;
 
 @Component
-
 public class BackTestExecutorServiceImpl implements BackTestExecutorService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BackTestExecutorServiceImpl.class);
 	
