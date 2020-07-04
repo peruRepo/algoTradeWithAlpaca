@@ -16,14 +16,14 @@
 
 ####  How do I back test my idea?
 	Below Screenshare might guide.?
-
+![](wiki/gif/backTest.gif)
 		
 		
 
 ####  What is Ta4j?
 		A Java library for technical trading indicators , you can find it here https://github.com/ta4j/ta4j
 
-#### How do I learn Trading Indicators?		
+#### How do I learn about Trading Indicators?		
 		There are more resources out there in the internet and youtube to understand about trading indicators. Make your self familiar with it first.		
 		Below blog is the good starting point.
 		https://medium.com/@harrynicholls/7-popular-technical-indicators-and-how-to-use-them-to-increase-your-trading-profits-7f13ffeb8d05
@@ -43,6 +43,11 @@
 	
 
 #### Stopping All the trades?
+	You two option to suspend the trades
+	1. Using the Alpaca Dashboard mobile app.
+	2. Below Option from the UI can be used.
+   
+![](wiki/images/suspend_trading.jpg)   
 
 #### Raise an Issue
 
