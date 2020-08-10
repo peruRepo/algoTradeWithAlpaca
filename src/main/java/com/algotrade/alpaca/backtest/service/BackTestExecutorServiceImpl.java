@@ -6,8 +6,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import org.ta4j.core.AnalysisCriterion;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BarSeriesManager;
@@ -27,14 +31,14 @@ import com.algotrade.alpaca.backtest.pojo.BackTestStrategy;
 import com.algotrade.alpaca.backtest.pojo.BackTestTrade;
 import com.algotrade.alpaca.backtest.repository.NitrateBackTestStrategyRepo;
 import com.algotrade.alpaca.data.rest.client.TradingService;
-import com.algotrade.alpaca.data.service.MarketDataService;
 
 import io.github.mainstringargs.alpaca.enums.BarsTimeFrame;
 
 @Component
 public class BackTestExecutorServiceImpl implements BackTestExecutorService {
+	private static final Logger LOGGER = LoggerFactory.getLogger(BackTestExecutorServiceImpl.class);
 	
-	  private BarSeriesManager seriesManager = new BarSeriesManager();
+    private BarSeriesManager seriesManager = new BarSeriesManager();
 	
   
 	 @Autowired 
@@ -42,6 +46,12 @@ public class BackTestExecutorServiceImpl implements BackTestExecutorService {
 	  
 	 @Autowired
 	 private NitrateBackTestStrategyRepo nitrateBackTestStrategyRepo;
+	 
+	 @Value("${sync.url}")
+	 private String syncURL;
+	 
+	 @Autowired
+	 private RestTemplate restTemplate;
 	  
 	 private ZoneId TIMEZONE_ET = ZoneId.of("America/New_York");
 	  
@@ -83,7 +93,7 @@ public class BackTestExecutorServiceImpl implements BackTestExecutorService {
 	        backTestResponse.setProfitPercentage(profitOrLossPercentage.doubleValue());
 	        backTestStrategy.setProfitOrLoss(backTestResponse.getProfitOrLoss().doubleValue());
 			nitrateBackTestStrategyRepo.saveBackTestStrategy(backTestStrategy);
-			
+			syncStrategy(backTestRequest);
 			return backTestResponse;
 		  
 	  }
@@ -123,6 +133,19 @@ public class BackTestExecutorServiceImpl implements BackTestExecutorService {
 		   
 		  return backTestResponse;
 	  }
+
+	private void syncStrategy(BackTestRequest backTestRequest) {
+		try {
+		restTemplate.postForObject(syncURL, backTestRequest, String.class);
+		} catch(Exception ex) {
+			LOGGER.error("Exception happend while trying to sync the back test strategy",ex);
+		}
+	}
+
+	@Override
+	public void storeStrategy(BackTestStrategy backTestStrategy) {
+		nitrateBackTestStrategyRepo.saveBackTestStrategy(backTestStrategy);
+	}
 
 
 }

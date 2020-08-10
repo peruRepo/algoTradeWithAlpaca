@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-
+import { RestApiService } from "../services/rest-api.service";
+import { TitleCasePipe } from '@angular/common';
+import { EnvProfile } from '../model/envProfile';
 
 export interface RouteInfo {
     path: string;
@@ -17,7 +19,7 @@ export const ROUTES: RouteInfo[] = [
   //  { path: '/table',                   title: 'Table List',        icon:'nc-tile-56',    class: '' },
   //  { path: '/typography',              title: 'Typography',        icon:'nc-caps-small', class: '' },
   //  { path: '/notifications',           title: 'Notification',   icon:'nc-bullet-list-67',    class: '' },
-  //  { path: '/icons',                   title: 'Icons',             icon:'nc-bell-55', class: '' },
+    { path: '/icons',                   title: 'Icons',             icon:'nc-bell-55', class: '' },
     { path: '/orders',                 title: 'Executed Orders',    icon:'nc-bullet-list-67',  class: '' },
   //  { path: '/orders',                 title: 'Settings',    icon:'nc-settings-gear-65',  class: '' },
   //  { path: '/upgrade',                 title: 'Switch to Live Trade',    icon:'nc-spaceship',  class: 'active-pro' }
@@ -32,7 +34,21 @@ export const ROUTES: RouteInfo[] = [
 
 export class SidebarComponent implements OnInit {
     public menuItems: any[];
+    envProfile : string = '';
+    titleCasePipe : TitleCasePipe = new TitleCasePipe();
+
+    constructor(public restApi: RestApiService) {
+    }
+
     ngOnInit() {
         this.menuItems = ROUTES.filter(menuItem => menuItem);
+        this.populateEnvProfile();
+    }
+
+    populateEnvProfile() {
+      this.restApi.getEnvProfile().subscribe((data : EnvProfile) => {
+      this.envProfile =  this.titleCasePipe.transform(data.envProfile);
+          }
+      );
     }
 }

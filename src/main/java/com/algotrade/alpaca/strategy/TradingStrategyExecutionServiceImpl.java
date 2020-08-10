@@ -80,7 +80,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 	// Scheduler configuration to scan for strategy
 	
 	// Every Five minutes scan for new Strategies
-	@Scheduled(fixedDelay = 5000)
+	@Scheduled(fixedDelay = 300000)
 	
 	// Below configuration can be used to scan for strategy from 9am to 5pm every day for every five min
 	// fron Monday to Friday

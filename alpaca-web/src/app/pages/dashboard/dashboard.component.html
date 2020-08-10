@@ -5,7 +5,7 @@
         <div class="row">
           <div class="col-5 col-md-4">
             <div class="icon-big text-center icon-warning">
-              <i class="nc-icon nc-money-coins text-success"></i>
+              <i class="nc-icon nc-money-coins text-primary"></i>
             </div>
           </div>
           <div class="col-7 col-md-8">
@@ -31,7 +31,7 @@
         <div class="row">
           <div class="col-5 col-md-4">
             <div class="icon-big text-center icon-warning">
-              <i class="nc-icon nc-briefcase-24 text-warning"></i>
+              <i class="nc-icon nc-briefcase-24 text-success"></i>
             </div>
           </div>
           <div class="col-7 col-md-8">
@@ -82,13 +82,14 @@
         <div class="row">
           <div class="col-5 col-md-4">
             <div class="icon-big text-center icon-warning">
-              <i class="nc-icon nc-favourite-28 text-primary"></i>
+              <i *ngIf="tradingActive" class="nc-icon nc-button-pause text-warning hoverActivate" (click)="suspendAllTrade()" ></i>
+              <i *ngIf="!tradingActive" class="nc-icon nc-button-play text-success hoverActivate" (click)="resumeAllTrade()" ></i>
             </div>
           </div>
           <div class="col-7 col-md-8">
             <div class="numbers">
-              <p class="card-category">Active Triggers</p>
-              <p class="card-title">10</p>
+              <p *ngIf="tradingActive" class="card-category">Suspend the Trading</p>
+              <p *ngIf="!tradingActive" class="card-category">Trading is currently suspended</p>
             </div>
           </div>
         </div>

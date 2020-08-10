@@ -3,15 +3,18 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { StockTradeStrategy } from '../model/stockTradeStrategy';
 import { BackTestStrategy } from '../model/backTestStrategy';
 import { BackTestRequest } from '../model/backTestRequest';
+import { EnvProfile } from '../model/envProfile';
 import { Position } from '../model/position';
+import { Status } from '../model/status';
 import { Account } from '../model/account';
 import { Order } from '../model/order';
 import { BackTestResponse } from '../model/backTestResponse';
 import { Observable, throwError } from 'rxjs';
-import { retry, catchError } from 'rxjs/operators';
+import { map,retry, catchError } from 'rxjs/operators';
 import {TechnicalIndicatorTemplate} from "../model/indicator-template";
 import { TickerSuggestionResponse } from '../model/stock-suggestion-response';
 import { PortfolioHistory } from '../model/portfolioHistory';
+
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +23,8 @@ import { PortfolioHistory } from '../model/portfolioHistory';
 export class RestApiService {
 
   // Define API
-  apiURL = 'http://localhost:8080';
+  apiURL = '';
+  //apiURL = '';
 
   constructor(private http: HttpClient) { }
 
@@ -34,6 +38,14 @@ export class RestApiService {
       'Content-Type': 'application/json'
     })
   }
+
+  getEnvProfile (): Observable<EnvProfile> {
+    return this.http.get<EnvProfile>(this.apiURL + '/alpaca/getProfile')
+    .pipe(
+      retry(1),
+      catchError(this.handleError)
+    )
+  };
 
   getAllStockTradeStrategy (): Observable<StockTradeStrategy[]> {
     return this.http.get<StockTradeStrategy[]>(this.apiURL + '/alpaca/strategy/getAllStrategy')
@@ -90,6 +102,25 @@ export class RestApiService {
       catchError(this.handleError)
     )
   }
+
+
+  suspendAllTrade(): Observable<Status> {
+    return this.http.get<Status>(this.apiURL + '/alpaca/suspendAllTrade')
+    .pipe(
+      retry(1),
+      catchError(this.handleError)
+    );
+  }
+
+
+  resumeAllTrade(): Observable<Status> {
+    return this.http.get<Status>(this.apiURL + '/alpaca/resumeAllTrade')
+    .pipe(
+      retry(1),
+      catchError(this.handleError)
+    );
+  }
+
 
   getExecutedOrders(maxDays,maxRows) : Observable<Order[]> {
     return this.http.get<Order[]>(this.apiURL + '/alpaca/getOrders?days=' + maxDays+'&maxRows='+maxRows)

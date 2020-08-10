@@ -5,6 +5,7 @@ import { Order } from "../../model/order";
 import Chart from 'chart.js';
 import { DatePipe } from '@angular/common';
 import { Account } from '../../model/account';
+import { Status } from '../../model/status';
 import { PortfolioHistory } from '../../model/portfolioHistory';
 
 @Component({
@@ -31,6 +32,7 @@ export class DashboardComponent implements OnInit{
   orderExecutedToday : number = 0;
   portfolioHistory : PortfolioHistory;
   profitValueDataSet : any;
+  tradingActive : boolean = true;
 
   constructor(public restApi: RestApiService) {
   }
@@ -73,6 +75,19 @@ export class DashboardComponent implements OnInit{
 
   }
 
+ suspendAllTrade() {
+   this.restApi.suspendAllTrade().subscribe((data : Status) => {
+         this.tradingActive = false;
+       }
+     );
+ }
+
+ resumeAllTrade() {
+   this.restApi.resumeAllTrade().subscribe((data : Status) => {
+         this.tradingActive = true;
+       }
+     );
+ }
 
  populateAccount() {
    this.restApi.getAccount().subscribe((data : Account) => {
