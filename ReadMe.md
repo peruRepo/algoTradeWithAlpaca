@@ -5,9 +5,9 @@
 	This app allows you to back test and configuring trigger trading strategy based on technical indicators and price point.
 #### Prerequisite 
 	1. SignUp for Alpaca API https://alpaca.markets/
-	2. Minimal Programming
+	2. Minimal Programming knowledge
 #### Can I use this for live trading?
-	Proect is still in development, So consider using it only for Paper trading as of now.j
+	App is still in development, So consider using it only for Paper trading as of now.
 	
 ####  What is Nashorn doing here?
 	Cute Nashorn here enables you to express the strategy with JavaScript syntax but will be converted to byte code in the runtime.
