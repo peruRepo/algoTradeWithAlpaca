@@ -50,6 +50,6 @@
 ![](wiki/images/suspend_trading.jpg)   
 
 #### Raise an Issue
-
+    Please feel free to raise an Issue if you feel something is off with the code, I will indeed getback.
 
 		
