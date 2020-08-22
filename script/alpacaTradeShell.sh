@@ -7,13 +7,13 @@ export alpaca_api_baseDataUrl="https://data.alpaca.markets"
 # Mostly you don't need to change the url for paper
 export alpaca_paper_api_baseURL="https://paper-api.alpaca.markets"
 # Enter your paper api Key here
-export alpca_paper_api_keyId="Provide your api key here"
+export alpaca_paper_api_keyId="Provide your api key here"
 # Enter your paper api Secret here
-export alpca_paper_api_secret="Provide your api secret key here"
+export alpaca_paper_api_secret="Provide your api secret key here"
 # Enter your live api key here
-export alpca_live_api_keyId="blah"
+export alpaca_live_api_keyId="blah"
 # Enter your live api secret here
-export alpca_live_api_secret="blah"
+export alpaca_live_api_secret="blah"
 # Mostly you don't need to change the url for live
 export alpaca_live_api_baseURL="https://api.alpaca.markets"
 

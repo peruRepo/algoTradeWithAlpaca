@@ -32,8 +32,8 @@ public class AlpacaLiveTradingServiceProvider implements TradingServiceProvider<
 	@Override
 	public AlpacaAPI getTradingAPI() throws TradingServiceProviderException {
 
-		keyId = System.getenv("alpca_live_api_keyId");
-		secret = System.getenv("alpca_live_api_secret");
+		keyId = System.getenv("alpaca_live_api_keyId");
+		secret = System.getenv("alpaca_live_api_secret");
 		baseURL = System.getenv("alpaca_live_api_baseURL");
 		baseDataUrl = System.getenv("alpaca_api_baseDataUrl");
 		if(StringUtils.isEmpty(keyId) || StringUtils.isEmpty(secret)) {
