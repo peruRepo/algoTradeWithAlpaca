@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class AlpacaAlgoTrader {
 	public static void main(String[] args) {
-		System.setProperty("javax.net.ssl.trustStore",
-				"/Library/Java/JavaVirtualMachines/jdk1.8.0_101.jdk/Contents/Home/jre/lib/security/cacerts");
+		String certificatePath = System.getenv("certificate_path");
+		System.setProperty("javax.net.ssl.trustStore",certificatePath);
 		System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
 		SpringApplication.run(AlpacaAlgoTrader.class, args);
 	}

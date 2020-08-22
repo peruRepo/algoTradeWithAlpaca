@@ -23,6 +23,8 @@ app_port_opt=" -Dserver.port="
 #Provide the port for your app , Keep it seperate for paper and live
 app_port="8080"
 
+#Provide your jre certificate path
+certificate_path=
 
 # Provide Location to store the Db files
 export db_location="/Users/sriram/Documents/Study/Projects/Algo/AlgoTradeWithAlpaca/db/"
