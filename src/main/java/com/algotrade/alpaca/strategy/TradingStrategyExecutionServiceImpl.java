@@ -108,7 +108,7 @@ public class TradingStrategyExecutionServiceImpl implements TradingStrategyExecu
 		
 	}
 
-	@Scheduled(cron = "0 1 17 ? * MON-FRI")
+	//@Scheduled(cron = "0 1 17 ? * MON-FRI")
 	public void stopScheduler() {
 		tradeScheduledThreadPool.shutdownNow();
 	}
