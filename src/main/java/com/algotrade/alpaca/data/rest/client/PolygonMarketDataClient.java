@@ -9,6 +9,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.algotrade.alpaca.data.polygon.pojo.AggregatesResponse;
 import com.algotrade.alpaca.data.polygon.pojo.RecentTradeData;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 import io.github.mainstringargs.polygon.PolygonConstants;
 import io.github.mainstringargs.polygon.enums.Market;
@@ -41,6 +42,7 @@ public class PolygonMarketDataClient  implements MarketDataClient {
 	 * /v1/last/stocks/{symbol}
 	 * @see com.algotrade.alpaca.service.rest.client.MarketDataClient#getRecentMarketData(java.lang.String)
 	 */
+	@HystrixCommand(commandKey="polygon", threadPoolKey = "polygon")
 	public RecentTradeData getRecentMarketData(String stock) {
 		String url =  getPolygonRecentTradeURL(stock);
 		ResponseEntity<RecentTradeData> responseEntity = restTemplate.getForEntity(url, RecentTradeData.class);
@@ -51,6 +53,7 @@ public class PolygonMarketDataClient  implements MarketDataClient {
 	 *  Format - https://api.polygon.io/v2/aggs/ticker/${AAPL}/range/${1}/${hour}/${2019-01-01}/${2019-02-01}?apiKey=$GivenAlpacaKey
 	 * @see com.algotrade.alpaca.service.rest.client.MarketDataClient#getHistoricalMarketData(java.lang.String, java.sql.Date, java.sql.Date)
 	 */
+	@HystrixCommand(commandKey="polygon", threadPoolKey = "polygon")
 	public AggregatesResponse getHistoricalMarketData(String stock, String startDate, String endDate) {
 		
 		String url = getPolygonResourceURL(stock,startDate,endDate,1,"hour");
@@ -88,6 +91,8 @@ public class PolygonMarketDataClient  implements MarketDataClient {
 		return builder.toString();		
 	}
 	
+	
+	@HystrixCommand(commandKey="polygon", threadPoolKey = "polygon")
 	public String stockSearch(String searchString) {
 
 		try {

@@ -27,6 +27,7 @@ import com.algotrade.alpaca.data.pojo.TradeOrderResponse;
 import com.algotrade.alpaca.data.ta4j.AlpacaTa4jAdapter;
 import com.algotrade.alpaca.strategy.exception.AlpacaAPIException;
 import com.algotrade.alpaca.strategy.exception.MarketDataException;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 import io.github.mainstringargs.alpaca.AlpacaAPI;
 import io.github.mainstringargs.alpaca.enums.BarsTimeFrame;
@@ -63,6 +64,7 @@ public class AlpacaTradingService implements TradingService {
 	}
 
 	@Override
+	@HystrixCommand(commandKey="alpaca", threadPoolKey = "alpaca")
 	public TradeOrderResponse buyStock(TradeOrder tradeOrder) {
 		Order order = null;
 		try {
@@ -78,6 +80,7 @@ public class AlpacaTradingService implements TradingService {
 	}
 
 	@Override
+	@HystrixCommand(commandKey="alpaca", threadPoolKey = "alpaca")
 	public TradeOrderResponse sellStock(TradeOrder tradeOrder) {
 		Order order = null;
 		try {
@@ -94,6 +97,7 @@ public class AlpacaTradingService implements TradingService {
 	}
 
 	@Override
+	@HystrixCommand(commandKey="alpaca", threadPoolKey = "alpaca")
 	public List<Position> getOpenPositions() {
 		try {
 			return alpacaAPI.getOpenPositions();
@@ -104,6 +108,7 @@ public class AlpacaTradingService implements TradingService {
 	}
 
 	@Override
+	@HystrixCommand(commandKey="alpaca", threadPoolKey = "alpaca")
 	public Position getOpenPositionBySymbol(String ticker) {
 		Position position = null;
 		try {
@@ -116,6 +121,7 @@ public class AlpacaTradingService implements TradingService {
 	}
 
 	@Override
+	@HystrixCommand(commandKey="alpaca", threadPoolKey = "alpaca")
 	public List<Order> getOrders(Integer days, Integer maximumResult) {
 
 		ZonedDateTime currentTime = ZonedDateTime.now(TIMEZONE_ET);
@@ -132,6 +138,7 @@ public class AlpacaTradingService implements TradingService {
 	}
 
 	@Override
+	@HystrixCommand(commandKey="alpaca", threadPoolKey = "alpaca")
 	public Account getAccount() {
 		try {
 			return alpacaAPI.getAccount();
@@ -142,6 +149,7 @@ public class AlpacaTradingService implements TradingService {
 	}
 
 	@Override
+	@HystrixCommand(commandKey="alpaca", threadPoolKey = "alpaca")
 	public BarSeries getMarketData(String ticker, String candleDuration, Integer candleCount, ZonedDateTime startTime,
 			ZonedDateTime endTime) {
 		BarsTimeFrame timeFrame = BarsTimeFrame.valueOf(candleDuration);
@@ -161,6 +169,7 @@ public class AlpacaTradingService implements TradingService {
 
 	}
 
+	
 	private BarSeries aggregateBarSeriesData(String ticker, String candleDuration, ZonedDateTime startTime,
 			ZonedDateTime endTime) {
 		LinkedList<Bar> aggregatedbars = new LinkedList<Bar>();
@@ -207,6 +216,7 @@ public class AlpacaTradingService implements TradingService {
 	}
 
 	@Override
+	@HystrixCommand(commandKey="alpaca", threadPoolKey = "alpaca")
 	public BarSeries getMarketDataForGivenDuration(String ticker, String candleDuration, Integer candleCount) {
 		BarsTimeFrame timeFrame = BarsTimeFrame.valueOf(candleDuration);
 		ZonedDateTime currentTime = ZonedDateTime.now(TIMEZONE_ET);
@@ -249,6 +259,7 @@ public class AlpacaTradingService implements TradingService {
 	}
 
 	@Override
+	@HystrixCommand(commandKey="alpaca", threadPoolKey = "alpaca")
 	public Order getOrder(String orderId) {
 		Order order = null;
 		try {
@@ -295,6 +306,7 @@ public class AlpacaTradingService implements TradingService {
 	}
 
 	@Override
+	@HystrixCommand(commandKey="alpaca", threadPoolKey = "alpaca")
 	public PortfolioHistory getProPortfolioHistory(Integer periodLength) {
 		PortfolioPeriodUnit alpacaPeriodUnit = PortfolioPeriodUnit.MONTH;
         PortfolioTimeFrame timeFrame = PortfolioTimeFrame.ONE_DAY;

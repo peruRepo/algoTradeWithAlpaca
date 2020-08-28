@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -84,9 +85,15 @@
 		<dependency>
 			<groupId>io.github.mainstringargs</groupId>
 			<artifactId>alpaca-java</artifactId>
-			<!--  <version>5.0.8</version> -->
-			   <version>5.0.12</version>
+			<!-- <version>5.0.8</version> -->
+			<version>5.0.12</version>
 			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-hystrix</artifactId>
+			<version>1.4.7.RELEASE</version>
 		</dependency>
 	</dependencies>
 
@@ -108,32 +115,16 @@
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
-					      <excludes>
-       						 <exclude>web/node_modules/**</exclude>
-      					</excludes>
+					<excludes>
+						<exclude>web/node_modules/**</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
-			<!-- <plugin>
-				<artifactId>exec-maven-plugin</artifactId>
-				<groupId>org.codehaus.mojo</groupId>
-				<version>1.6.0</version>
-				<executions>
-					<execution>
-						<id>Build angular using ng</id>
-						<phase>install</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<executable>ng</executable>
-					<workingDirectory>src/main/resources/web</workingDirectory>
-					<arguments>
-						<argument>build</argument>
-					</arguments>
-				</configuration>
-			</plugin> -->
+			<!-- <plugin> <artifactId>exec-maven-plugin</artifactId> <groupId>org.codehaus.mojo</groupId> 
+				<version>1.6.0</version> <executions> <execution> <id>Build angular using 
+				ng</id> <phase>install</phase> <goals> <goal>exec</goal> </goals> </execution> 
+				</executions> <configuration> <executable>ng</executable> <workingDirectory>src/main/resources/web</workingDirectory> 
+				<arguments> <argument>build</argument> </arguments> </configuration> </plugin> -->
 		</plugins>
 	</build>
 
