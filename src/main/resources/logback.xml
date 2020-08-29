@@ -1,15 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-        <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-    </encoder>
- </appender>
-     <logger name="org.apache" level="ERROR"/>
-    <logger name="httpclient" level="WARN"/>
-   <root level="info">
-    <appender-ref ref="STDOUT" />
-    </root>
+
+	<if condition='property("use.logback.appender").contains("true")'>
+	<then>
+	<appender name="DEFAULT-APPENDER"
+		class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+		<destination>${LOGSTASH-HOST}</destination>
+		<encoder class="net.logstash.logback.encoder.LogstashEncoder">
+			<customFields>{"appname":"AlgoTradeWithAlpaca"}</customFields>
+		</encoder>
+	</appender>
+	</then>
+	<else>
+		<appender name="DEFAULT-APPENDER"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</pattern>
+		</encoder>
+		</appender>
+	</else>
+	</if>
+	
+	<logger name="org.apache" level="ERROR" />
+	<logger name="httpclient" level="WARN" />
+	
+	
+	<root level="info">
+		<appender-ref ref="DEFAULT-APPENDER" />
+	</root>
 
 </configuration>
