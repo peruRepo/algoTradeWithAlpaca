@@ -6,6 +6,19 @@
 #### Prerequisite 
 	1. SignUp for Alpaca API https://alpaca.markets/
 	2. Minimal Programming knowledge
+#### How do I deploy the app?
+      1.Install docker      
+      2.Provide your API keys and secrets for the paper (or) live respectively in docker/paper.env or docker/live.env files.
+      3.Execute the below command,
+         a. cd <<docker folder in your disk>>
+         b. docker-compose pull
+         c. docker-compose up
+
+#### How do I get API Key Credentials?
+	You need to open the trading account with https://alpaca.markets/. They are providing Commision free API Service.
+	You can get api credentials for paper trading from https://app.alpaca.markets/paper/dashboard/overview
+![](wiki/images/PaperTradingDashboard.jpg)
+	
 #### Can I use this for live trading?
 	App is still in development, So consider using it only for Paper trading as of now.
 	
@@ -30,17 +43,6 @@
 
 ####  What is paper trading?
 	As the name suggests , Paper Trading environment uses the live market data but your stock purchases are not real. You can use this as the test environment.
-
-##### Installation
-	1. Download Shell "alpacaTradeShell.sh" from script folder.
-	2. Download --jar-- from the dist folder and place it in your work directory	
-	3. Update your directory for the jar in the shell script
-
-#### How do I get API Key Credentials?
-	You need to open the trading account with https://alpaca.markets/. They are providing Commision free API Service.
-	You can get api credentials for paper trading from https://app.alpaca.markets/paper/dashboard/overview
-![](wiki/images/PaperTradingDashboard.jpg)
-	
 
 #### Stopping All the trades?
 	You two option to suspend the trades
