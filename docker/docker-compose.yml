@@ -1,0 +1,15 @@
+version: '2'
+services:
+  AlgoTradeWithAlpaca:
+    image: perurepo/algo_trade_with_alpaca:latest
+# Provide live.env for live trading with real money
+    env_file:
+      - ./paper.env
+    ports:
+      - "10120:10120"
+    container_name : algo_trade_with_alpaca_paper
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+#     Provide your disk location here for storing data where your back test 
+#     and trigger configuration will be stored
+      - <<Your disk location for DB >>:/apps/AlgoTradeWithAlpaca/data/nitroDB
