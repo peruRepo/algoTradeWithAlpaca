@@ -20,7 +20,7 @@ export const ROUTES: RouteInfo[] = [
   //  { path: '/typography',              title: 'Typography',        icon:'nc-caps-small', class: '' },
   //  { path: '/notifications',           title: 'Notification',   icon:'nc-bullet-list-67',    class: '' },
     { path: '/icons',                   title: 'Icons',             icon:'nc-bell-55', class: '' },
-    { path: '/orders',                 title: 'Executed Orders',    icon:'nc-bullet-list-67',  class: '' },
+    { path: '/orders',                 title: 'Executed Orders',    icon:'nc-bullet-list-67',  class: '' }
   //  { path: '/orders',                 title: 'Settings',    icon:'nc-settings-gear-65',  class: '' },
   //  { path: '/upgrade',                 title: 'Switch to Live Trade',    icon:'nc-spaceship',  class: 'active-pro' }
 
