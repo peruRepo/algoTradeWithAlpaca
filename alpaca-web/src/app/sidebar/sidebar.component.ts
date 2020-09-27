@@ -14,16 +14,9 @@ export const ROUTES: RouteInfo[] = [
     { path: '/dashboard',               title: 'Dashboard',         icon:'nc-bank',       class: '' },
     { path: '/backtest',                title: 'New Strategy',      icon:'nc-simple-add', class: '' },
     { path: '/trading-strategy-browse', title: 'Deployed Triggers', icon:'nc-sound-wave', class: '' },
-    { path: '/backtestbrowse',          title: 'Executed BackTest',  icon:'nc-bulb-63',    class: '' },
-  //  { path: '/user',                    title: 'User Profile',      icon:'nc-single-02',  class: '' },
-  //  { path: '/table',                   title: 'Table List',        icon:'nc-tile-56',    class: '' },
-  //  { path: '/typography',              title: 'Typography',        icon:'nc-caps-small', class: '' },
-  //  { path: '/notifications',           title: 'Notification',   icon:'nc-bullet-list-67',    class: '' },
-    { path: '/icons',                   title: 'Icons',             icon:'nc-bell-55', class: '' },
-    { path: '/orders',                 title: 'Executed Orders',    icon:'nc-bullet-list-67',  class: '' },
-  //  { path: '/orders',                 title: 'Settings',    icon:'nc-settings-gear-65',  class: '' },
-  //  { path: '/upgrade',                 title: 'Switch to Live Trade',    icon:'nc-spaceship',  class: 'active-pro' }
-
+    { path: '/backtestbrowse',          title: 'Executed BackTest', icon:'nc-bulb-63',    class: '' },
+    { path: '/orders',                  title: 'Executed Orders',   icon:'nc-bullet-list-67',  class: '' }
+ 
 ];
 
 @Component({
