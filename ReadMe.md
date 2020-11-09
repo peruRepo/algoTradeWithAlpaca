@@ -2,7 +2,7 @@
 #   Algo Trading With Alpaca API
 
 #### 	What does this app do?
-	This app allows you to back test and configuring trigger trading strategy based on technical indicators and price point.
+	This app allows you to setup trading strategy based on technical indicators and price point and backtest as well
 #### Prerequisite 
 	1. SignUp for Alpaca API https://alpaca.markets/
 	2. Minimal Programming knowledge
